@@ -11,13 +11,13 @@ class ConfigurePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
 
-    return const SizedBox.expand(
+    return SizedBox.expand(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "We configure the tuner for your Floyd Rose Guitar",
               textAlign: TextAlign.center,
             ),
