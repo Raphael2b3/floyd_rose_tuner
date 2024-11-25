@@ -2,6 +2,11 @@
 
 Help people to tune Floyd Rose Guitars
 
+## Acknowledgements
+
+This project was inspired by @jyodesh10  https://github.com/jyodesh10/guitar-tuner-flutter/
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
