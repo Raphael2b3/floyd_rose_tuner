@@ -1,5 +1,5 @@
-import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
-import 'package:floyd_rose_tuner/utils/random_stream.dart';
+import 'package:floyd_rose_tuner/logic/frequency_to_note.dart';
+import 'package:floyd_rose_tuner/logic/random_stream.dart';
 import 'package:flutter/material.dart';
 
 class TunerSlider extends StatefulWidget {
@@ -20,7 +20,7 @@ class _TunerSliderState extends State<TunerSlider> {
         if (!snapshot.hasData) return const Text("No Data");
         return Column(
         children: [
-          Text(noteByFrequency(snapshot.data!)),
+          //Text((snapshot.data!)),
           Slider(
               label: "1",
               year2023: false,
