@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>The app needs to access your mic to determine the pitch of your instrument</string>
 </dict>
 </plist>
