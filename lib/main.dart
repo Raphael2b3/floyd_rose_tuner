@@ -76,10 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: [
-        HelpPage(),
-        ConfigurePage(),
-        HelpPage(),
-        HelpPage(),
+        const HelpPage(),
+        const ConfigurePage(),
+        const HelpPage(),
+        const HelpPage(),
       ][currentPageIndex],
     );
   }

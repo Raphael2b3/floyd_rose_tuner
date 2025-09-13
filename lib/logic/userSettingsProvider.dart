@@ -33,9 +33,12 @@ class UserSettings {
 }
 
 
-class UserSettingsNotifier extends StateNotifier<UserSettings> {
-  UserSettingsNotifier() : super(UserSettings(templates: [], configurations: [])) {
+class UserSettingsNotifier extends Notifier<UserSettings> {
+  @override
+  UserSettings build() {
     _loadFromLocalStorage();
+    return UserSettings(configurations: [], templates: []);
+    // Initialize with empty lists
   }
 
   static const _storageKey = 'user_settings';
@@ -101,7 +104,6 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
 }
 
 // Riverpod provider for UserSettings
-final userSettingsProvider =
-StateNotifierProvider<UserSettingsNotifier, UserSettings>(
-      (ref) => UserSettingsNotifier(),
+final userSettingsProvider = NotifierProvider<UserSettingsNotifier, UserSettings>(
+      UserSettingsNotifier.new
 );

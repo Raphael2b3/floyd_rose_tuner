@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:floyd_rose_tuner/components/tuner_slider.dart';
 import 'package:flutter/material.dart';
