@@ -1,61 +1,43 @@
 import 'dart:math';
-
-class Tone {
-  String name;
-  double frequency;
-  int noteNumber;
-  double centDifference;
-
-  Tone(
-      {this.name = "?",
-      this.frequency = 0.0,
-      this.noteNumber = 0,
-      this.centDifference = 0});
-}
-
-const numberOfNotes = 12;
-final double coefficient = numberOfNotes / log(2);
 // Note names in an octave
 const List<String> noteNames = [
-  'A',
-  'A#',
-  'B',
   'C',
-  'C#',
+  'Db',
   'D',
-  'D#',
+  'Eb',
   'E',
   'F',
-  'F#',
+  'Gb',
   'G',
-  'G#'
+  'Ab',
+  'A',
+  'Bb',
+  'B',
 ];
+final indexOfA = noteNames.indexOf('A'); // Index of A in the noteNames list
+final numberOfNotes = noteNames.length;
 
-int getClosestNoteNumberFromFrequency(double frequency,
-    {double a4Frequency = 440.0}) {
-  // Calculate the number of semitones from A4
-  double n = coefficient * (log(frequency / a4Frequency));
-  // Round to the nearest semitone
-  int roundedN = n.round();
-  return roundedN;
+int getClosestNoteNumberFromFrequency(double frequency,{double normTone = 440.0}) {
+  double numberOfSemitones = indexOfA + numberOfNotes * log(frequency / normTone) / log(2);
+  int noteNumber = numberOfSemitones.round();
+  return noteNumber;
 }
 
 String getNearestNoteFromFrequency(double frequency,
-    {double a4Frequency = 440.0}) {
-  int roundedN =
-      getClosestNoteNumberFromFrequency(frequency, a4Frequency: a4Frequency);
+    {double normTone = 440.0}) {
+  int noteNumber =
+      getClosestNoteNumberFromFrequency(frequency, normTone: normTone);
 
   // Determine the octave and note
-  int noteIndex = roundedN % numberOfNotes;
-  int octave = 4 + (roundedN ~/ numberOfNotes); // A4 is in octave 4
+  int noteIndex = noteNumber % numberOfNotes;
+  // Proper floor division for negative values
+  int octave = 4 + (noteNumber >= 0
+      ? noteNumber ~/ numberOfNotes
+      : ((noteNumber + 1) ~/ numberOfNotes) - 1);
 
   // Get the note name
   String noteName = noteNames[noteIndex];
 
   // Return the full note with octave
   return '$noteName$octave';
-}
-
-double diffInCents(double expectedFrequency, double frequency) {
-  return 1200.0 * log(expectedFrequency / frequency);
 }

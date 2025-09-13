@@ -41,6 +41,7 @@ dependencies:
   record: ^6.1.1
   ml_linalg: ^13.12.6
   pitch_detector_dart: ^0.0.7
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
