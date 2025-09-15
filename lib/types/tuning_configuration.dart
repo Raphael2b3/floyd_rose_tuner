@@ -5,7 +5,7 @@ part 'tuning_configuration.g.dart';
 @JsonSerializable()
 class TuningConfiguration {
   String name;
-  List<int> goalNotes;
+  List<String> goalNotes;
 
   TuningConfiguration({required this.name, goalNotes}) : goalNotes = goalNotes ?? [];
   /// Connect the generated [_$TuningConfigurationFromJson] function to the `fromJson`

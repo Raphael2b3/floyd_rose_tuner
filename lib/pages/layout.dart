@@ -1,7 +1,8 @@
 
+import 'package:floyd_rose_tuner/components/tuner_slider.dart';
 import 'package:flutter/material.dart';
 
-import 'configure_page.dart';
+import 'floyd_rose_tuner_page.dart';
 import 'help_page.dart';
 
 class Layout extends StatefulWidget {
@@ -33,10 +34,6 @@ class _LayoutState extends State<Layout> {
             label: 'Help',
           ),
           NavigationDestination(
-            icon: Badge(child: Icon(Icons.tune)),
-            label: 'Configure',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.star),
             label: 'Floyd Rose',
           ),
@@ -46,11 +43,10 @@ class _LayoutState extends State<Layout> {
           ),
         ],
       ),
-      body: const [
-        HelpPage(),
-        ConfigurePage(),
-        HelpPage(),
-        HelpPage(),
+      body: [
+        const HelpPage(),
+        const FloydRoseTunerPage(),
+        TunerSlider(),
       ][currentPageIndex],
     );
   }

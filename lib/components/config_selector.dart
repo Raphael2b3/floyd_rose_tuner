@@ -1,0 +1,69 @@
+import 'package:floyd_rose_tuner/provider/guitar_configuration_provider.dart';
+import 'package:floyd_rose_tuner/provider/tuning_configuration_provider.dart';
+import 'package:floyd_rose_tuner/random_stream.dart';
+import 'package:flutter/material.dart';
+
+class ConfigSelector extends StatefulWidget {
+  ConfigSelector({super.key, this.goal = 0.5});
+  double goal;
+  @override
+  State<ConfigSelector> createState() => ConfigSelectorState();
+}
+
+class ConfigSelectorState extends State<ConfigSelector> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+            DropdownMenu(
+                label: Text("Tuning Configuration"),
+                helperText: "e.g. Standard EADGBE",
+                dropdownMenuEntries: defaultTuningConfigurations
+                    .map((e) => DropdownMenuEntry(value: e.name, label: e.name))
+                    .toList(),
+                onSelected: (String? value) {
+                  print(value);
+                }),
+            OutlinedButton(
+              onPressed: () {},
+              child: Text("Add Custom Tuning"),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+            DropdownMenu(
+                label: Text("Your Guitar"),
+                dropdownMenuEntries: defaultGuitarConfigurations
+                    .map((e) => DropdownMenuEntry(value: e.name, label: e.name))
+                    .toList(),
+                onSelected: (String? value) {
+                  print(value);
+                }),
+            OutlinedButton(
+              onPressed: () {},
+              child: Text("Add A Guitar"),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FilledButton(
+              onPressed: () {},
+              child: Text("Start Tuning"),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
