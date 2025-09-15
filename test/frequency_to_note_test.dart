@@ -1,45 +1,10 @@
 
 import 'dart:math';
-import 'package:floyd_rose_tuner/logic/frequency_to_note.dart';
+import 'package:floyd_rose_tuner/frequency_to_note.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
 void main() {
-  group('getClosestNoteNumberFromFrequency', () {
-    test('returns index of A for 440 Hz (A4)', () {
-      expect(getClosestNoteNumberFromFrequency(440.0), equals(indexOfA));
-    });
-
-    test('returns index of Bb for ~466.16 Hz', () {
-      expect(getClosestNoteNumberFromFrequency(466.16),
-          equals(noteNames.indexOf('Bb')));
-    });
-
-    test('returns index of B for ~493.88 Hz', () {
-      expect(getClosestNoteNumberFromFrequency(493.88),
-          equals(noteNames.indexOf('B')));
-    });
-
-    test('returns index of C for ~523.25 Hz (C5)', () {
-      expect(getClosestNoteNumberFromFrequency(523.25)%numberOfNotes,
-          equals(noteNames.indexOf('C')));
-    });
-
-    test('returns index of A for 220 Hz (A3)', () {
-      expect(getClosestNoteNumberFromFrequency(220.0)%numberOfNotes, equals(indexOfA));
-    });
-
-    test('returns index of A for 880 Hz (A5)', () {
-      expect(getClosestNoteNumberFromFrequency(880.0)%numberOfNotes, equals(indexOfA));
-    });
-
-    test('uses custom normTone (432 Hz instead of 440)', () {
-      expect(
-        getClosestNoteNumberFromFrequency(432.0, normTone: 432.0),
-        equals(indexOfA),
-      );
-    });
-  });
 
   group('getNearestNoteFromFrequency', () {
     test('returns A4 for 440 Hz', () {

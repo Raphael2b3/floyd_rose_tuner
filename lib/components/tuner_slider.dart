@@ -1,4 +1,4 @@
-import 'package:floyd_rose_tuner/logic/random_stream.dart';
+import 'package:floyd_rose_tuner/random_stream.dart';
 import 'package:flutter/material.dart';
 
 class TunerSlider extends StatefulWidget {

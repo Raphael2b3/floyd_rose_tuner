@@ -17,7 +17,7 @@ const List<String> noteNames = [
 final indexOfA = noteNames.indexOf('A'); // Index of A in the noteNames list
 final numberOfNotes = noteNames.length;
 
-int getClosestNoteNumberFromFrequency(double frequency,{double normTone = 440.0}) {
+int _getClosestNoteNumberFromFrequency(double frequency,{double normTone = 440.0}) {
   double numberOfSemitones = indexOfA + numberOfNotes * log(frequency / normTone) / log(2);
   int noteNumber = numberOfSemitones.round();
   return noteNumber;
@@ -26,7 +26,7 @@ int getClosestNoteNumberFromFrequency(double frequency,{double normTone = 440.0}
 String getNearestNoteFromFrequency(double frequency,
     {double normTone = 440.0}) {
   int noteNumber =
-      getClosestNoteNumberFromFrequency(frequency, normTone: normTone);
+      _getClosestNoteNumberFromFrequency(frequency, normTone: normTone);
 
   // Determine the octave and note
   int noteIndex = noteNumber % numberOfNotes;
