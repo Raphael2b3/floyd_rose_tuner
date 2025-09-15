@@ -1,5 +1,5 @@
 import 'dart:convert'; // For JSON encoding and decoding
-import 'package:floyd_rose_tuner/logic/models.dart';
+import 'package:floyd_rose_tuner/types/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

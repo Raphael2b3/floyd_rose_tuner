@@ -19,3 +19,6 @@ List<TuningConfiguration> defaultTuningConfigurations = [
   TuningConfiguration(
       name: 'Drop B', goalNotes: ["B1", "Gb2", "B2", "E3", "Ab3", "Db4"]),
 ];
+
+TuningConfiguration? selectedTuningConfiguration =
+    defaultTuningConfigurations[0];

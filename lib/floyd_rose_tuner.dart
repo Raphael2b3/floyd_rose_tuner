@@ -12,6 +12,7 @@ class FloydRoseTuner extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,
+        sliderTheme: SliderThemeData(year2023:false)
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,

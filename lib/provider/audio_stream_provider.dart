@@ -1,14 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pitch_detector_dart/pitch_detector.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:record/record.dart';
 import 'dart:async';
 import 'dart:typed_data';
 
 
 typedef Result = int; //Uint8List;
-@riverpod
-Stream<Result> streamExample(Ref ref) async* {}
 
 final name = StreamNotifierProvider<AudioPitch, Result>(
     AudioPitch.new); //.someModifier<AudioPitch, Result>(AudioPitch.new);
@@ -39,8 +36,7 @@ class AudioPitch extends StreamNotifier<Result> {
       var stream = await recorder
           .startStream(recordConfig);
       await for (Uint8List sample in stream) {
-        final result = pitchDetectorDart.getPitchFromIntBuffer(sample);
-
+        final result = await  pitchDetectorDart.getPitchFromIntBuffer(sample);
         yield sample.length;
       }
     }

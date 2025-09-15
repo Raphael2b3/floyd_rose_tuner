@@ -19,10 +19,9 @@ class _TunerSliderState extends State<TunerSlider> {
         if (!snapshot.hasData) return const Text("No Data");
         return Column(
         children: [
-          //Text((snapshot.data!)),
+          Text((snapshot.data!.toString())),
           Slider(
               label: "1",
-              year2023: false,
               value: snapshot.data!,
               onChanged: (d) {
                 print(d);
