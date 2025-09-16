@@ -1,11 +1,8 @@
 import 'package:floyd_rose_tuner/provider/guitar_behaviour_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/tuning_configuration_provider.dart';
-import 'package:floyd_rose_tuner/random_stream.dart';
 import 'package:flutter/material.dart';
 
 class GuitarBehaviourMatrixSelector extends StatefulWidget {
-  GuitarBehaviourMatrixSelector({super.key, this.goal = 0.5});
-  double goal;
+  GuitarBehaviourMatrixSelector({super.key});
   @override
   State<GuitarBehaviourMatrixSelector> createState() => GuitarBehaviourMatrixSelectorState();
 }

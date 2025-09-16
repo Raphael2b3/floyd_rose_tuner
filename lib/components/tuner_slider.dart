@@ -1,4 +1,4 @@
-import 'package:floyd_rose_tuner/random_stream.dart';
+import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 
 class TunerSlider extends StatefulWidget {
@@ -22,6 +22,7 @@ class _TunerSliderState extends State<TunerSlider> {
           Text((snapshot.data!.toString())),
           Slider(
               label: "1",
+              year2023: false,
               value: snapshot.data!,
               onChanged: (d) {
                 print(d);

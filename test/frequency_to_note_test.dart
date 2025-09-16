@@ -1,6 +1,6 @@
 
 import 'dart:math';
-import 'package:floyd_rose_tuner/frequency_to_note.dart';
+import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 

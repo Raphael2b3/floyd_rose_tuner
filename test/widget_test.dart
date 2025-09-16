@@ -5,7 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:floyd_rose_tuner/floyd_rose_tuner.dart';
+import 'package:floyd_rose_tuner/components/floyd_rose_tuner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,8 +1,9 @@
 
+import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/guitar_behaviour_matrix_selector.dart';
 import 'package:floyd_rose_tuner/components/tuning_configuration_selector.dart';
 import 'package:flutter/material.dart';
-
+@RoutePage()
 class FloydRoseTunerPage extends StatelessWidget {
   const FloydRoseTunerPage({super.key});
 

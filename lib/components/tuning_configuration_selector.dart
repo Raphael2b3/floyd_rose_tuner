@@ -1,6 +1,4 @@
-import 'package:floyd_rose_tuner/provider/guitar_behaviour_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/tuning_configuration_provider.dart';
-import 'package:floyd_rose_tuner/random_stream.dart';
 import 'package:flutter/material.dart';
 
 class TuningConfigurationSelector extends StatefulWidget {
