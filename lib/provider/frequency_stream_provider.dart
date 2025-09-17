@@ -23,11 +23,11 @@ final pitchDetectorDart = PitchDetector(
 
 @riverpod
 Future<Stream<double>> frequencyStream(Ref ref) async {
-  var stream = await ref.watch(audioStreamProvider.future);
+  //var stream = await ref.watch(audioStreamProvider.future);
   return inputStream().asBroadcastStream();
-  stream!.asyncMap((sample) async {
+  /*stream!.asyncMap((sample) async {
     var result = await pitchDetectorDart.getPitchFromIntBuffer(sample);
     print("${result.probability} from frequency_stream_provider");
     return result.pitch;
-  });
+  });*/
 }

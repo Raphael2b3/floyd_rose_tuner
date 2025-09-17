@@ -18,7 +18,8 @@ class TunerSlider extends ConsumerWidget {
 
         return Column(
         children: [
-          Text("$noteName, $frequency Hz, Cent Distance: ${centDistance.toStringAsFixed(2)}"),
+          Text(noteName, style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),),
+          Text("${frequency.toStringAsFixed(2)} Hz | ${centDistance.toStringAsFixed(2)} Cents"),
           Slider(
               label: "1",
               year2023: false,
