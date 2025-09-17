@@ -1,9 +1,8 @@
 import 'dart:math';
 
 var random = Random();
-double state =0.5;
+double state =440;
 Stream<double> inputStream() async* {
-
   while (true) {
     state = (state + ((random.nextBool()?1:-1)*(random.nextDouble() %0.01))) % 1   ;
 

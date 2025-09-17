@@ -1,29 +1,30 @@
+import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
+import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TunerSlider extends StatefulWidget {
-  TunerSlider({super.key, this.goal=0.5});
-  double goal;
-  @override
-  State<TunerSlider> createState() => _TunerSliderState();
-}
-
-class _TunerSliderState extends State<TunerSlider> {
-  var v = 0.3;
+class TunerSlider extends ConsumerWidget {
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref){
+    var frequencyStream = ref.watch(frequencyStreamProvider);
     return StreamBuilder(
-      stream: inputStream(),
+      stream: frequencyStream.value,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
+        var frequency = snapshot.data!;
+        var (noteName, centDistance) = getNearestNoteAndCentDistance(frequency);
+
         return Column(
         children: [
-          Text((snapshot.data!.toString())),
+          Text("$noteName, $frequency Hz, Cent Distance: ${centDistance.toStringAsFixed(2)}"),
           Slider(
               label: "1",
               year2023: false,
-              value: snapshot.data!,
+              value: centDistance,
+              max: 100,
+              min: -100,
               onChanged: (d) {
                 print(d);
               },

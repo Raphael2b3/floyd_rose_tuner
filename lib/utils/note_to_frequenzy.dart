@@ -2,12 +2,17 @@ import 'dart:math';
 
 import 'frequency_to_note.dart';
 
-double getFrequencyFromNote(String note, {double normTone = 440.0}) {
+double getFrequencyFromNoteNumber(int noteNumber, {double normTone = 440.0}) {
+  final semitoneDistance = noteNumber - indexOfA;
+  return normTone * pow(2, semitoneDistance / 12);
+}
+
+int getNoteNumberFromNoteId(String noteId) {
   // Extract note name and octave
   final regex = RegExp(r'^([A-G][b#]?)(-?\d+)$');
-  final match = regex.firstMatch(note);
+  final match = regex.firstMatch(noteId);
   if (match == null) {
-    throw ArgumentError('Invalid note format: $note');
+    throw ArgumentError('Invalid note format: $noteId');
   }
 
   final noteName = match.group(1)!;   // e.g. "Eb"
@@ -21,8 +26,10 @@ double getFrequencyFromNote(String note, {double normTone = 440.0}) {
 
   // Compute note number (distance in semitones from A4)
   final noteNumber = noteIndex + (octave - 4) * numberOfNotes;
-  final semitoneDistance = noteNumber - indexOfA;
+  return noteNumber;
+}
 
-  // Calculate frequency
-  return normTone * pow(2, semitoneDistance / 12);
+dynamic getFrequencyFromNoteId(String noteId){
+  final noteNumber = getNoteNumberFromNoteId(noteId);
+  return getFrequencyFromNoteNumber(noteNumber);
 }

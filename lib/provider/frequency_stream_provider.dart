@@ -1,45 +1,33 @@
+import 'package:floyd_rose_tuner/provider/audio_stream_provider.dart';
+import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pitch_detector_dart/pitch_detector.dart';
 import 'package:record/record.dart';
 import 'dart:async';
 import 'dart:typed_data';
 
-
-typedef Result = int; //Uint8List;
-
-final name = StreamNotifierProvider<AudioPitch, Result>(
-    AudioPitch.new); //.someModifier<AudioPitch, Result>(AudioPitch.new);
-
-class AudioPitch extends StreamNotifier<Result> {
-
-  static const int sampleRate = 44100;
-  static const int bufferSize = 2048;
-  static const int bitsPerSample = 8;
-  static const int bitrate = 8*44100;
-
-  @override
-  Stream<Result> build() async* {
-    //Create a new pitch detector and set the sample rate and buffer size
-    final pitchDetectorDart = PitchDetector(
-        audioSampleRate: sampleRate*1, bufferSize: bufferSize);
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'frequency_stream_provider.g.dart';
 
 
-    var recorder = AudioRecorder();
-    var recordConfig = const RecordConfig(encoder: AudioEncoder.pcm16bits, sampleRate: sampleRate, bitRate: bitrate );
-    ref.onDispose(() async {
-      await recorder.cancel();
-      await recorder.dispose();
-    });
 
-    // Check and request permission if needed
-    if (await recorder.hasPermission()) {
-      var stream = await recorder
-          .startStream(recordConfig);
-      await for (Uint8List sample in stream) {
-        final result = await  pitchDetectorDart.getPitchFromIntBuffer(sample);
-        yield sample.length;
-      }
-    }
-  }
 
+const int sampleRate = 44100;
+const int bufferSize = 2048;
+const int bitsPerSample = 8;
+const int bitrate = bitsPerSample*sampleRate;
+
+final pitchDetectorDart = PitchDetector(
+    audioSampleRate: sampleRate*1, bufferSize: bufferSize);
+
+
+@riverpod
+Future<Stream<double>> frequencyStream(Ref ref) async {
+  var stream = await ref.watch(audioStreamProvider.future);
+  return inputStream().asBroadcastStream();
+  stream!.asyncMap((sample) async {
+    var result = await pitchDetectorDart.getPitchFromIntBuffer(sample);
+    print("${result.probability} from frequency_stream_provider");
+    return result.pitch;
+  });
 }
