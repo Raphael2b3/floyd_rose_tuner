@@ -27,7 +27,7 @@ Future<Stream<Uint8List>?> audioStream(Ref ref) async {
   // Check and request permission if needed
   if (await recorder.hasPermission()) {
     var stream = await recorder.startStream(recordConfig);
-    return stream;
+    return stream.asBroadcastStream();
   }
   return null;
 }

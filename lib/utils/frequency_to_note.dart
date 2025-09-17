@@ -19,6 +19,10 @@ final indexOfA = noteNames.indexOf('A'); // Index of A in the noteNames list
 final numberOfNotes = noteNames.length;
 
 int getClosestNoteNumber(double frequency, {double normTone = 440.0}) {
+  if (frequency <= 0) {
+    //print('Frequency must be greater than 0');
+    frequency = 1;
+  }
   double numberOfSemitones =
       indexOfA + numberOfNotes * log(frequency / normTone) / log(2);
   int noteNumber = numberOfSemitones.round();
@@ -30,6 +34,10 @@ double getCentDistance(
   int noteNumber, {
   double normTone = 440.0,
 }) {
+  if (frequency <= 0) {
+    //print('Frequency must be greater than 0');
+    frequency = 1;
+  }
   double exactFrequency =
       normTone * pow(2, (noteNumber - indexOfA) / numberOfNotes);
   double distance = 1200 * log(frequency / exactFrequency) / log(2);
