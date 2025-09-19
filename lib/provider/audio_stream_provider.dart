@@ -1,4 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:buffered_list_stream/buffered_list_stream.dart';
+import 'package:pitch_detector_dart/pitch_detector.dart';
 import 'package:record/record.dart';
 import 'dart:async';
 import 'dart:typed_data';
@@ -13,12 +14,13 @@ var recorder = AudioRecorder();
 
 var recordConfig = const RecordConfig(
   encoder: AudioEncoder.pcm16bits,
-  sampleRate: sampleRate,
-  bitRate: bitrate,
+  numChannels: 1,
+  bitRate: 128000,
+  sampleRate: PitchDetector.DEFAULT_SAMPLE_RATE,
 );
 
 @riverpod
-Future<Stream<Uint8List>?> audioStream(Ref ref) async {
+Future<Stream<List<int>>?> audioStream(Ref ref) async {
   ref.onDispose(() async {
     await recorder.cancel();
     await recorder.dispose();
@@ -26,8 +28,13 @@ Future<Stream<Uint8List>?> audioStream(Ref ref) async {
 
   // Check and request permission if needed
   if (await recorder.hasPermission()) {
-    var stream = await recorder.startStream(recordConfig);
-    return stream.asBroadcastStream();
+    var recordStream = await recorder.startStream(recordConfig);
+    var audioSampleBufferedStream = bufferedListStream(
+      recordStream.map((Uint8List event) => event.toList()),
+      //The library converts a PCM16 to 8bits internally. So we need twice as many bytes
+      PitchDetector.DEFAULT_BUFFER_SIZE * 2,
+    ) ;
+    return audioSampleBufferedStream.asBroadcastStream();
   }
   return null;
 }

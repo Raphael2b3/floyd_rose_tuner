@@ -1,13 +1,13 @@
-import 'dart:math';
 
 import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
 import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
-import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TunerSlider extends ConsumerWidget {
+  const TunerSlider({super.key});
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref){
@@ -53,7 +53,7 @@ class TunerSlider extends ConsumerWidget {
                   Slider(
                     label: "1",
                     year2023: false,
-                    value: volume as double,
+                    value: volume,
                     max: 20,
                     min: -20,
                     onChanged: (d) {

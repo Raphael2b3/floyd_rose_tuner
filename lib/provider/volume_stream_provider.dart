@@ -2,25 +2,22 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:floyd_rose_tuner/provider/audio_stream_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'volume_stream_provider.g.dart';
 
 
 
-double calculateVolume(Uint8List data) {
-  // PCM16 → 16-Bit Signed Werte extrahieren
-  final buffer = Int16List.view(data.buffer);
+double calculateVolume(List<int> data) {
 
-  if (buffer.isEmpty) return -20.0; // sehr leise (Silence)
+  if (data.isEmpty) return -20.0; // sehr leise (Silence)
 
   // Root Mean Square (RMS) berechnen
   double sumSquares = 0;
-  for (final sample in buffer) {
+  for (final sample in data) {
     sumSquares += sample * sample;
   }
-  double rms = sqrt(sumSquares / buffer.length);
+  double rms = sqrt(sumSquares / data.length);
 
   // Umrechnung in Dezibel (dBFS, max = 32768)
   double db = 20 * log(rms / 32768) / ln10;
