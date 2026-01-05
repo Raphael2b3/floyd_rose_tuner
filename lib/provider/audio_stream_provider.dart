@@ -19,7 +19,7 @@ var recordConfig = const RecordConfig(
   sampleRate: PitchDetector.DEFAULT_SAMPLE_RATE,
 );
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<Stream<List<int>>?> audioStream(Ref ref) async {
   ref.onDispose(() async {
     await recorder.cancel();
@@ -33,7 +33,7 @@ Future<Stream<List<int>>?> audioStream(Ref ref) async {
       recordStream.map((Uint8List event) => event.toList()),
       //The library converts a PCM16 to 8bits internally. So we need twice as many bytes
       PitchDetector.DEFAULT_BUFFER_SIZE * 2,
-    ) ;
+    );
     return audioSampleBufferedStream.asBroadcastStream();
   }
   return null;

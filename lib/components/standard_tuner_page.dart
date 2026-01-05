@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/tuner_slider.dart';
+import 'package:floyd_rose_tuner/components/frequency_view.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -15,7 +15,7 @@ class StandardTunerPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [TunerSlider()],
+            children: [FrequencyView()],
           ),
         ),
       ),

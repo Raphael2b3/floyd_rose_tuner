@@ -1,3 +1,4 @@
+
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class FloydRoseTuner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      routerConfig: _appRouter.config(),
       title: 'Floyd Rose Tuner',
       theme: ThemeData(
           brightness: Brightness.light,
@@ -19,7 +21,6 @@ class FloydRoseTuner extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.dark,
-      routerConfig: _appRouter.config(),
     );
   }
 }

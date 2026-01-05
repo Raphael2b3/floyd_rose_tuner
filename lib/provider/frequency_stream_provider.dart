@@ -8,8 +8,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'frequency_stream_provider.g.dart';
 
 
-
-
 const int sampleRate = 44100;
 const int bufferSize = 2048;
 const int bitsPerSample = 8;
