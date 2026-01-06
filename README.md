@@ -1,21 +1,17 @@
 # floyd_rose_tuner
-
-Help people to tune Floyd Rose Guitars
-
-## Acknowledgements
-
-This project was inspired by @jyodesh10  https://github.com/jyodesh10/guitar-tuner-flutter/
+DEFAULT_SAMPLE_RATE = 44100;
+DEFAULT_BUFFER_SIZE = 2048;
 
 
-## Getting Started
+Recorder:
+encoding: pcm16bits
+bitrate: 128k
+samplerate: 44.1k
+buffer_size: 2048
+channels: 1
 
-This project is a starting point for a Flutter application.
+AudioStream:
+BufferSize: 2048
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+PitchDetection:
+1024

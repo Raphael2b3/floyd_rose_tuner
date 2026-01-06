@@ -15,7 +15,7 @@ const int bitrate = bitsPerSample*sampleRate;
 
 final pitchDetectorDart = PitchDetector(
     audioSampleRate: sampleRate*1,
-    bufferSize: PitchDetector.DEFAULT_BUFFER_SIZE,
+    bufferSize: PitchDetector.DEFAULT_BUFFER_SIZE as int,
 );
 
 
@@ -24,7 +24,8 @@ Future<Stream<double>> frequencyStream(Ref ref) async {
   var stream = await ref.watch(audioStreamProvider.future);
   // TODO: consider using the current string to help optimise the frequency detection
   return stream!.asyncMap((sample) async {
-    var result = await pitchDetectorDart.getPitchFromIntBuffer(Uint8List.fromList(sample));
+    print("Sample length: ${sample.length}");
+    var result = await pitchDetectorDart.getPitchFromIntBuffer(sample);
     //print("${result.probability} , ${result.pitch} from frequency_stream_provider");
     return result.pitch;
   });
