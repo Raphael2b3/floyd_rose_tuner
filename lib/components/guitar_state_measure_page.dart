@@ -1,7 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
+import 'package:floyd_rose_tuner/components/volume_view.dart';
+import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'frequency_measure_view.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
@@ -15,27 +20,50 @@ class GuitarStateMeasurePage extends ConsumerStatefulWidget {
 
 class _GuitarStateMeasurePageState
     extends ConsumerState<GuitarStateMeasurePage> {
-  int currentString = 1;
-  static const int MAX_NUMBER_OF_STRINGS = 6;
+  int currentStringIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final selectedTuningConfig = ref.watch(selectedTuningConfigProvider).value;
+    final selectedDetuningMatrix = ref
+        .watch(selectedDetuningMatrixProvider)
+        .value;
+    if (selectedTuningConfig == null || selectedDetuningMatrix == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+    final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
+
     return Material(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Measure String Nr.:"),
-          Text(currentString.toString(), style: TextStyle(fontSize: 48)),
+          Text(
+            selectedDetuningMatrix.guitarName,
+            style: TextStyle(fontSize: 20),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text("Measure your"),
+              Text(
+                selectedTuningConfig.goalNotes[currentStringIndex],
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              Text("String"),
+            ],
+          ),
           FrequencyView(),
-          TextField(controller: TextEditingController(text: "sass")),
+          FrequencyMeasureView(),
+          VolumeView(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               OutlinedButton(
                 onPressed: () {
-                  if (currentString > 1) {
+                  if (currentStringIndex > 0) {
                     setState(() {
-                      currentString--;
+                      currentStringIndex--;
                     });
                   } else {
                     context.router.pop();
@@ -43,12 +71,13 @@ class _GuitarStateMeasurePageState
                 },
                 child: Text("Back"),
               ),
-              if (currentString < MAX_NUMBER_OF_STRINGS)
+              if (currentStringIndex < maxNumberOfStrings)
                 OutlinedButton(
                   onPressed: () {
-                    if (currentString < MAX_NUMBER_OF_STRINGS) {
+                    if (currentStringIndex < maxNumberOfStrings) {
                       setState(() {
-                        currentString++;
+                        currentStringIndex =
+                            (currentStringIndex + 1) % maxNumberOfStrings;
                       });
                     }
                   },

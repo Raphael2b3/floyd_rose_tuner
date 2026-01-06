@@ -8,7 +8,7 @@ import '../types/detuning_matrix.dart';
 
 part 'detuning_matrices_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
   List<DetuningMatrix> detuningMatrices = [];
 
