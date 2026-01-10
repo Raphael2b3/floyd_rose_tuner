@@ -1,32 +1,50 @@
-
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:async/async.dart';
-import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
-import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
-import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
-import 'dart:async';
+import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'guitar_state_measure_state_provider.g.dart';
 
-class GuitarStateMeasureState {
-  final List<int> stringStates;
-
-  GuitarStateMeasureState(this.stringStates);
-
-}
 @riverpod
-class GuitarStateMeasureStateNotifier extends _$GuitarStateMeasureStateNotifier {
+class GuitarStateMeasureStateNotifier
+    extends _$GuitarStateMeasureStateNotifier {
   @override
-  List build()   {
-    // TODO implement a view that shows which strings are measured/tuned
-    // you should be able to navigate throgh a spinnable tab navigation to select which string to tune
-    //
-    return [];
+  GuitarStateMeasureState build() {
+   return GuitarStateMeasureState(
+      currentStringIndex: 0,
+      manualDetection: false,
+    );
   }
 
-  void setGuitarStateMeasureState(double frequency) {
+  void set(GuitarStateMeasureState guitarMeasureState) {
+    print("Setting guitar measure state to $guitarMeasureState");
+    var matrixLength = ref
+        .read(selectedDetuningMatrixProvider)
+        .value
+        ?.matrix
+        .length;
+    print("Detuning matrix length: $matrixLength");
+    var selectedTuningConfigLength = ref
+        .read(selectedTuningConfigProvider)
+        .value
+        ?.goalNotes
+        .length;
+    print("Tuning config length: $selectedTuningConfigLength");
+    if (matrixLength == null || selectedTuningConfigLength == null) {
+      print("Matrix length or tuning config length is null, cannot set guitar measure state");
+      return;
+    }
+    assert(matrixLength == selectedTuningConfigLength);
+    print("Validated matrix length and tuning config length are equal: $matrixLength");
+    if (guitarMeasureState.currentStringIndex < 0 ||
+        guitarMeasureState.currentStringIndex >= matrixLength) {
+      throw Exception(
+        "Invalid string index ${guitarMeasureState.currentStringIndex} for guitar with $matrixLength strings",
+      );
+    }
+    state = guitarMeasureState.copy();
+    ref.notifyListeners();
+    print("Guitar measure state set to $guitarMeasureState");
   }
 }
- 

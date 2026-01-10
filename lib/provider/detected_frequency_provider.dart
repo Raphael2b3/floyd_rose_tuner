@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
@@ -8,11 +9,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'detected_frequency_provider.g.dart';
 
-
 @riverpod
 class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
   @override
-  Future<double> build() async  {
+  Future<double> build() async {
     // explizite Typen hilfen dem Analyzer bei der Typinferenz
     Stream<double> smoothedFrequency = await ref.watch(
       smoothedFrequencyStreamProvider().future,
@@ -28,18 +28,20 @@ class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
     ]); // parallelized
     // For each incoming pair, update the buffer (only if volume >= threshold) and emit the
     // squared moving average (RMS) of the values in the buffer. If buffer is empty emit 0.0.
-    combinedStream.listen((sample) {
+    var subscription = combinedStream.listen((sample) {
       final frequency = sample[0];
       final volume = sample[1];
       if (frequency <= 0) {
         return;
       }
       final threshold = ref.read(volumeThresholdProvider);
+      if (ref.read(guitarStateMeasureStateProvider).manualDetection) return;
       if (volume < threshold) {
         return;
       }
       state = AsyncValue.data(frequency);
     });
+    ref.onDispose(subscription.cancel);
     return 0.0;
   }
 
