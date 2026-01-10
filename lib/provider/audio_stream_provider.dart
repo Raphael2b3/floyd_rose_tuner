@@ -1,4 +1,3 @@
-import 'package:buffered_list_stream/buffered_list_stream.dart';
 import 'package:pitch_detector_dart/pitch_detector.dart';
 import 'package:record/record.dart';
 import 'dart:async';

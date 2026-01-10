@@ -9,9 +9,11 @@ class TuningConfigSelector extends ConsumerWidget {
   // "build" receives an extra parameter
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // We can use that "ref" to listen to providers
-    final selected = ref.watch(selectedTuningConfigProvider).value;
-    final tuningConfigs = ref.watch(tuningConfigsProvider).value ?? [];
+    // Use the AsyncValue safely; provide fallbacks for null
+    final selectedAsync = ref.watch(selectedTuningConfigProvider);
+    final selected = selectedAsync.value;
+    final configsAsync = ref.watch(tuningConfigsProvider);
+    final tuningConfigs = configsAsync.value ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

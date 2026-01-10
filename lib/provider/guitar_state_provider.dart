@@ -1,11 +1,6 @@
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:async/async.dart';
-import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
-import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
-import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
-import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -20,14 +15,46 @@ class GuitarStateNotifier extends _$GuitarStateNotifier {
 
   @override
   Future<GuitarState> build()async  {
-    var detectedFrequency = await ref.watch(detectedFrequencyProvider.future);
-    var currentDetuningMatrix = await ref.watch(selectedDetuningMatrixProvider.future);
-    var guitarStateMeasureState = ref.read(guitarStateMeasureStateProvider);
+    final guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
 
-    guitarStates[currentDetuningMatrix!.guitarName]![guitarStateMeasureState.currentStringIndex] = detectedFrequency;
-    return guitarStates[currentDetuningMatrix.guitarName]!;
+    final currentDetuningMatrix = await ref.watch(selectedDetuningMatrixProvider.future);
+
+    if (currentDetuningMatrix == null) {
+      // no detuning matrix selected -> return a default guitar state
+      return List<num>.filled(6, 0);
+    }
+
+    final name = currentDetuningMatrix.guitarName;
+    var currentGuitarState = getGuitarStateSave(name);
+    if (guitarStateMeasureState.manualDetection) {
+      return currentGuitarState;
+    }
+
+    final detectedFrequency = await ref.watch(detectedFrequencyProvider.future);
+    // ensure a list exists for this guitar
+    final index = guitarStateMeasureState.currentStringIndex;
+    if (index >= 0 && index < currentGuitarState.length) {
+      currentGuitarState[index] = detectedFrequency;
+    }
+    return currentGuitarState;
   }
-
+  GuitarState getGuitarStateSave(String name){
+    return guitarStates.putIfAbsent(name, () => List<num>.filled(6, 0));
+  }
   void setGuitarState(double frequency) {
+    final currentDetuningMatrix = ref.read(selectedDetuningMatrixProvider).value;
+    if (currentDetuningMatrix == null) {
+      return;
+    }
+    final name = currentDetuningMatrix.guitarName;
+    var currentGuitarState = getGuitarStateSave(name);
+
+    final guitarStateMeasureState = ref.read(guitarStateMeasureStateProvider);
+    final index = guitarStateMeasureState.currentStringIndex;
+    if (index >= 0 && index < currentGuitarState.length) {
+      currentGuitarState[index] = frequency;
+      guitarStates[name] = currentGuitarState;
+      ref.notifyListeners();
+    }
   }
 }

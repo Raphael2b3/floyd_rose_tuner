@@ -1,12 +1,8 @@
-import 'dart:math';
-
-import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
-import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
-import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
-import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
+import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,12 +18,15 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
         selectedDetuningMatrix.value == null) {
       return Text("Loading...");
     }
-    final numberOfStrings = selectedDetuningMatrix.value!.matrix.length;
-    assert(numberOfStrings == selectedTuningConfig.value!.goalNotes.length);
+    // after the null-check above it's safe to assign to non-nullable locals
+    final detuning = selectedDetuningMatrix.value!;
+    final tuning = selectedTuningConfig.value!;
+    final numberOfStrings = detuning.matrix.length;
+    assert(numberOfStrings == tuning.goalNotes.length);
     return Column(
       children: [
         Text(
-          "${selectedDetuningMatrix.value?.guitarName ?? ""} - ${selectedTuningConfig.value?.name ?? ""}",
+          "${detuning.guitarName} - ${tuning.name}",
         ),
         DefaultTabController(
           length: numberOfStrings,
@@ -35,18 +34,22 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
             tabAlignment: TabAlignment.center,
             isScrollable: true,
             tabs: List.generate(numberOfStrings, (i) {
-              var name = selectedTuningConfig.value?.goalNotes[i] ?? "N/A";
-              var freq = guitarState.value![i];
-              return Column(
-                children: [
-                  Tab(
-                    icon: Text(name),
-                    child: Text("${freq.toStringAsFixed(2)} Hz"),
-                  ),
-                ],
+              var name = tuning.goalNotes[i];
+              final guitarVals = guitarState.value ?? List<double>.filled(numberOfStrings, 1);
+              var freq = guitarVals[i];
+              return Tab(
+                icon: Text(name),
+                child: Text("${freq.toStringAsFixed(2)} Hz"),
               );
             }),
-            onTap: (index) {},
+            onTap: (index) {
+              print("Switching to string index $index");
+              ref.read(guitarStateMeasureStateProvider.notifier).set(GuitarStateMeasureState(
+                currentStringIndex: index,
+                manualDetection:
+                    ref.read(guitarStateMeasureStateProvider).manualDetection,
+              ));
+            },
           ),
         ),
       ],

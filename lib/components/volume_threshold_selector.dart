@@ -1,7 +1,5 @@
-import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
-import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,12 +8,13 @@ class VolumeThresholdSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var volumeStream = ref.watch(volumeStreamProvider);
-    return StreamBuilder(
-      stream: volumeStream.value,
+    final volumeStreamAsync = ref.watch(volumeStreamProvider);
+    final Stream<double>? volumeStream = volumeStreamAsync.value;
+    return StreamBuilder<double>(
+      stream: volumeStream,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
-        var volume = snapshot.data!;
+        // volume is available via snapshot.data if needed
         //print("Volume: $volume");
         var threshold = ref.watch(volumeThresholdProvider);
         var thresholdNotifier = ref.read(volumeThresholdProvider.notifier);
@@ -34,7 +33,7 @@ class VolumeThresholdSelector extends ConsumerWidget {
                     min: -20,
                     onChanged: (e) {
                        thresholdNotifier.set(e); },
-                    secondaryTrackValue: volume,
+                    secondaryTrackValue: snapshot.data,
 
                     //activeColor: Color.fromRGBO(50, 50, 50, 0),
                   ),

@@ -35,10 +35,11 @@ class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
         return;
       }
       final threshold = ref.read(volumeThresholdProvider);
-      if (ref.read(guitarStateMeasureStateProvider).manualDetection) return;
       if (volume < threshold) {
         return;
       }
+      if (ref.read(guitarStateMeasureStateProvider).manualDetection) return;
+
       state = AsyncValue.data(frequency);
     });
     ref.onDispose(subscription.cancel);

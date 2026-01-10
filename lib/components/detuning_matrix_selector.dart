@@ -9,9 +9,11 @@ class DetuningMatrixSelector extends ConsumerWidget {
   // "build" receives an extra parameter
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // We can use that "ref" to listen to providers
-    final selected = ref.watch(selectedDetuningMatrixProvider).value;
-    final detuningMatrices = ref.watch(detuningMatricesProvider).value ?? [];
+    // safe handling of AsyncValue
+    final selectedAsync = ref.watch(selectedDetuningMatrixProvider);
+    final selected = selectedAsync.value;
+    final matricesAsync = ref.watch(detuningMatricesProvider);
+    final detuningMatrices = matricesAsync.value ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,13 +1,7 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/frequency_view.dart';
 import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
-import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +20,10 @@ class FrequencyDetectorView extends ConsumerWidget {
     }
     var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
     var guitarState = ref.watch(guitarStateProvider);
+    final guitarVals = guitarState.value ?? List<double>.filled(6, 0.0);
+    final idx = guitarStateMeasureState.currentStringIndex;
     var currentFrequency =
-        guitarState.value![guitarStateMeasureState.currentStringIndex];
+        (idx >= 0 && idx < guitarVals.length) ? guitarVals[idx] : 0.0;
 
     return Column(
       children: [
