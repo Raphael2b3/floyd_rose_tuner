@@ -19,8 +19,9 @@ class AppRouter extends RootStackRouter {
       initial: true,
       page: LayoutRoute.page,
       children: [
-        AutoRoute(page: HelpRoute.page, initial: true),
+        AutoRoute(page: HelpRoute.page),
         AutoRoute(
+          initial: true,
           page: FloydRoseTunerRoute.page,
           children: [
             AutoRoute(page: FloydRoseTunerSetupRoute.page, initial: true),

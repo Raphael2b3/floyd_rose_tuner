@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
-import 'package:floyd_rose_tuner/components/volume_view.dart';
+import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'frequency_measure_view.dart';
+import 'frequency_detector_view.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
@@ -54,8 +54,7 @@ class _GuitarStateMeasurePageState
             ],
           ),
           FrequencyView(),
-          FrequencyMeasureView(),
-          VolumeView(),
+          FrequencyDetectorView(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

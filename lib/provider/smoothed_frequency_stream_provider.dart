@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
@@ -8,27 +8,36 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'frequency_stream_provider.dart';
+
 part 'smoothed_frequency_stream_provider.g.dart';
 
-
-
 @riverpod
-Future<Stream<double>> smoothedFrequencyStream(Ref ref) async {
+Future<Stream<double>> smoothedFrequencyStream(
+  Ref ref, {
+  int windowSize = 5,
+}) async {
   var frequencyStream = await ref.watch(frequencyStreamProvider.future);
-  var volumeStream = await ref.watch(volumeStreamProvider.future);
-  // TODO: Create a squared moving average, and ignore samples with volume below
-  //  the threshold coming from a volume threashhold provider
-  // also consider using the current string to help optimise the frequency detection
-  var combinedStream = StreamZip<double>([
-    frequencyStream,
-    volumeStream,
-  ]);
+  // Ensure a sane window size
+  final int window = (windowSize <= 0) ? 1 : windowSize;
 
-  return combinedStream.asyncMap((sample) async {
-    var frequency = sample[0];
-    var volume = sample[1];
-    var threashold = ref.read(volumeThresholdProvider);
+  // sliding buffer storing the last `window` frequency samples (only samples above threshold)
+  final List<double> buffer = [];
 
-    return sample[0];
+  // For each incoming pair, update the buffer (only if volume >= threshold) and emit the
+  // squared moving average (RMS) of the values in the buffer. If buffer is empty emit 0.0.
+  return frequencyStream.map((frequency) {
+    if (frequency <= 0.0) {
+      // ignore this sample; emit RMS of existing buffer (or 0 if empty)
+      if (buffer.isEmpty) return 0.0;
+      final sqSum = buffer.fold(0.0, (double prev, double v) => prev + v * v);
+      return sqrt(sqSum / buffer.length);
+    }
+
+    // accept sample
+    buffer.add(frequency);
+    if (buffer.length > window) buffer.removeAt(0);
+
+    final sqSum = buffer.fold(0.0, (double prev, double v) => prev + v * v);
+    return sqrt(sqSum / buffer.length);
   });
 }

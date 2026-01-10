@@ -1,35 +1,38 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
+import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
+import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
-class FrequencyMeasureView extends ConsumerStatefulWidget {
-  const FrequencyMeasureView({super.key});
+class FrequencyDetectorView extends ConsumerStatefulWidget {
+  const FrequencyDetectorView({super.key});
 
   @override
-  ConsumerState<FrequencyMeasureView> createState() =>
-      _FrequencyMeasureViewState();
+  ConsumerState<FrequencyDetectorView> createState() =>
+      _FrequencyDetectorViewState();
 }
 
-class _FrequencyMeasureViewState extends ConsumerState<FrequencyMeasureView> {
+class _FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
   bool manualInputEnabled = false;
   double lastFrequency = 0.0;
 
   @override
   Widget build(BuildContext context) {
-    var frequencyStream = ref.watch(frequencyStreamProvider);
-    return StreamBuilder(
-      stream: frequencyStream.value,
-      builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-        if (!snapshot.hasData) return const Text("No Data");
-        var frequency = snapshot.data!;
-        if (!manualInputEnabled) lastFrequency = frequency;
-        return Column(
+    var detectedFrequency = ref.watch(detectedFrequencyProvider);
+    if (!detectedFrequency.hasValue) {
+      return const Text("Loading...");
+    }
+
+    if (!manualInputEnabled) lastFrequency = detectedFrequency.requireValue;
+    return Column(
           children: [
+            VolumeThresholdSelector(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -46,13 +49,11 @@ class _FrequencyMeasureViewState extends ConsumerState<FrequencyMeasureView> {
             ),
             FilledButton(
               onPressed: () {
-                manualInputEnabled = !manualInputEnabled;
+                setState(() {manualInputEnabled = !manualInputEnabled;});
               },
-              child: Text("Enable Manual Input"),
+              child: Text("${manualInputEnabled?"Disable":"Enable"} Manual Input"),
             ),
           ],
         );
-      },
-    );
   }
 }

@@ -5,8 +5,8 @@ import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class VolumeView extends ConsumerWidget {
-  const VolumeView({super.key});
+class VolumeThresholdSelector extends ConsumerWidget {
+  const VolumeThresholdSelector({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,15 +21,25 @@ class VolumeView extends ConsumerWidget {
         var thresholdNotifier = ref.read(volumeThresholdProvider.notifier);
         return Column(
           children: [
-            Slider(
-              label: "1",
-              year2023: false,
-              value: threshold,
-              max: 7,
-              min: -20,
-              onChanged: (e) {
-                 thresholdNotifier.set(e); },
-              secondaryTrackValue: volume,
+            Row(
+              spacing: 0,
+              children: [
+                Text("Sensitivity"),
+                Expanded(
+                  child: Slider(
+                    label: "1",
+                    year2023: false,
+                    value: threshold,
+                    max: 0,
+                    min: -20,
+                    onChanged: (e) {
+                       thresholdNotifier.set(e); },
+                    secondaryTrackValue: volume,
+
+                    //activeColor: Color.fromRGBO(50, 50, 50, 0),
+                  ),
+                ),
+              ],
             ),
           ],
         );

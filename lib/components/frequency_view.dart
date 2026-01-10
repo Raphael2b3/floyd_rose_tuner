@@ -1,4 +1,5 @@
 import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
+import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,14 +9,20 @@ class FrequencyView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var frequencyStream = ref.watch(frequencyStreamProvider);
+    var frequencyStream = ref.watch(smoothedFrequencyStreamProvider());
     return StreamBuilder(
       stream: frequencyStream.value,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
         var frequency = snapshot.data!;
-
-        var (noteName, centDistance) = getNearestNoteAndCentDistance(frequency);
+        late var noteName, centDistance;
+        if (frequency <= 0) {
+          noteName = "--";
+          centDistance = 0.0;
+          frequency = 0.0;
+        } else {
+          (noteName, centDistance) = getNearestNoteAndCentDistance(frequency);
+        }
         //print( "$frequency Hz is $noteName, $centDistance Cents");
         return Column(
           children: [
@@ -32,6 +39,8 @@ class FrequencyView extends ConsumerWidget {
               value: centDistance,
               max: 100,
               min: -100,
+              activeColor: Theme.of(context).colorScheme.secondaryContainer,
+              thumbColor: Theme.of(context).colorScheme.primary,
               onChanged: (e) {},
             ),
           ],
