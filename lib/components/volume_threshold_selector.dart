@@ -1,5 +1,6 @@
 import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
+import 'package:floyd_rose_tuner/utils/convert_rms_to_db_full_scale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +31,7 @@ class VolumeThresholdSelector extends ConsumerWidget {
                     year2023: false,
                     value: threshold,
                     max: 0,
-                    min: -20,
+                    min: MIN_DB_VALUE,
                     onChanged: (e) {
                        thresholdNotifier.set(e); },
                     secondaryTrackValue: snapshot.data,

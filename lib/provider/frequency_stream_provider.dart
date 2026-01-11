@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:floyd_rose_tuner/provider/audio_stream_provider.dart';
 import 'package:floyd_rose_tuner/utils/convert_pcm16_to_float.dart';
@@ -22,7 +23,8 @@ final pitchDetectorDart = PitchDetector(
 Future<Stream<double>> frequencyStream(Ref ref) async {
   var stream = await ref.watch(audioStreamProvider.future);
   return stream!.asyncMap((sample) async {
-    var result = await pitchDetectorDart.getPitchFromFloatBuffer(sample.convertPCM16ToFloat());
+
+    var result = await pitchDetectorDart.getPitchFromFloatBuffer(sample.convertPCM16ToNormalizedFloat());
     //print("${result.probability} , ${result.pitch} from frequency_stream_provider");
     return result.pitch;
   });

@@ -1,3 +1,4 @@
+import 'package:floyd_rose_tuner/utils/pcm16_encoding_to_Int16List.dart';
 import 'package:pitch_detector_dart/pitch_detector.dart';
 import 'package:record/record.dart';
 import 'dart:async';
@@ -21,7 +22,7 @@ var recordConfig = const RecordConfig(
 );
 
 @Riverpod(keepAlive: true)
-Future<Stream<Uint8List>?> audioStream(Ref ref) async {
+Future<Stream<Int16List>?> audioStream(Ref ref) async {
   ref.onDispose(() async {
     await recorder.cancel();
     await recorder.dispose();
@@ -31,7 +32,7 @@ Future<Stream<Uint8List>?> audioStream(Ref ref) async {
   // Check and request permission if needed
   if (await recorder.hasPermission()) {
     var recordStream = await recorder.startStream(recordConfig);
-    return recordStream.asBroadcastStream();
+    return recordStream.asBroadcastStream().map((data) => bytesToInt16List(data));
   }
   return null;
 }
