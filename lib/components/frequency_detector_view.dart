@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 class FrequencyDetectorView extends ConsumerWidget {
+  const FrequencyDetectorView({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var detectedFrequency = ref.watch(detectedFrequencyProvider);

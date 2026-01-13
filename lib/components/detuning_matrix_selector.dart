@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // We subclass ConsumerWidget instead of StatelessWidget
 class DetuningMatrixSelector extends ConsumerWidget {
+  const DetuningMatrixSelector({super.key});
+
   // "build" receives an extra parameter
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:floyd_rose_tuner/provider/audio_stream_provider.dart';
 import 'package:floyd_rose_tuner/utils/convert_pcm16_to_float.dart';

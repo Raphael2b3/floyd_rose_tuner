@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // We subclass ConsumerWidget instead of StatelessWidget
 class TuningConfigSelector extends ConsumerWidget {
+  const TuningConfigSelector({super.key});
+
   // "build" receives an extra parameter
   @override
   Widget build(BuildContext context, WidgetRef ref) {

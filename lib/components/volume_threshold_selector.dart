@@ -30,7 +30,7 @@ class VolumeThresholdSelector extends ConsumerWidget {
                     label: "1",
                     year2023: false,
                     value: threshold,
-                    max: 0,
+                    max: MAX_DB_VALUE,
                     min: MIN_DB_VALUE,
                     onChanged: (e) {
                        thresholdNotifier.set(e); },

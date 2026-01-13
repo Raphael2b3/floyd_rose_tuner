@@ -14,6 +14,7 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
     var selectedTuningConfig = ref.watch(selectedTuningConfigProvider);
     var selectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
     var guitarState = ref.watch(guitarStateProvider);
+    var currentIndex = ref.watch(guitarStateMeasureStateProvider.select((state)=>state.currentStringIndex));
     if (selectedTuningConfig.value == null ||
         selectedDetuningMatrix.value == null) {
       return Text("Loading...");
@@ -23,34 +24,32 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
     final tuning = selectedTuningConfig.value!;
     final numberOfStrings = detuning.matrix.length;
     assert(numberOfStrings == tuning.goalNotes.length);
+    print("currren index: $currentIndex");
     return Column(
       children: [
         Text(
           "${detuning.guitarName} - ${tuning.name}",
         ),
-        DefaultTabController(
-          length: numberOfStrings,
-          child: TabBar(
-            tabAlignment: TabAlignment.center,
-            isScrollable: true,
-            tabs: List.generate(numberOfStrings, (i) {
-              var name = tuning.goalNotes[i];
-              final guitarVals = guitarState.value ?? List<double>.filled(numberOfStrings, 1);
-              var freq = guitarVals[i];
-              return Tab(
-                icon: Text(name),
-                child: Text("${freq.toStringAsFixed(2)} Hz"),
-              );
-            }),
-            onTap: (index) {
-              print("Switching to string index $index");
-              ref.read(guitarStateMeasureStateProvider.notifier).set(GuitarStateMeasureState(
-                currentStringIndex: index,
-                manualDetection:
-                    ref.read(guitarStateMeasureStateProvider).manualDetection,
-              ));
-            },
-          ),
+        TabBar(
+          tabAlignment: TabAlignment.center,
+          isScrollable: true,
+          tabs: List.generate(numberOfStrings, (i) {
+            var name = tuning.goalNotes[i];
+            final guitarVals = guitarState.value ?? List<double>.filled(numberOfStrings, 1);
+            var freq = guitarVals[i];
+            return Tab(
+              icon: Text(name),
+              child: Text("${freq.toStringAsFixed(2)} Hz"),
+            );
+          }),
+          onTap: (index) {
+            print("Switching to string index $index");
+            ref.read(guitarStateMeasureStateProvider.notifier).set(GuitarStateMeasureState(
+              currentStringIndex: index,
+              manualDetection:
+                  ref.read(guitarStateMeasureStateProvider).manualDetection,
+            ));
+          },
         ),
       ],
     );

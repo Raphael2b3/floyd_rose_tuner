@@ -47,4 +47,20 @@ class GuitarStateMeasureStateNotifier
     ref.notifyListeners();
     print("Guitar measure state set to $guitarMeasureState");
   }
+  void selectNextString(){
+    var nextIndex = (state.currentStringIndex +1) % (ref
+        .read(selectedDetuningMatrixProvider)
+        .value
+        ?.matrix
+        .length ?? 1);
+    set(state.copy(currentStringIndex: nextIndex));
+  }
+  void selectPreviousString(){
+    var nextIndex = (state.currentStringIndex -1) % (ref
+        .read(selectedDetuningMatrixProvider)
+        .value
+        ?.matrix
+        .length ?? 1);
+    set(state.copy(currentStringIndex: nextIndex));
+  }
 }
