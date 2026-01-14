@@ -10,7 +10,6 @@ part 'volume_stream_provider.g.dart';
 Future<Stream<double>> volumeStream(Ref ref) async {
   var stream = await ref.watch(audioStreamProvider.future);
   return stream!.asyncMap((sample) async {
-    print("median value ${sample.median}");
     return pcm16todBFS(sample);
   });
 }

@@ -26,7 +26,6 @@ class GuitarStateMeasurePage extends ConsumerWidget {
     final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
     var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
     var currentStringIndex = guitarStateMeasureState.currentStringIndex;
-    print("Current String Index: $currentStringIndex");
     return DefaultTabController(
       length: maxNumberOfStrings,
       initialIndex: currentStringIndex,
@@ -37,34 +36,38 @@ class GuitarStateMeasurePage extends ConsumerWidget {
           GuitarStateMeasureNavigation(),
           FrequencyView(),
           FrequencyDetectorView(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              OutlinedButton(
-                onPressed: () {
-                  ref
-                      .read(guitarStateMeasureStateProvider.notifier)
-                      .selectPreviousString();
-                },
-                child: Text("Back"),
-              ),
-              if (currentStringIndex < maxNumberOfStrings)
+          Builder(
+            builder: (context2) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 OutlinedButton(
                   onPressed: () {
-                    ref
+                    var index = ref
                         .read(guitarStateMeasureStateProvider.notifier)
-                        .selectNextString();
+                        .selectPreviousString();
+                    DefaultTabController.of(context2).animateTo(index);
                   },
-                  child: Text("Next"),
-                )
-              else
-                FilledButton(
-                  onPressed: () {
-                    context.router.maybePop([1, 2, 3]);
-                  },
-                  child: Text("Done"),
+                  child: Text("Back"),
                 ),
-            ],
+                if (currentStringIndex < maxNumberOfStrings - 1)
+                  OutlinedButton(
+                    onPressed: () {
+                      var index = ref
+                          .read(guitarStateMeasureStateProvider.notifier)
+                          .selectNextString();
+                      DefaultTabController.of(context2).animateTo(index);
+                    },
+                    child: Text("Next"),
+                  )
+                else
+                  FilledButton(
+                    onPressed: () {
+                      context.router.maybePop([1, 2, 3]);
+                    },
+                    child: Text("Done"),
+                  ),
+              ],
+            ),
           ),
         ],
       ),

@@ -7,15 +7,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'frequency_stream_provider.dart';
 
 part 'smoothed_frequency_stream_provider.g.dart';
-
+const WINDOW_SIZE= 5;
 @riverpod
 Future<Stream<double>> smoothedFrequencyStream(
-  Ref ref, {
-  int windowSize = 5,
-}) async {
+  Ref ref) async {
   var frequencyStream = await ref.watch(frequencyStreamProvider.future);
   // Ensure a sane window size
-  final int window = (windowSize <= 0) ? 1 : windowSize;
+  final int window = (WINDOW_SIZE <= 0) ? 1 : WINDOW_SIZE;
 
   // sliding buffer storing the last `window` frequency samples (only samples above threshold)
   final List<double> buffer = [];

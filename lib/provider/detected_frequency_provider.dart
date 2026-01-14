@@ -15,7 +15,7 @@ class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
   Future<double> build() async {
     // explizite Typen hilfen dem Analyzer bei der Typinferenz
     Stream<double> smoothedFrequency = await ref.watch(
-      smoothedFrequencyStreamProvider().future,
+      smoothedFrequencyStreamProvider.future,
     );
     Stream<double> volumeStream = await ref.watch(volumeStreamProvider.future);
     print(

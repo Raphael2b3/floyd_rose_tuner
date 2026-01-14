@@ -24,7 +24,6 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
     final tuning = selectedTuningConfig.value!;
     final numberOfStrings = detuning.matrix.length;
     assert(numberOfStrings == tuning.goalNotes.length);
-    print("currren index: $currentIndex");
     return Column(
       children: [
         Text(

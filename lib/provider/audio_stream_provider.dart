@@ -1,10 +1,8 @@
-import 'dart:typed_data';
 
 import 'package:floyd_rose_tuner/utils/bytes_to_int16list.dart';
 import 'package:record/record.dart';
 import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:statistics/statistics.dart';
 
 part 'audio_stream_provider.g.dart';
 
