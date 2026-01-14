@@ -1,8 +1,12 @@
 # floyd_rose_tuner
 DEFAULT_SAMPLE_RATE = 44100;
 DEFAULT_BUFFER_SIZE = 2048;
+highest_freq = 2kHz
+lowest_frequ = 30Hz
 
-
+sampling_rate =  2x highest_freq = 4kHz =
+buffer_size = sampling_rate/lowest_freq = 4kHz/30Hz = 133.33
+bitrate = 8*sampling_rate = 8*4kHz = 32kbps
 Recorder:
 encoding: pcm16bits
 bitrate: 128k
