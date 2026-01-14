@@ -14,7 +14,6 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
     var selectedTuningConfig = ref.watch(selectedTuningConfigProvider);
     var selectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
     var guitarState = ref.watch(guitarStateProvider);
-    var currentIndex = ref.watch(guitarStateMeasureStateProvider.select((state)=>state.currentStringIndex));
     if (selectedTuningConfig.value == null ||
         selectedDetuningMatrix.value == null) {
       return Text("Loading...");
