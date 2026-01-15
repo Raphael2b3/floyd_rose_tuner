@@ -4,6 +4,7 @@ import 'package:floyd_rose_tuner/components/guitar_state_measure_navigation.dart
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,8 +62,8 @@ class GuitarStateMeasurePage extends ConsumerWidget {
                   )
                 else
                   FilledButton(
-                    onPressed: () {
-                      context.router.maybePop([1, 2, 3]);
+                    onPressed: () async {
+                      await context.router.push(const GuitarTuningRoute());
                     },
                     child: Text("Done"),
                   ),

@@ -1,4 +1,2 @@
 
-
-
 typedef GuitarState  = List<num>;

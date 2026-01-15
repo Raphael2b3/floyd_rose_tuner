@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
+import 'package:ml_linalg/vector.dart';
+
 import 'frequency_to_note.dart';
 
 double getFrequencyFromNoteNumber(int noteNumber, {double normTone = 440.0}) {
@@ -15,7 +18,7 @@ int getNoteNumberFromNoteId(String noteId) {
     throw ArgumentError('Invalid note format: $noteId');
   }
 
-  final noteName = match.group(1)!;   // e.g. "Eb"
+  final noteName = match.group(1)!; // e.g. "Eb"
   final octave = int.parse(match.group(2)!); // e.g. 4
 
   // Find index of note in our noteNames list
@@ -29,7 +32,13 @@ int getNoteNumberFromNoteId(String noteId) {
   return noteNumber;
 }
 
-dynamic getFrequencyFromNoteId(String noteId){
+dynamic getFrequencyFromNoteId(String noteId) {
   final noteNumber = getNoteNumberFromNoteId(noteId);
   return getFrequencyFromNoteNumber(noteNumber);
+}
+
+Vector getFrequenciesFromGoalNotes(List<String> goalNotes) {
+  var output = <double>[];
+  goalNotes.map((noteId) => output.add(getFrequencyFromNoteId(noteId)));
+  return Vector.fromList(output);
 }

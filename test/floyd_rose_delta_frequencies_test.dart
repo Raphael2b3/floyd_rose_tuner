@@ -20,11 +20,8 @@ Vector matrixToVector(Matrix m) {
 
   return Vector.fromList(m.asFlattenedList);
 }
-void expectVectorCloseTo(
-    Vector actual,
-    Vector expected, {
-      double tol = eps,
-    }) {
+
+void expectVectorCloseTo(Vector actual, Vector expected, {double tol = eps}) {
   expect(actual.length, expected.length);
 
   for (var i = 0; i < actual.length; i++) {
@@ -36,11 +33,7 @@ void expectVectorCloseTo(
   }
 }
 
-void expectMatrixCloseTo(
-    Matrix actual,
-    Matrix expected, {
-      double tol = eps,
-    }) {
+void expectMatrixCloseTo(Matrix actual, Matrix expected, {double tol = eps}) {
   expect(actual.rowCount, expected.rowCount);
   expect(actual.columnCount, expected.columnCount);
 
@@ -53,23 +46,9 @@ void expectMatrixCloseTo(
 /// ---------------------------------------------------------------------------
 /// Testdaten (zentral, unveränderlich)
 /// ---------------------------------------------------------------------------
-final goal = Vector.fromList([
-  82.41,
-  110.00,
-  146.83,
-  196.00,
-  246.94,
-  329.63,
-]);
+final goal = Vector.fromList([82.41, 110.00, 146.83, 196.00, 246.94, 329.63]);
 
-final guitarState = Vector.fromList([
-  80.0,
-  113.0,
-  142.2,
-  200.0,
-  242.4,
-  319.33,
-]);
+final guitarState = Vector.fromList([80.0, 113.0, 142.2, 200.0, 242.4, 319.33]);
 
 final detuningMatrix = Matrix.fromList([
   [1.0, -0.13151204, -0.07967868, -0.08285579, -0.03920727, -0.00887611],
@@ -93,6 +72,21 @@ void main() {
     test('vectors have length 6', () {
       expect(goal.length, 6);
       expect(guitarState.length, 6);
+    });
+    test('inverse works', () {
+      final identity = detuningMatrix * detuningMatrix.inverse();
+
+      for (var i = 0; i < identity.rowCount; i++) {
+        for (var j = 0; j < identity.columnCount; j++) {
+          if (i == j) {
+            // Diagonale ≈ 1
+            expect(identity[i][j], closeTo(1.0, eps));
+          } else {
+            // Nebendiagonale ≈ 0
+            expect(identity[i][j], closeTo(0.0, eps));
+          }
+        }
+      }
     });
   });
 
@@ -118,12 +112,54 @@ void main() {
       final inverse = detuningMatrix.inverse();
 
       final expectedInverse = Matrix.fromList([
-        [1.18565929, 0.27388702, 0.17790115, 0.16155557, 0.08799298, 0.01918426],
-        [0.35590854, 1.17812980, 0.20367199, 0.17942121, 0.09678503, 0.01875206],
-        [0.44903285, 0.37855111, 1.15193210, 0.22696042, 0.12246603, 0.02487328],
-        [0.84944366, 0.73167568, 0.48961770, 1.24215356, 0.24244901, 0.04876497],
-        [0.71213654, 0.61426343, 0.40832155, 0.36827210, 1.12213540, 0.04190453],
-        [0.53767128, 0.45956571, 0.31033407, 0.28357656, 0.16025890, 1.01991105],
+        [
+          1.18565929,
+          0.27388702,
+          0.17790115,
+          0.16155557,
+          0.08799298,
+          0.01918426,
+        ],
+        [
+          0.35590854,
+          1.17812980,
+          0.20367199,
+          0.17942121,
+          0.09678503,
+          0.01875206,
+        ],
+        [
+          0.44903285,
+          0.37855111,
+          1.15193210,
+          0.22696042,
+          0.12246603,
+          0.02487328,
+        ],
+        [
+          0.84944366,
+          0.73167568,
+          0.48961770,
+          1.24215356,
+          0.24244901,
+          0.04876497,
+        ],
+        [
+          0.71213654,
+          0.61426343,
+          0.40832155,
+          0.36827210,
+          1.12213540,
+          0.04190453,
+        ],
+        [
+          0.53767128,
+          0.45956571,
+          0.31033407,
+          0.28357656,
+          0.16025890,
+          1.01991105,
+        ],
       ]);
 
       expectMatrixCloseTo(inverse, expectedInverse);
@@ -151,7 +187,8 @@ void main() {
     test('A * delta + guitarState equals goal', () {
       final rhs = goal - guitarState;
       final delta = detuningMatrix.inverse() * rhs;
-      final reconstructed = matrixToVector(detuningMatrix * delta) + guitarState;
+      final reconstructed =
+          matrixToVector(detuningMatrix * delta) + guitarState;
 
       expectVectorCloseTo(reconstructed, goal);
     });

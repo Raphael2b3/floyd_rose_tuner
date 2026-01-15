@@ -1,13 +1,18 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:ml_linalg/matrix.dart';
 
 part 'detuning_matrix.g.dart';
 
 @JsonSerializable()
 class DetuningMatrix {
   String guitarName;
-  List<List<num>> matrix;
+  Matrix matrix;
+  late Matrix inverse;
 
-  DetuningMatrix({required this.guitarName, matrix}) : matrix = matrix ?? [];
+  DetuningMatrix({required this.guitarName, matrix})
+    : matrix = Matrix.fromList(matrix) {
+    inverse = this.matrix.inverse();
+  }
 
   /// Connect the generated [DetuningMatrixFromJson] function to the `fromJson`
   /// factory.

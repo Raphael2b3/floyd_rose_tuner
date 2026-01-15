@@ -21,7 +21,7 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
     // after the null-check above it's safe to assign to non-nullable locals
     final detuning = selectedDetuningMatrix.value!;
     final tuning = selectedTuningConfig.value!;
-    final numberOfStrings = detuning.matrix.length;
+    final numberOfStrings = detuning.matrix.rowCount;
     assert(numberOfStrings == tuning.goalNotes.length);
     return Column(
       children: [

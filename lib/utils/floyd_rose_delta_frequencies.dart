@@ -1,15 +1,13 @@
+import "package:ml_linalg/inverse.dart";
 import "package:ml_linalg/matrix.dart";
 import "package:ml_linalg/vector.dart";
 
 List<double> floydRoseDeltaFrequencies(// TODO Increase precision
-  Matrix detuningMatrix,
+  Matrix inverseDetuningMatrix,
   Vector guitarState,
   Vector goalFrequencies,
 ) {
-  final inverseMatrix = detuningMatrix.inverse();
-  final guitarStateVector = guitarState;
-  final goalFrequenciesVector = goalFrequencies;
-  final deltaVector = goalFrequenciesVector-guitarStateVector;
-  final result = inverseMatrix * deltaVector;
+  final deltaVector = goalFrequencies-guitarState;
+  final result = inverseDetuningMatrix * deltaVector;
   return result.asFlattenedList;
 }
