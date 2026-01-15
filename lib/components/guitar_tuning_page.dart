@@ -36,39 +36,6 @@ class GuitarTuningPage extends ConsumerWidget {
           GuitarStateMeasureNavigation(),
           FrequencyView(),
           FrequencyDetectorView(),
-          Builder(
-            builder: (context2) => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    var index = ref
-                        .read(guitarStateMeasureStateProvider.notifier)
-                        .selectPreviousString();
-                    DefaultTabController.of(context2).animateTo(index);
-                  },
-                  child: Text("Back"),
-                ),
-                if (currentStringIndex < maxNumberOfStrings - 1)
-                  OutlinedButton(
-                    onPressed: () {
-                      var index = ref
-                          .read(guitarStateMeasureStateProvider.notifier)
-                          .selectNextString();
-                      DefaultTabController.of(context2).animateTo(index);
-                    },
-                    child: Text("Next"),
-                  )
-                else
-                  FilledButton(
-                    onPressed: () {
-                      context.router.maybePop([1, 2, 3]);
-                    },
-                    child: Text("Done"),
-                  ),
-              ],
-            ),
-          ),
         ],
       ),
     );
