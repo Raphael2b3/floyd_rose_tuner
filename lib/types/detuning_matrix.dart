@@ -12,6 +12,7 @@ class DetuningMatrix {
   DetuningMatrix({required this.guitarName, matrix})
     : matrix = Matrix.fromList(matrix) {
     inverse = this.matrix.inverse();
+    assert(inverse.sum() != 0);
   }
 
   /// Connect the generated [DetuningMatrixFromJson] function to the `fromJson`

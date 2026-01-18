@@ -1,3 +1,4 @@
+import 'package:floyd_rose_tuner/utils/floyd_rose_delta_frequencies.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ml_linalg/matrix.dart';
 import 'package:ml_linalg/vector.dart';
@@ -204,6 +205,20 @@ void main() {
       for (final v in residual) {
         expect(v.abs() < eps, true);
       }
+    });
+  });
+  group('Test Floyd Rose Delta Frequency Function', () {
+    test('basic usage', () {
+      var delta = floydRoseDeltaFrequencies(
+        detuningMatrix.inverse(),
+        guitarState,
+        goal,
+      );
+
+      expect(
+        matrixToVector(detuningMatrix * Vector.fromList(delta)) + guitarState,
+        goal,
+      );
     });
   });
 }

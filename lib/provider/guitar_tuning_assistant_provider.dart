@@ -20,15 +20,20 @@ class GuitarTuningAssistantNotifier extends _$GuitarTuningAssistantNotifier {
   @override
   Future<List<double>> build() async {
     var matrix = await ref.watch(selectedDetuningMatrixProvider.future);
+    print("got matrix");
     if (matrix == null) return [];
     var guitarState = await ref.watch(guitarStateProvider.future);
+    print("got guitarstate");
     var tuning = await ref.watch(selectedTuningConfigProvider.future);
+    print("got tuning");
     var goalFrequencies = getFrequenciesFromGoalNotes(tuning.goalNotes);
+    print("got goalFrequencies");
     var delta = floydRoseDeltaFrequencies(
       matrix.inverse,
       Vector.fromList(guitarState),
       goalFrequencies,
     );
+    print("delta ${delta.asList}");
     return delta.asList;
   }
 }
