@@ -13,9 +13,9 @@ class DetuningMatrixSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // safe handling of AsyncValue
     final selectedAsync = ref.watch(selectedDetuningMatrixProvider);
-    final selected = selectedAsync.value;
     final matricesAsync = ref.watch(detuningMatricesProvider);
     final detuningMatrices = matricesAsync.value ?? [];
+    final selected = selectedAsync.value;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,6 +28,35 @@ class DetuningMatrixSelector extends ConsumerWidget {
                 (e) => DropdownMenuEntry<DetuningMatrix>(
                   value: e,
                   label: e.guitarName,
+                  trailingIcon: IconButton(
+                    onPressed: () {
+                      showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Delete The Guitar'),
+                          content: const Text(
+                            'Do you really want to delete the guitar?',
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
+                            ),
+                            FilledButton(
+                              onPressed: () {
+                                ref
+                                    .read(detuningMatricesProvider.notifier)
+                                    .removeDetuningMatrix(e.guitarName);
+                                Navigator.pop(context, 'OK');
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.delete),
+                  ),
                 ),
               )
               .toList(),

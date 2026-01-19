@@ -42,8 +42,17 @@ class GuitarTuningPage extends ConsumerWidget {
     final guitarName = selectedDetuningMatrix.guitarName;
     final numberOfStrings = delta.length;
     assert(numberOfStrings == selectedTuningConfig.goalNotes.length);
+    late String hintText;
 
-    var saveDelta = min(max(-100, delta[currentStringIndex]), 100);
+    switch (delta[currentStringIndex]) {
+      case > 4:
+        hintText = "To LOW! Tune the String higher";
+      case < 4:
+        hintText = "To HIGH! Tune the String lower";
+      default:
+        hintText = "Looks Good";
+    }
+
     return DefaultTabController(
       length: maxNumberOfStrings,
       initialIndex: currentStringIndex,
@@ -77,12 +86,10 @@ class GuitarTuningPage extends ConsumerWidget {
                   );
             },
           ),
-          Slider(
-            value: delta[currentStringIndex].clamp(-100, 100),
-            min: -100,
-            max: 100,
-            onChanged: (value) {},
-            year2023: false,
+          Text(hintText, style: TextStyle(fontSize: 30), textAlign: TextAlign.center,),
+          Text(
+            "Offset ${(-delta[currentStringIndex]).toStringAsFixed(2)} Hz",
+            style: TextStyle(fontSize: 20),
           ),
           FrequencyDetectorView(),
         ],

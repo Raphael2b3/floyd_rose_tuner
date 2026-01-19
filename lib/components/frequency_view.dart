@@ -15,35 +15,13 @@ class FrequencyView extends ConsumerWidget {
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
         var frequency = snapshot.data!;
-        late var noteName, centDistance;
         if (frequency <= 0) {
-          noteName = "--";
-          centDistance = 0.0;
           frequency = 0.0;
-        } else {
-          (noteName, centDistance) = getNearestNoteAndCentDistance(frequency);
         }
         //print( "$frequency Hz is $noteName, $centDistance Cents");
-        return Column(
-          children: [
-            Text(
-              noteName,
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "${frequency.toStringAsFixed(2)} Hz | ${centDistance.toStringAsFixed(2)} Cents",
-            ),
-            Slider(
-              label: "1",
-              year2023: false,
-              value: centDistance,
-              max: 100,
-              min: -100,
-              activeColor: Theme.of(context).colorScheme.secondaryContainer,
-              thumbColor: Theme.of(context).colorScheme.primary,
-              onChanged: (e) {},
-            ),
-          ],
+        return Text(
+          "${frequency.toStringAsFixed(2)} Hz ",
+          style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
         );
       },
     );

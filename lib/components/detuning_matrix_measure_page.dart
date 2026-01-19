@@ -13,8 +13,8 @@ import 'frequency_detector_view.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
-class GuitarStateMeasurePage extends ConsumerWidget {
-  const GuitarStateMeasurePage({super.key});
+class DetuningMatrixMeasurePage extends ConsumerWidget {
+  const DetuningMatrixMeasurePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

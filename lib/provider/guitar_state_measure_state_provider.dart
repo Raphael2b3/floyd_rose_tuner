@@ -12,7 +12,7 @@ class GuitarStateMeasureStateNotifier
     extends _$GuitarStateMeasureStateNotifier {
   @override
   GuitarStateMeasureState build() {
-   return GuitarStateMeasureState(
+    return GuitarStateMeasureState(
       currentStringIndex: 0,
       manualDetection: false,
     );
@@ -33,11 +33,15 @@ class GuitarStateMeasureStateNotifier
         .length;
     print("Tuning config length: $selectedTuningConfigLength");
     if (matrixLength == null || selectedTuningConfigLength == null) {
-      print("Matrix length or tuning config length is null, cannot set guitar measure state");
+      print(
+        "Matrix length or tuning config length is null, cannot set guitar measure state",
+      );
       return;
     }
     assert(matrixLength == selectedTuningConfigLength);
-    print("Validated matrix length and tuning config length are equal: $matrixLength");
+    print(
+      "Validated matrix length and tuning config length are equal: $matrixLength",
+    );
     if (guitarMeasureState.currentStringIndex < 0 ||
         guitarMeasureState.currentStringIndex >= matrixLength) {
       throw Exception(
@@ -48,22 +52,24 @@ class GuitarStateMeasureStateNotifier
     ref.notifyListeners();
     print("Guitar measure state set to $guitarMeasureState");
   }
-  int selectNextString(){
-    var nextIndex = (state.currentStringIndex +1) % (ref
-        .read(selectedDetuningMatrixProvider)
-        .value
-        ?.matrix
-        .length ?? 1);
+
+  int selectNextString() {
+    var nextIndex =
+        (state.currentStringIndex + 1) %
+        (ref.read(selectedDetuningMatrixProvider).value?.matrix.length ?? 1);
     set(state.copy(currentStringIndex: nextIndex));
     return nextIndex;
   }
-  int selectPreviousString(){
-    var prevIndex = (state.currentStringIndex -1) % (ref
-        .read(selectedDetuningMatrixProvider)
-        .value
-        ?.matrix
-        .length ?? 1);
+
+  int selectPreviousString() {
+    var prevIndex =
+        (state.currentStringIndex - 1) %
+        (ref.read(selectedDetuningMatrixProvider).value?.matrix.length ?? 1);
     set(state.copy(currentStringIndex: prevIndex));
     return prevIndex;
+  }
+
+  void selectFirstString() {
+    set(state.copy(currentStringIndex: 0));
   }
 }
