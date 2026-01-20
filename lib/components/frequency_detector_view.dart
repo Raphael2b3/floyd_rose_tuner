@@ -24,8 +24,9 @@ class FrequencyDetectorView extends ConsumerWidget {
     var guitarState = ref.watch(guitarStateProvider);
     final guitarVals = guitarState.value ?? List<double>.filled(6, 0.0);
     final idx = guitarStateMeasureState.currentStringIndex;
-    var currentFrequency =
-        (idx >= 0 && idx < guitarVals.length) ? guitarVals[idx] : 0.0;
+    var currentFrequency = (idx >= 0 && idx < guitarVals.length)
+        ? guitarVals[idx]
+        : 0.0;
 
     return Column(
       children: [
@@ -37,12 +38,15 @@ class FrequencyDetectorView extends ConsumerWidget {
             IntrinsicWidth(
               child: TextField(
                 controller: TextEditingController(
-                  text: currentFrequency.toStringAsFixed(2),
+                  text: detectedFrequency.value!.toStringAsFixed(2),
                 ),
+                keyboardAppearance: Brightness.light,
+                keyboardType: TextInputType.number,
                 enabled: guitarStateMeasureState.manualDetection,
-                onChanged: (string) {
+                onSubmitted: (stringValue) {
                   if (guitarStateMeasureState.manualDetection) {
-                    var value = double.tryParse(string) ?? 0.0;
+                    var value = double.tryParse(stringValue) ?? 0.0;
+                    print("Manually setting detected frequency to $stringValue");
                     detectedFrequencyNotifier.setDetectedFrequency(value);
                   }
                 },

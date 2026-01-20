@@ -48,5 +48,6 @@ class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
 
   void setDetectedFrequency(double frequency) {
     state = AsyncValue.data(frequency);
+    ref.notifyListeners();
   }
 }

@@ -28,9 +28,6 @@ class GuitarStateNotifier extends _$GuitarStateNotifier {
 
     final name = currentDetuningMatrix.guitarName;
     List<num> currentGuitarState = getGuitarStateSave(name);
-    if (guitarStateMeasureState.manualDetection) {
-      return currentGuitarState;
-    }
 
     final detectedFrequency = await ref.watch(detectedFrequencyProvider.future);
     // ensure a list exists for this guitar
