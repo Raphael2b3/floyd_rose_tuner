@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_navigation.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -56,7 +57,9 @@ class GuitarStateMeasurePage extends ConsumerWidget {
                     ref
                         .read(guitarStateMeasureStateProvider.notifier)
                         .selectFirstString();
-                    await context.router.push(const GuitarTuningRoute());
+                    var guitarState = ref
+                        .read(guitarStateProvider).value;
+                    await context.router.maybePop(guitarState);
                   },
                   child: Text("Done"),
                 ),

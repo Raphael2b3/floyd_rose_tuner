@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,7 +70,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
           },
         ),
         OutlinedButton(
-          onPressed: () {
+          onPressed: () async {
             ref
                 .read(detuningMatricesProvider.notifier)
                 .addDetuningMatrix(
@@ -127,6 +129,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
                     ],
                   ),
                 );
+            await context.router.push(const GuitarStateMeasureRoute());
           },
           child: Text("Add A New Guitar"),
         ),
