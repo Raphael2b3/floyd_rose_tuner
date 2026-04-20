@@ -18,14 +18,8 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    final selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
-        .value;
-    if (selectedTuningConfig == null || selectedDetuningMatrix == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-    final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
+
+    final int maxNumberOfStrings = 6;
     var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
     var currentStringIndex = guitarStateMeasureState.currentStringIndex;
     return DefaultTabController(

@@ -27,12 +27,8 @@ class _FloydRoseTunerSetupPageState extends State<FloydRoseTunerSetupPage> {
           children: [
             FilledButton(
               onPressed: () async {
-                print("test3");
-                var state = await context.router.push(
+                await context.router.push(
                   const GuitarStateMeasureRoute(),
-                );
-                print(
-                  "Returned from GuitarStateMeasureRoute with state $state",
                 );
               },
               child: Text("Start Tuning"),

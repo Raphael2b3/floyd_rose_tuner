@@ -6,7 +6,7 @@ import 'package:floyd_rose_tuner/components/help_page.dart';
 import 'package:floyd_rose_tuner/components/layout_page.dart';
 import 'package:floyd_rose_tuner/components/standard_tuner_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_setup_page.dart';
-
+import 'package:floyd_rose_tuner/components/detuning_matrix_measure_page.dart';
 
 
 part 'router.gr.dart';
@@ -29,7 +29,8 @@ class AppRouter extends RootStackRouter {
           children: [
             AutoRoute(page: FloydRoseTunerSetupRoute.page, initial: true),
             AutoRoute(page: GuitarStateMeasureRoute.page),
-            AutoRoute(page: GuitarTuningRoute.page)
+            AutoRoute(page: GuitarTuningRoute.page),
+            AutoRoute(page: DetuningMatrixMeasureRoute.page)
           ],
         ),
         AutoRoute(page: StandardTunerRoute.page),
