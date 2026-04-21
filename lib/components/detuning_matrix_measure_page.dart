@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:floyd_rose_tuner/components/detuning_matrix_measure_navigation.dart';
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_navigation.dart';
+import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
@@ -21,7 +23,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int maxNumberOfStrings = 6;
-    List<List<num>> freshMatrix = [
+    List<List<double>> freshMatrix = [
       [1, 0, 0, 0, 0, 0],
       [0, 1, 0, 0, 0, 0],
       [0, 0, 1, 0, 0, 0],
@@ -35,16 +37,16 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
         DetuningMatrix(
             guitarName: "New Guitar ${random.nextInt(5555)}", matrix: freshMatrix));
 
-    var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
-    var currentStringIndex = guitarStateMeasureState.currentStringIndex;
+    var detuningMatrixMeasureState = ref.watch(detuningMatrixMeasureStateProvider);
+
     return DefaultTabController(
       length: maxNumberOfStrings,
-      initialIndex: currentStringIndex,
+      initialIndex: 0,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GuitarStateMeasureNavigation(),
+          DetuningMatrixMeasureNavigation(),
           FrequencyView(),
           FrequencyDetectorView(),
           Builder(
@@ -70,7 +72,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                       },
                       child: Text("Done"),
                     ),
-                    if (currentStringIndex < maxNumberOfStrings - 1)
+                    if (0 < maxNumberOfStrings - 1)
                       OutlinedButton(
                         onPressed: () {
                           var index = ref
