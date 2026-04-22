@@ -32,7 +32,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           tabAlignment: TabAlignment.center,
           isScrollable: true,
           tabs: List.generate(numberOfStrings, (i) {
-            var name = tuning.goalNotes[i];
+            var name = "TODO 12345 Da";
             final guitarVals = detuningMatrixMeasureState.value ?? List<double>.filled(numberOfStrings, 1);
             var freq = guitarVals[i];
             return Tab(
@@ -42,8 +42,8 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           }),
           onTap: (index) {
             print("Switching to string index $index");
-            ref.read(detuningMatrixMeasureStateMeasureStateProvider.notifier).set(
-                DetuningMatrixMeasureState(currentImpactedStringIndex: 0, currentEffectingStringIndex: 0);
+            ref.read(detuningMatrixMeasureStateProvider.notifier).set(
+                DetuningMatrixMeasureState(currentEffectingStringIndex: 0));
           },
         ),
       ],
