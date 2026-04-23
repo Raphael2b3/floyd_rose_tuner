@@ -3,6 +3,7 @@ import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -77,6 +78,23 @@ class DetuningMatrixSelector extends ConsumerWidget {
         ),
         OutlinedButton(
           onPressed: () async {
+            List<List<double>> freshMatrix = [
+              [1, 0, 0, 0, 0, 0],
+              [0, 1, 0, 0, 0, 0],
+              [0, 0, 1, 0, 0, 0],
+              [0, 0, 0, 1, 0, 0],
+              [0, 0, 0, 0, 1, 0],
+              [0, 0, 0, 0, 0, 1],
+            ];
+
+            ref
+                .read(selectedDetuningMatrixProvider.notifier)
+                .selectDetuningMatrix(
+              DetuningMatrix(
+                guitarName: "New Guitar ${random.nextInt(5555)}",
+                matrix: freshMatrix,
+              ),
+            );
             await context.router.push(const DetuningMatrixMeasureRoute());
           },
           child: Text("Add A New Guitar"),

@@ -93,7 +93,9 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     await prefs.setString(_storageKey, jsonString);
   }
 
-  Future<void> addDetuningMatrix(DetuningMatrix detuningMatrix) async {
+  Future<void> saveDetuningMatrixOverriding(
+    DetuningMatrix detuningMatrix,
+  ) async {
     // keep custom list in-memory and set the current state
 
     detuningMatrices.removeWhere(
@@ -109,5 +111,17 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     state = AsyncValue.data([...detuningMatrices]);
     // if the removed one is currently selected, fall back to default selectedIndex
     await _saveToLocalStorage();
+  }
+
+  void changeGuitarName(String oldName, String newName) {
+    int index = detuningMatrices.indexWhere((c) => c.guitarName == oldName);
+    if (index != -1) {
+      DetuningMatrix updatedMatrix = detuningMatrices[index].copy(
+        guitarName: newName,
+      );
+      detuningMatrices[index] = updatedMatrix;
+      state = AsyncValue.data([...detuningMatrices]);
+      _saveToLocalStorage();
+    }
   }
 }

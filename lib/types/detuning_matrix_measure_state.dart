@@ -7,7 +7,6 @@ class DetuningMatrixMeasureState {
 
   final int currentSampleIndex;
 
-
   final Map<int, List<GuitarState>> guitarStateSamples;
 
   DetuningMatrixMeasureState({
@@ -15,7 +14,12 @@ class DetuningMatrixMeasureState {
     required this.currentSampleIndex,
     Map<int, List<GuitarState>>? guitarStateSamples,
   }) : guitarStateSamples =
-           guitarStateSamples ??  {0:[[0]]};
+           guitarStateSamples ??
+           {
+             0: [
+               [0],
+             ],
+           };
 
   DetuningMatrixMeasureState copy({
     int? currentEffectingStringIndex,
@@ -28,5 +32,21 @@ class DetuningMatrixMeasureState {
       currentSampleIndex: currentSampleIndex ?? this.currentSampleIndex,
       guitarStateSamples: guitarStateSamples ?? this.guitarStateSamples,
     );
+  }
+
+   List<GuitarState> get getCurrentSamples {
+    var samples = guitarStateSamples[currentEffectingStringIndex];
+
+    if (samples == null || samples.length < 2) {
+      guitarStateSamples[currentEffectingStringIndex] = [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+      ];
+    }
+    samples = guitarStateSamples[currentEffectingStringIndex];
+
+    assert (currentSampleIndex < samples!.length && currentSampleIndex >= 0);
+
+    return samples!;
   }
 }

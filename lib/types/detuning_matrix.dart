@@ -22,4 +22,12 @@ class DetuningMatrix {
 
   /// Connect the generated [DetuningMatrixToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$DetuningMatrixToJson(this);
+
+  DetuningMatrix copy({required String guitarName}) {
+
+    return DetuningMatrix(
+      guitarName: guitarName,
+      matrix: matrix.toList(), // TODO Make this more efficient
+    );
+  }
 }
