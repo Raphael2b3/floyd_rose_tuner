@@ -15,7 +15,7 @@ class DetuningMatrixMeasureStateNotifier
   DetuningMatrixMeasureState build() {
     return DetuningMatrixMeasureState(
       currentEffectingStringIndex: 0,
-      currentImpactedStringIndex: 0
+      currentSampleIndex: 0
     );
   }
 
@@ -25,12 +25,12 @@ class DetuningMatrixMeasureStateNotifier
 
   int selectNextString() {
     return 0;
-
   }
 
   int selectPreviousString() {
     return 0;
   }
+
   void selectFirstString() {
 
   }

@@ -3,24 +3,29 @@ import 'package:floyd_rose_tuner/types/guitar_state.dart';
 class DetuningMatrixMeasureState {
   final int currentEffectingStringIndex;
 
-  int get sampleNumber => guitarStateSamples.length;
+  int get nextSampleNumber => guitarStateSamples.length;
+
+  final int currentSampleIndex;
+
 
   final Map<int, List<GuitarState>> guitarStateSamples;
 
   DetuningMatrixMeasureState({
     required this.currentEffectingStringIndex,
+    required this.currentSampleIndex,
     Map<int, List<GuitarState>>? guitarStateSamples,
   }) : guitarStateSamples =
-           guitarStateSamples ?? {} as Map<int, List<GuitarState>>;
+           guitarStateSamples ??  {0:[[0]]};
 
   DetuningMatrixMeasureState copy({
     int? currentEffectingStringIndex,
-    int? currentImpactedStringIndex,
+    int? currentSampleIndex,
     Map<int, List<GuitarState>>? guitarStateSamples,
   }) {
     return DetuningMatrixMeasureState(
       currentEffectingStringIndex:
           currentEffectingStringIndex ?? this.currentEffectingStringIndex,
+      currentSampleIndex: currentSampleIndex ?? this.currentSampleIndex,
       guitarStateSamples: guitarStateSamples ?? this.guitarStateSamples,
     );
   }

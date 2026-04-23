@@ -36,46 +36,10 @@ class GuitarStateMeasurePage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Text("Guitar State:"),
           GuitarStateMeasureNavigation(),
           FrequencyView(),
           FrequencyDetectorView(),
-          Builder(
-            builder: (context2) => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                OutlinedButton(
-                  onPressed: () {
-                    var index = ref
-                        .read(guitarStateMeasureStateProvider.notifier)
-                        .selectPreviousString();
-                    DefaultTabController.of(context2).animateTo(index);
-                  },
-                  child: Text("Back"),
-                ),
-                FilledButton(
-                  onPressed: () async {
-                    ref
-                        .read(guitarStateMeasureStateProvider.notifier)
-                        .selectFirstString();
-                    var guitarState = ref
-                        .read(guitarStateProvider).value;
-                    await context.router.maybePop(guitarState);
-                  },
-                  child: Text("Done"),
-                ),
-                if (currentStringIndex < maxNumberOfStrings - 1)
-                  OutlinedButton(
-                    onPressed: () {
-                      var index = ref
-                          .read(guitarStateMeasureStateProvider.notifier)
-                          .selectNextString();
-                      DefaultTabController.of(context2).animateTo(index);
-                    },
-                    child: Text("Next"),
-                  ),
-              ],
-            ),
-          ),
         ],
       ),
     );

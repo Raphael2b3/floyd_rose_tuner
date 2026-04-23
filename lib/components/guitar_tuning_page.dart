@@ -1,10 +1,5 @@
-import 'dart:math';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/frequency_view.dart';
-import 'package:floyd_rose_tuner/components/guitar_state_measure_navigation.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
@@ -86,12 +81,22 @@ class GuitarTuningPage extends ConsumerWidget {
                   );
             },
           ),
-          Text(hintText, style: TextStyle(fontSize: 30), textAlign: TextAlign.center,),
+          Text(
+            hintText,
+            style: TextStyle(fontSize: 30),
+            textAlign: TextAlign.center,
+          ),
           Text(
             "Offset ${(-delta[currentStringIndex]).toStringAsFixed(2)} Hz",
             style: TextStyle(fontSize: 20),
           ),
           FrequencyDetectorView(),
+          OutlinedButton(
+            onPressed: () {
+              context.router.pop();
+            },
+            child: Text("Done"),
+          ),
         ],
       ),
     );

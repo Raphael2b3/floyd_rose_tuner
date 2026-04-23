@@ -28,7 +28,7 @@ class _FloydRoseTunerSetupPageState extends State<FloydRoseTunerSetupPage> {
             FilledButton(
               onPressed: () async {
                 await context.router.push(
-                  const GuitarStateMeasureRoute(),
+                  const GuitarTuningRoute(),
                 );
               },
               child: Text("Start Tuning"),

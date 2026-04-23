@@ -24,33 +24,26 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
     final tuning = selectedTuningConfig.value!;
     final numberOfStrings = detuning.matrix.rowCount;
     assert(numberOfStrings == tuning.goalNotes.length);
-    return Column(
-      children: [
-        Text(
-          "${detuning.guitarName} - ${tuning.name}",
-        ),
-        TabBar(
-          tabAlignment: TabAlignment.center,
-          isScrollable: true,
-          tabs: List.generate(numberOfStrings, (i) {
-            var name = tuning.goalNotes[i];
-            final guitarVals = guitarState.value ?? List<double>.filled(numberOfStrings, 1);
-            var freq = guitarVals[i];
-            return Tab(
-              icon: Text(name),
-              child: Text("${freq.toStringAsFixed(2)} Hz"),
-            );
-          }),
-          onTap: (index) {
-            print("Switching to string index $index");
-            ref.read(guitarStateMeasureStateProvider.notifier).set(GuitarStateMeasureState(
-              currentStringIndex: index,
-              manualDetection:
-                  ref.read(guitarStateMeasureStateProvider).manualDetection,
-            ));
-          },
-        ),
-      ],
+    return TabBar(
+      tabAlignment: TabAlignment.center,
+      isScrollable: true,
+      tabs: List.generate(numberOfStrings, (i) {
+        var name = "String ${i + 1}";
+        final guitarVals = guitarState.value ?? List<double>.filled(numberOfStrings, 1);
+        var freq = guitarVals[i];
+        return Tab(
+          icon: Text(name),
+          child: Text("${freq.toStringAsFixed(2)} Hz"),
+        );
+      }),
+      onTap: (index) {
+        print("Switching to string index $index");
+        ref.read(guitarStateMeasureStateProvider.notifier).set(GuitarStateMeasureState(
+          currentStringIndex: index,
+          manualDetection:
+              ref.read(guitarStateMeasureStateProvider).manualDetection,
+        ));
+      },
     );
   }
 }
