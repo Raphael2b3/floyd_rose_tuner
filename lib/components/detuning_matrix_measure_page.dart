@@ -18,8 +18,14 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
     var detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
+    var nullableSelectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
+
+    if (nullableSelectedDetuningMatrix.value == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+    var selectedDetuningMatrix = nullableSelectedDetuningMatrix.value!;
     return DefaultTabController(
-      length: detuningMatrixMeasureState.getCurrentSamples.length,
+      length: selectedDetuningMatrix.getSamplesForEffectingString(detuningMatrixMeasureState.currentEffectingStringIndex).length,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,7 +39,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                 OutlinedButton(
                   onPressed: () async {
                     ref
-                        .read(detuningMatrixMeasureStateProvider.notifier)
+                        .read(selectedDetuningMatrixProvider.notifier)
                         .deleteCurrentSample();
                   },
                   child: Text("Delete Sample"),
@@ -41,11 +47,8 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                 OutlinedButton(
                   onPressed: () async {
                     ref
-                        .read(detuningMatrixMeasureStateProvider.notifier)
+                        .read(selectedDetuningMatrixProvider.notifier)
                         .addSampleForCurrentEffectingString();
-                    DefaultTabController.of(innerContext).animateTo(
-                      detuningMatrixMeasureState.getCurrentSamples.length,
-                    );
                   },
                   child: Text("Add Sample"),
                 ),

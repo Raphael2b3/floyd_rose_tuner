@@ -21,29 +21,5 @@ class DetuningMatrixMeasureStateNotifier
     ref.notifyListeners();
   }
 
-  void deleteCurrentSample() {
-    var currentSamples = state.getCurrentSamples;
-    if (currentSamples.length < 3) {
-      if (kDebugMode) {
-        print("Can't delete sample, need at least 2 samples per string");
-      }
-      return;
-    }
-    if (state.currentSampleIndex >= currentSamples.length - 1) {
-      state = state.copy(currentSampleIndex: currentSamples.length - 2);
-    }
-    state.guitarStateSamples[state.currentEffectingStringIndex]?.removeAt(
-      state.currentSampleIndex,
-    );
-    ref.notifyListeners();
-  }
 
-  void addSampleForCurrentEffectingString() async {
-    var guitarState = (await ref.read(guitarStateProvider.future));
-
-    state.guitarStateSamples[state.currentEffectingStringIndex]?.add(
-      guitarState,
-    );
-    state = state.copy(currentSampleIndex: state.getCurrentSamples.length - 1);
-  }
 }

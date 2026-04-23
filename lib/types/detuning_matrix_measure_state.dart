@@ -34,19 +34,5 @@ class DetuningMatrixMeasureState {
     );
   }
 
-   List<GuitarState> get getCurrentSamples {
-    var samples = guitarStateSamples[currentEffectingStringIndex];
 
-    if (samples == null || samples.length < 2) {
-      guitarStateSamples[currentEffectingStringIndex] = [
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-      ];
-    }
-    samples = guitarStateSamples[currentEffectingStringIndex];
-
-    assert (currentSampleIndex < samples!.length && currentSampleIndex >= 0);
-
-    return samples!;
-  }
 }

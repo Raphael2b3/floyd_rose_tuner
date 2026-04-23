@@ -18,7 +18,9 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
     }
     // after the null-check above it's safe to assign to non-nullable locals
     final detuningMatrix = selectedDetuningMatrix.value!;
-    var samples = detuningMatrixMeasureState.getCurrentSamples;
+    var samples = detuningMatrix.getSamplesForEffectingString(
+      detuningMatrixMeasureState.currentEffectingStringIndex,
+    );
     return Column(
       children: [
         TextField(

@@ -1,3 +1,4 @@
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ml_linalg/matrix.dart';
 
@@ -8,12 +9,21 @@ class DetuningMatrix {
   String guitarName;
   Matrix matrix;
   late Matrix inverse;
+  Map<int, List<GuitarState>> samples = {};
 
-  DetuningMatrix({required this.guitarName, matrix})
-    : matrix = Matrix.fromList(matrix) {
+  DetuningMatrix({required this.guitarName, matrix, samples})
+    : matrix = Matrix.fromList(matrix),
+      samples = samples ?? {} {
     inverse = this.matrix.inverse();
+    this.samples = samples ?? {};
     assert(inverse.sum() != 0);
   }
+
+  DetuningMatrix._({
+    required this.guitarName,
+    required this.matrix,
+    required this.samples,
+  });
 
   /// Connect the generated [DetuningMatrixFromJson] function to the `fromJson`
   /// factory.
@@ -24,10 +34,25 @@ class DetuningMatrix {
   Map<String, dynamic> toJson() => _$DetuningMatrixToJson(this);
 
   DetuningMatrix copy({required String guitarName}) {
-
-    return DetuningMatrix(
+    return DetuningMatrix._(
       guitarName: guitarName,
-      matrix: matrix.toList(), // TODO Make this more efficient
+      matrix: matrix,
+      samples: samples,
     );
+  }
+
+  List<GuitarState> getSamplesForEffectingString(int effectingStringIndex) {
+    if (!samples.containsKey(effectingStringIndex)) {
+      samples[effectingStringIndex] = [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+      ];
+    }
+    var samplesForEffectingString = samples[effectingStringIndex]!;
+    for (int i = samplesForEffectingString.length; i < 2; i++) {
+      samplesForEffectingString.add([0, 0, 0, 0, 0, 0]);
+    }
+
+    return samplesForEffectingString;
   }
 }

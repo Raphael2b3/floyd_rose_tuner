@@ -32,8 +32,9 @@ class DetuningMatrixSelector extends ConsumerWidget {
                   value: e,
                   label: e.guitarName,
                   leadingIcon: IconButton(
-                    onPressed: () {
-                      // TODO
+                    onPressed: () async {
+                      ref.read(selectedDetuningMatrixProvider.notifier).selectDetuningMatrix(e);
+                      await context.router.push(const DetuningMatrixMeasureRoute());
                     },
                     icon: Icon(Icons.edit),
                   ),
