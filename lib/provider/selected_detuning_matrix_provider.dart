@@ -1,7 +1,9 @@
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
 import 'package:flutter/foundation.dart';
+import 'package:ml_linalg/matrix.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'detuning_matrix_measure_state_provider.dart';
@@ -73,6 +75,22 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       ),
     );*/
     // TODO switch to the new sample after adding
+    ref.notifyListeners();
+  }
+
+  void calculateMatrix() {
+    var guitarStateSamples = state.value!.samples;
+
+    List<List<double>> matrix = [];
+    for (int i in guitarStateSamples.keys) {
+      var samplesForEffectingString = guitarStateSamples[i]!;
+      assert(samplesForEffectingString.length >= 2);
+      var column = calculateMatrixColumn(samplesForEffectingString, i);
+      matrix.add(column);
+    }
+    var matrixTransposed = Matrix.fromList(matrix).transpose();
+
+    state = AsyncValue.data(state.value!.copy(matrix: matrixTransposed));
     ref.notifyListeners();
   }
 }

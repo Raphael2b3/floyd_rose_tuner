@@ -23,7 +23,9 @@ class DetuningMatrix {
     required this.guitarName,
     required this.matrix,
     required this.samples,
-  });
+  }) : inverse = matrix.inverse() {
+    assert(inverse.sum() != 0);
+  }
 
   /// Connect the generated [DetuningMatrixFromJson] function to the `fromJson`
   /// factory.
@@ -33,11 +35,15 @@ class DetuningMatrix {
   /// Connect the generated [DetuningMatrixToJson] function to the `toJson` method.
   Map<String, dynamic> toJson() => _$DetuningMatrixToJson(this);
 
-  DetuningMatrix copy({required String guitarName}) {
+  DetuningMatrix copy({
+    String? guitarName,
+    Matrix? matrix,
+    Map<int, List<GuitarState>>? samples,
+  }) {
     return DetuningMatrix._(
-      guitarName: guitarName,
-      matrix: matrix,
-      samples: samples,
+      guitarName: guitarName ?? this.guitarName,
+      matrix: matrix ?? this.matrix,
+      samples: samples ?? this.samples,
     );
   }
 
