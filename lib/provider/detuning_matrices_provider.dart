@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -93,11 +94,9 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     await prefs.setString(_storageKey, jsonString);
   }
 
-  Future<void> saveDetuningMatrixOverriding(
-    DetuningMatrix detuningMatrix,
-  ) async {
+  Future<void> saveDetuningMatrixOverriding() async {
     // keep custom list in-memory and set the current state
-
+    var detuningMatrix = ref.read(selectedDetuningMatrixProvider).value;
     detuningMatrices.removeWhere(
       (c) => c.guitarName == detuningMatrix.guitarName,
     );

@@ -18,14 +18,20 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
     var detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
-    var nullableSelectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
+    var nullableSelectedDetuningMatrix = ref.watch(
+      selectedDetuningMatrixProvider,
+    );
 
     if (nullableSelectedDetuningMatrix.value == null) {
       return Center(child: CircularProgressIndicator());
     }
     var selectedDetuningMatrix = nullableSelectedDetuningMatrix.value!;
     return DefaultTabController(
-      length: selectedDetuningMatrix.getSamplesForEffectingString(detuningMatrixMeasureState.currentEffectingStringIndex).length,
+      length: selectedDetuningMatrix
+          .getSamplesForEffectingString(
+            detuningMatrixMeasureState.currentEffectingStringIndex,
+          )
+          .length,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -57,13 +63,14 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () async {
-              var selectedDetuningMatrix = ref
-                  .read(selectedDetuningMatrixProvider)
-                  .value!;
+              ref
+                  .read(selectedDetuningMatrixProvider.notifier)
+                  .calculateMatrix();
 
               ref
                   .read(detuningMatricesProvider.notifier)
-                  .saveDetuningMatrixOverriding(selectedDetuningMatrix);
+                  .saveDetuningMatrixOverriding();
+
               context.router.pop();
             },
             child: Text("Done"),
