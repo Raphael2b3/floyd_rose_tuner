@@ -29,6 +29,10 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
             ref
                 .read(detuningMatricesProvider.notifier)
                 .changeGuitarName(detuningMatrix.guitarName, value);
+
+            ref
+                .read(selectedDetuningMatrixProvider.notifier)
+                .selectDetuningMatrix(detuningMatrix.copy(guitarName: value));
           },
         ),
         Divider(),
@@ -43,12 +47,9 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
             }),
             onTap: (index) {
               ref
-                  .read(detuningMatrixMeasureStateProvider.notifier)
-                  .set(
-                    detuningMatrixMeasureState.copy(
-                      currentEffectingStringIndex: index,
-                    ),
-                  );
+                      .read(detuningMatrixMeasureStateProvider.notifier)
+                      .currentEffectingStringIndex =
+                  index;
             },
           ),
         ),
@@ -61,11 +62,23 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           }),
           onTap: (index) {
             ref
-                .read(detuningMatrixMeasureStateProvider.notifier)
-                .set(
-                  detuningMatrixMeasureState.copy(currentSampleIndex: index),
-                );
+                    .read(detuningMatrixMeasureStateProvider.notifier)
+                    .currentSampleIndex =
+                index;
           },
+        ),
+        Row(
+          children: [
+            Text(
+              "Current Sample: ${samples[detuningMatrixMeasureState.currentSampleIndex]} Hz",
+            ),
+            IconButton(
+              onPressed: () async {
+                ref.read(selectedDetuningMatrixProvider.notifier);
+              },
+              icon: Icon(Icons.save),
+            ),
+          ],
         ),
       ],
     );

@@ -77,7 +77,24 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     // TODO switch to the new sample after adding
     ref.notifyListeners();
   }
+  void saveSamples() async {
+    var guitarState = (await ref.read(guitarStateProvider.future));
+    var detuningMatrixMeasureState = ref.read(
+      detuningMatrixMeasureStateProvider,
+    );
 
+    state.value!.samples[detuningMatrixMeasureState.currentEffectingStringIndex]
+        ?.add(guitarState);
+    /*ref
+        .read(detuningMatrixMeasureStateProvider.notifier)
+        .set(
+      detuningMatrixMeasureState.copy(
+        currentSampleIndex: currentSamples.length - 2,
+      ),
+    );*/
+    // TODO switch to the new sample after adding
+    ref.notifyListeners();
+  }
   void calculateMatrix() {
     var guitarStateSamples = state.value!.samples;
 

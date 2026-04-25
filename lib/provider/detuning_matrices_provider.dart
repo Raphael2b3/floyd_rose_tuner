@@ -94,9 +94,8 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     await prefs.setString(_storageKey, jsonString);
   }
 
-  Future<void> saveDetuningMatrixOverriding() async {
+  Future<void> saveDetuningMatrixOverriding(DetuningMatrix detuningMatrix) async {
     // keep custom list in-memory and set the current state
-    var detuningMatrix = ref.read(selectedDetuningMatrixProvider).value;
     detuningMatrices.removeWhere(
       (c) => c.guitarName == detuningMatrix.guitarName,
     );

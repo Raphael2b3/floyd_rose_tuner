@@ -25,6 +25,7 @@ class _FloydRoseTunerSetupPageState extends State<FloydRoseTunerSetupPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+
             FilledButton(
               onPressed: () async {
                 await context.router.push(

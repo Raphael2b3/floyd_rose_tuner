@@ -61,19 +61,26 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
               ],
             ),
           ),
-          FilledButton(
-            onPressed: () async {
-              ref
-                  .read(selectedDetuningMatrixProvider.notifier)
-                  .calculateMatrix();
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
 
-              ref
-                  .read(detuningMatricesProvider.notifier)
-                  .saveDetuningMatrixOverriding();
+              FilledButton(
+                onPressed: () async {
+                  ref.read(selectedDetuningMatrixProvider.notifier);
+                  //.calculateMatrix();
+                  var detuningMatrix = ref
+                      .read(selectedDetuningMatrixProvider)
+                      .value!;
+                  ref
+                      .read(detuningMatricesProvider.notifier)
+                      .saveDetuningMatrixOverriding(detuningMatrix);
 
-              context.router.pop();
-            },
-            child: Text("Done"),
+                  context.router.pop();
+                },
+                child: Text("Done"),
+              ),
+            ],
           ),
         ],
       ),

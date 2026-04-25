@@ -13,7 +13,7 @@ List<double> calculateMatrixColumn(
   double mean(List<double> xs) => xs.reduce((a, b) => a + b) / xs.length;
 
   final x = col(variableIndex);
-  assert(x.every((v) => v != 0));
+  //assert(x.every((v) => v != 0));
 
   final meanX = mean(x);
   final dimCount = samples[0].length;

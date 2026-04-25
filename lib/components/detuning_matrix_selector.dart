@@ -100,6 +100,14 @@ class DetuningMatrixSelector extends ConsumerWidget {
           },
           child: Text("Add A New Guitar"),
         ),
+        FilledButton(
+          onPressed: () async {
+            var detuningMatrix = ref.read(selectedDetuningMatrixProvider);
+
+            print(detuningMatrix.value!.samples);
+          },
+          child: Text("Debug"),
+        ),
       ],
     );
   }
