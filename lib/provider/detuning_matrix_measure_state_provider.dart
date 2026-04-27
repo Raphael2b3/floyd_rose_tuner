@@ -22,7 +22,10 @@ class DetuningMatrixMeasureStateNotifier
   }
 
   set currentEffectingStringIndex(int index) {
-    state = state.copy(currentEffectingStringIndex: index);
+    state = state.copy(
+      currentEffectingStringIndex: index,
+      currentSampleIndex: 0,
+    );
     ref.notifyListeners();
   }
 
@@ -30,5 +33,4 @@ class DetuningMatrixMeasureStateNotifier
     state = state.copy(currentSampleIndex: index);
     ref.notifyListeners();
   }
-
 }

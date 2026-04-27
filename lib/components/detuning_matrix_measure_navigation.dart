@@ -69,15 +69,20 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
         ),
         Row(
           children: [
-            Text(
-              "Current Sample: ${samples[detuningMatrixMeasureState.currentSampleIndex]} Hz",
-            ),
             IconButton(
               onPressed: () async {
-                ref.read(selectedDetuningMatrixProvider.notifier);
+                ref.read(selectedDetuningMatrixProvider.notifier).saveSamples();
               },
               icon: Icon(Icons.save),
             ),
+            Text(
+              "Current Sample: ${samples[detuningMatrixMeasureState.currentSampleIndex]} Hz",
+              softWrap: true,
+              maxLines: 10,
+              overflow: TextOverflow.ellipsis,
+
+            ),
+
           ],
         ),
       ],
