@@ -22,16 +22,12 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
-    AsyncValue<DetuningMatrix?> nullableSelectedDetuningMatrix = ref.watch(
-      selectedDetuningMatrixProvider,
-    );
+    DetuningMatrix? selectedDetuningMatrix = ref
+        .watch(selectedDetuningMatrixProvider)
+        .value;
 
-    if (nullableSelectedDetuningMatrix.value == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-    DetuningMatrix? selectedDetuningMatrix = nullableSelectedDetuningMatrix.value;
     if (selectedDetuningMatrix == null) {
-      return Text("No Detuning Matrix Selected");
+      return Center(child: CircularProgressIndicator());
     }
     return DefaultTabController(
       length: selectedDetuningMatrix
@@ -51,9 +47,8 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () async {
-                    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
-                      detuningMatrixMeasureStateProvider,
-                    );
+                    DetuningMatrixMeasureState detuningMatrixMeasureState = ref
+                        .read(detuningMatrixMeasureStateProvider);
                     int currentEffectingStringIndex =
                         detuningMatrixMeasureState.currentEffectingStringIndex;
                     int currentSampleIndex =
@@ -73,9 +68,8 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                     GuitarState guitarState = await ref.read(
                       guitarStateProvider.future,
                     );
-                    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
-                      detuningMatrixMeasureStateProvider,
-                    );
+                    DetuningMatrixMeasureState detuningMatrixMeasureState = ref
+                        .read(detuningMatrixMeasureStateProvider);
                     int currentEffectingStringIndex =
                         detuningMatrixMeasureState.currentEffectingStringIndex;
 

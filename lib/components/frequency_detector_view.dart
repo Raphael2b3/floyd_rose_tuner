@@ -1,8 +1,6 @@
 import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,10 +19,9 @@ class FrequencyDetectorView extends ConsumerWidget {
       detectedFrequencyProvider.notifier,
     );
 
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
-    AsyncValue<GuitarState> guitarState = ref.watch(guitarStateProvider);
-    final Object guitarVals = guitarState.value ?? List<double>.filled(6, 0.0);
-    final int idx = guitarStateMeasureState.currentStringIndex;
+    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
+      guitarStateMeasureStateProvider,
+    );
     return Column(
       children: [
         VolumeThresholdSelector(),

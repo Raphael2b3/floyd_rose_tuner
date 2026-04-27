@@ -1,10 +1,6 @@
-import 'dart:collection';
 import 'dart:math';
 
-List<double> calculateMatrixColumn<T extends ListBase<num>>(
-    List<T> samples,
-    int variableIndex,
-    ) {
+List<double> calculateMatrixColumn(List<List<num>> samples, int variableIndex) {
   final n = samples.length;
   assert(samples.every((s) => s.length > variableIndex));
 
@@ -19,12 +15,15 @@ List<double> calculateMatrixColumn<T extends ListBase<num>>(
 
   // Varianz / Kovarianz für eine Spalte
   double variance(List<double> xs, double meanXs) =>
-      xs.map((v) => pow(v - meanXs, 2).toDouble()).reduce((a, b) => a + b) / (n - 1);
+      xs.map((v) => pow(v - meanXs, 2).toDouble()).reduce((a, b) => a + b) /
+      (n - 1);
 
   double covariance(List<double> ys, double meanY) =>
-      Iterable.generate(n, (i) => (x[i] - meanX) * (ys[i] - meanY))
-          .reduce((a, b) => a + b) /
-          (n - 1);
+      Iterable.generate(
+        n,
+        (i) => (x[i] - meanX) * (ys[i] - meanY),
+      ).reduce((a, b) => a + b) /
+      (n - 1);
 
   final varX = variance(x, meanX);
 
@@ -39,5 +38,8 @@ List<double> calculateMatrixColumn<T extends ListBase<num>>(
         (2 * covXY);
   }
 
-  return List.generate(dimCount, (i) => i == variableIndex ? 1.0 : coefficient(i));
+  return List.generate(
+    dimCount,
+    (i) => i == variableIndex ? 1.0 : coefficient(i),
+  );
 }

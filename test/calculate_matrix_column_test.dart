@@ -1,7 +1,7 @@
 import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
 import 'package:test/test.dart';
 
-typedef SmallGuitarState = List<double>;
+typedef SmallGuitarState = List<num>;
 
 void main() {
   group('calculateMatrixColumn', () {

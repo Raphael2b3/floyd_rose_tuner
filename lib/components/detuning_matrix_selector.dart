@@ -15,17 +15,22 @@ class DetuningMatrixSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // safe handling of AsyncValue
-    final selectedAsync = ref.watch(selectedDetuningMatrixProvider);
-    final matricesAsync = ref.watch(detuningMatricesProvider);
-    final detuningMatrices = matricesAsync.value ?? [];
-    final selected = selectedAsync.value;
+    final DetuningMatrix? selectedDetuningMatrix = ref
+        .watch(selectedDetuningMatrixProvider)
+        .value;
+    final List<DetuningMatrix>? detuningMatrices = ref
+        .watch(detuningMatricesProvider)
+        .value;
+    if (detuningMatrices == null || selectedDetuningMatrix == null) {
+      return const CircularProgressIndicator();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownMenu(
           label: const Text("Select Your Guitar"),
-          initialSelection: selected,
+          initialSelection: selectedDetuningMatrix,
           dropdownMenuEntries: detuningMatrices
               .map(
                 (e) => DropdownMenuEntry<DetuningMatrix>(
@@ -106,7 +111,9 @@ class DetuningMatrixSelector extends ConsumerWidget {
         ),
         FilledButton(
           onPressed: () async {
-            AsyncValue<DetuningMatrix?> detuningMatrix = ref.read(selectedDetuningMatrixProvider);
+            AsyncValue<DetuningMatrix?> detuningMatrix = ref.read(
+              selectedDetuningMatrixProvider,
+            );
 
             print(detuningMatrix.value?.samples);
           },

@@ -13,13 +13,14 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<DetuningMatrix?> selectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
+    DetuningMatrix? detuningMatrix = ref
+        .watch(selectedDetuningMatrixProvider)
+        .value;
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
 
     // after the null-check above it's safe to assign to non-nullable locals
-    final detuningMatrix = selectedDetuningMatrix.value;
     if (detuningMatrix == null) {
       return Text("No Detuning Matrix Selected");
     }
@@ -77,9 +78,8 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           children: [
             IconButton(
               onPressed: () async {
-                DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
-                  detuningMatrixMeasureStateProvider,
-                );
+                DetuningMatrixMeasureState detuningMatrixMeasureState = ref
+                    .read(detuningMatrixMeasureStateProvider);
                 int currentEffectingStringIndex =
                     detuningMatrixMeasureState.currentEffectingStringIndex;
                 int currentSampleIndex =

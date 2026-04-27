@@ -49,19 +49,17 @@ class DetuningMatrix {
 
   List<GuitarState> getSamplesForEffectingString(int effectingStringIndex) {
     if (!samples.containsKey(effectingStringIndex)) {
-      samples[effectingStringIndex] = [
-        GuitarState(),
-        GuitarState(), // TODO: variable length for now 6 string guitars
-      ];
+      samples[effectingStringIndex] = [GuitarState(), GuitarState()];
     }
-    List<GuitarState>? samplesForEffectingString = samples[effectingStringIndex];
+    List<GuitarState>? samplesForEffectingString =
+        samples[effectingStringIndex];
     if (samplesForEffectingString == null) {
       throw Exception(
         "Samples for effecting string index $effectingStringIndex should have been initialized but is null",
       );
     }
     for (int i = samplesForEffectingString.length; i < 2; i++) {
-      samplesForEffectingString.add(GuitarState()); // TODO: variable length for now 6 string guitars
+      samplesForEffectingString.add(GuitarState());
     }
 
     return samplesForEffectingString;
