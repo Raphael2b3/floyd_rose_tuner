@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:ml_linalg/vector.dart';
 
 import 'frequency_to_note.dart';
@@ -18,8 +17,15 @@ int getNoteNumberFromNoteId(String noteId) {
     throw ArgumentError('Invalid note format: $noteId');
   }
 
-  final noteName = match.group(1)!; // e.g. "Eb"
-  final octave = int.parse(match.group(2)!); // e.g. 4
+  final noteName = match.group(1); // e.g. "Eb"
+  if (noteName == null) {
+    throw ArgumentError('Note name could not be extracted from: $noteId');
+  }
+  final octaveStr = match.group(2); // e.g. "4"
+  if (octaveStr == null) {
+    throw ArgumentError('Octave could not be extracted from: $noteId');
+  }
+  final octave = int.parse(octaveStr); // e.g. 4
 
   // Find index of note in our noteNames list
   final noteIndex = noteNames.indexOf(noteName);

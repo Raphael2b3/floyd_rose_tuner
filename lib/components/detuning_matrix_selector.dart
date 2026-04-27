@@ -33,8 +33,12 @@ class DetuningMatrixSelector extends ConsumerWidget {
                   label: e.guitarName,
                   leadingIcon: IconButton(
                     onPressed: () async {
-                      ref.read(selectedDetuningMatrixProvider.notifier).selectDetuningMatrix(e);
-                      await context.router.push(const DetuningMatrixMeasureRoute());
+                      ref
+                          .read(selectedDetuningMatrixProvider.notifier)
+                          .selectDetuningMatrix(e);
+                      await context.router.push(
+                        const DetuningMatrixMeasureRoute(),
+                      );
                     },
                     icon: Icon(Icons.edit),
                   ),
@@ -91,11 +95,11 @@ class DetuningMatrixSelector extends ConsumerWidget {
             ref
                 .read(selectedDetuningMatrixProvider.notifier)
                 .selectDetuningMatrix(
-              DetuningMatrix(
-                guitarName: "New Guitar ${random.nextInt(5555)}",
-                matrix: freshMatrix,
-              ),
-            );
+                  DetuningMatrix(
+                    guitarName: "New Guitar ${random.nextInt(5555)}",
+                    matrix: freshMatrix,
+                  ),
+                );
             await context.router.push(const DetuningMatrixMeasureRoute());
           },
           child: Text("Add A New Guitar"),
@@ -104,7 +108,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
           onPressed: () async {
             var detuningMatrix = ref.read(selectedDetuningMatrixProvider);
 
-            print(detuningMatrix.value!.samples);
+            print(detuningMatrix.value?.samples);
           },
           child: Text("Debug"),
         ),

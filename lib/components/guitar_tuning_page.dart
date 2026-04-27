@@ -27,7 +27,10 @@ class GuitarTuningPage extends ConsumerWidget {
         selectedDetuningMatrix == null) {
       return Center(child: CircularProgressIndicator());
     }
-    final delta = guitarTuningAssistant.value!;
+    final delta = guitarTuningAssistant.value;
+    if (delta == null) {
+      return Center(child: CircularProgressIndicator());
+    }
 
     final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
     var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);

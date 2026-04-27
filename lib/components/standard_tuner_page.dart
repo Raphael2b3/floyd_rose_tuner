@@ -1,7 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/frequency_view.dart';
 import 'package:floyd_rose_tuner/provider/frequency_stream_provider.dart';
-import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/utils/frequency_to_note.dart'
     show getNearestNoteAndCentDistance;
 import 'package:flutter/material.dart';
@@ -19,7 +17,8 @@ class StandardTunerPage extends ConsumerWidget {
       stream: frequencyStream,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
-        var frequency = snapshot.data!;
+        var frequency = snapshot.data;
+        if (frequency == null) return const Text("No Data");
         late var noteName, centDistance;
         if (frequency <= 0) {
           noteName = "--";

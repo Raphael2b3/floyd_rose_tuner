@@ -12,33 +12,31 @@ class FrequencyDetectorView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var detectedFrequency = ref.watch(detectedFrequencyProvider);
-
+    var detectedFrequency = ref
+        .watch(detectedFrequencyProvider)
+        .value;
+    if (detectedFrequency == null) {
+      return const Text("Loading...");
+    }
     var detectedFrequencyNotifier = ref.read(
       detectedFrequencyProvider.notifier,
     );
-    if (!detectedFrequency.hasValue) {
-      return const Text("Loading...");
-    }
+
     var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
     var guitarState = ref.watch(guitarStateProvider);
     final guitarVals = guitarState.value ?? List<double>.filled(6, 0.0);
     final idx = guitarStateMeasureState.currentStringIndex;
-    var currentFrequency = (idx >= 0 && idx < guitarVals.length)
-        ? guitarVals[idx]
-        : 0.0;
-
     return Column(
       children: [
         VolumeThresholdSelector(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text("Detectet Frequency:"),
+            Text("Detected Frequency:"),
             IntrinsicWidth(
               child: TextField(
                 controller: TextEditingController(
-                  text: detectedFrequency.value!.toStringAsFixed(2),
+                  text: detectedFrequency.toStringAsFixed(2),
                 ),
                 keyboardAppearance: Brightness.light,
                 keyboardType: TextInputType.number,
@@ -46,7 +44,8 @@ class FrequencyDetectorView extends ConsumerWidget {
                 onSubmitted: (stringValue) {
                   if (guitarStateMeasureState.manualDetection) {
                     var value = double.tryParse(stringValue) ?? 0.0;
-                    print("Manually setting detected frequency to $stringValue");
+                    print(
+                        "Manually setting detected frequency to $stringValue");
                     detectedFrequencyNotifier.setDetectedFrequency(value);
                   }
                 },
@@ -58,20 +57,23 @@ class FrequencyDetectorView extends ConsumerWidget {
           onPressed: () {
             print("Toggle Manual Detection");
             print(
-              "Current  manualdetection ${guitarStateMeasureState.manualDetection}",
+              "Current  manualdetection ${guitarStateMeasureState
+                  .manualDetection}",
             );
             ref
                 .read(guitarStateMeasureStateProvider.notifier)
                 .set(
-                  GuitarStateMeasureState(
-                    currentStringIndex:
-                        guitarStateMeasureState.currentStringIndex,
-                    manualDetection: !guitarStateMeasureState.manualDetection,
-                  ),
-                );
+              GuitarStateMeasureState(
+                currentStringIndex:
+                guitarStateMeasureState.currentStringIndex,
+                manualDetection: !guitarStateMeasureState.manualDetection,
+              ),
+            );
           },
           child: Text(
-            "${guitarStateMeasureState.manualDetection ? "Disable" : "Enable"} Manual Input",
+            "${guitarStateMeasureState.manualDetection
+                ? "Disable"
+                : "Enable"} Manual Input",
           ),
         ),
       ],

@@ -1,12 +1,10 @@
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ml_linalg/matrix.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'detuning_matrix_measure_state_provider.dart';
 
 part 'selected_detuning_matrix_provider.g.dart';
 
@@ -25,78 +23,91 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     state = AsyncValue.data(selected);
   }
 
-  void deleteCurrentSample() {
-    var detuningMatrixMeasureState = ref.read(
-      detuningMatrixMeasureStateProvider,
-    );
-    int currentEffectingStringIndex =
-        detuningMatrixMeasureState.currentEffectingStringIndex;
-    int currentSampleIndex = detuningMatrixMeasureState.currentSampleIndex;
-
+  void deleteSample(int effectingStringIndex, int sampleIndex) {
+    if (state.value == null) {
+      if (kDebugMode) {
+        print("No detuning matrix selected, can't delete sample");
+      }
+      return;
+    }
     var currentSamples = state.value?.getSamplesForEffectingString(
-      currentEffectingStringIndex,
+      effectingStringIndex,
     );
 
-    if (currentSamples!.length < 3) {
+    if (currentSamples == null) {
+      if (kDebugMode) {
+        print(
+          "No samples found for effecting string index $effectingStringIndex, can't delete sample",
+        );
+      }
+      return;
+    }
+    if (currentSamples.length < 3) {
       if (kDebugMode) {
         print("Can't delete sample, need at least 2 samples per string");
       }
       return;
     }
-    if (currentSampleIndex >= currentSamples.length - 1) {
-      ref
-          .read(detuningMatrixMeasureStateProvider.notifier)
-          .set(
-            detuningMatrixMeasureState.copy(
-              currentSampleIndex: currentSamples.length - 2,
-            ),
-          );
+
+    state.value?.samples[effectingStringIndex]?.removeAt(sampleIndex);
+    ref.notifyListeners();
+  }
+
+  void addSampleForEffectingString(
+    GuitarState guitarState,
+    int effectingStringIndex,
+  ) async {
+    if (state.value == null) {
+      if (kDebugMode) {
+        print("No detuning matrix selected, can't add sample");
+      }
+      return;
     }
+    state.value?.samples[effectingStringIndex]?.add(guitarState);
 
-    state.value?.samples[currentEffectingStringIndex]?.removeAt(
-      currentSampleIndex,
-    );
     ref.notifyListeners();
   }
 
-  void addSampleForCurrentEffectingString() async {
-    var guitarState = (await ref.read(guitarStateProvider.future));
-    var detuningMatrixMeasureState = ref.read(
-      detuningMatrixMeasureStateProvider,
-    );
-
-    state.value!.samples[detuningMatrixMeasureState.currentEffectingStringIndex]
-        ?.add(guitarState);
-    /*ref
-        .read(detuningMatrixMeasureStateProvider.notifier)
-        .set(
-      detuningMatrixMeasureState.copy(
-        currentSampleIndex: currentSamples.length - 2,
-      ),
-    );*/
-    // TODO switch to the new sample after adding
-    ref.notifyListeners();
-  }
-
-  void saveSamples() async {
-    var guitarState = (await ref.read(guitarStateProvider.future));
-    var detuningMatrixMeasureState = ref.read(
-      detuningMatrixMeasureStateProvider,
-    );
-
-    state.value!.samples[detuningMatrixMeasureState
-            .currentEffectingStringIndex]![detuningMatrixMeasureState
-            .currentSampleIndex] =
-        guitarState;
+  void saveSamples(
+    GuitarState guitarState,
+    int effectingStringIndex,
+    int sampleIndex,
+  ) async {
+    if (state.value == null) {
+      if (kDebugMode) {
+        print("No detuning matrix selected, can't save sample");
+      }
+      return;
+    }
+    if (state.value?.samples[effectingStringIndex] == null ||
+        sampleIndex >= state.value!.samples[effectingStringIndex]!.length ||
+        sampleIndex < 0) {
+      if (kDebugMode) {
+        print(
+          "Invalid sample index $sampleIndex for effecting string index $effectingStringIndex",
+        );
+      }
+      return;
+    }
+    state.value?.samples[effectingStringIndex]![sampleIndex] = guitarState;
     ref.notifyListeners();
   }
 
   void calculateMatrix() {
+    if (state.value == null) {
+      if (kDebugMode) {
+        print("No detuning matrix selected, can't calculate matrix");
+      }
+      return;
+    }
     var guitarStateSamples = state.value!.samples;
 
     List<List<double>> matrix = [];
     for (int i in guitarStateSamples.keys) {
-      var samplesForEffectingString = guitarStateSamples[i]!;
+      var samplesForEffectingString = guitarStateSamples[i];
+      if (samplesForEffectingString == null) {
+        return print("samplesForEffectingString is null");
+      }
       assert(samplesForEffectingString.length >= 2);
       var column = calculateMatrixColumn(samplesForEffectingString, i);
       matrix.add(column);

@@ -1,6 +1,8 @@
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,11 +15,12 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
     var detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
-    if (selectedDetuningMatrix.value == null) {
-      return Text("Loading...");
-    }
+
     // after the null-check above it's safe to assign to non-nullable locals
-    final detuningMatrix = selectedDetuningMatrix.value!;
+    final detuningMatrix = selectedDetuningMatrix.value;
+    if (detuningMatrix == null) {
+      return Text("No Detuning Matrix Selected");
+    }
     var samples = detuningMatrix.getSamplesForEffectingString(
       detuningMatrixMeasureState.currentEffectingStringIndex,
     );
@@ -50,6 +53,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
                       .read(detuningMatrixMeasureStateProvider.notifier)
                       .currentEffectingStringIndex =
                   index;
+              DefaultTabController.of(context).animateTo(0);
             },
           ),
         ),
@@ -71,7 +75,25 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           children: [
             IconButton(
               onPressed: () async {
-                ref.read(selectedDetuningMatrixProvider.notifier).saveSamples();
+                var detuningMatrixMeasureState = ref.read(
+                  detuningMatrixMeasureStateProvider,
+                );
+                int currentEffectingStringIndex =
+                    detuningMatrixMeasureState.currentEffectingStringIndex;
+                int currentSampleIndex =
+                    detuningMatrixMeasureState.currentSampleIndex;
+
+                GuitarState guitarState = await ref.read(
+                  guitarStateProvider.future,
+                );
+
+                ref
+                    .read(selectedDetuningMatrixProvider.notifier)
+                    .saveSamples(
+                      guitarState,
+                      currentEffectingStringIndex,
+                      currentSampleIndex,
+                    );
               },
               icon: Icon(Icons.save),
             ),
@@ -80,9 +102,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
               softWrap: true,
               maxLines: 10,
               overflow: TextOverflow.ellipsis,
-
             ),
-
           ],
         ),
       ],

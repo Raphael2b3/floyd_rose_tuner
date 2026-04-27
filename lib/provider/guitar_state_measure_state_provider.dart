@@ -1,8 +1,6 @@
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
-import 'package:flutter/rendering.dart';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'guitar_state_measure_state_provider.g.dart';
@@ -53,18 +51,14 @@ class GuitarStateMeasureStateNotifier
     print("Guitar measure state set to $guitarMeasureState");
   }
 
-  int selectNextString() {
-    var nextIndex =
-        (state.currentStringIndex + 1) %
-        (ref.read(selectedDetuningMatrixProvider).value?.matrix.length ?? 1);
+  int selectNextString(int numberOfStrings) {
+    var nextIndex = (state.currentStringIndex + 1) % numberOfStrings;
     set(state.copy(currentStringIndex: nextIndex));
     return nextIndex;
   }
 
-  int selectPreviousString() {
-    var prevIndex =
-        (state.currentStringIndex - 1) %
-        (ref.read(selectedDetuningMatrixProvider).value?.matrix.length ?? 1);
+  int selectPreviousString(int numberOfStrings) {
+    var prevIndex = (state.currentStringIndex - 1) % numberOfStrings;
     set(state.copy(currentStringIndex: prevIndex));
     return prevIndex;
   }

@@ -1,5 +1,4 @@
 import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
-import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +13,10 @@ class FrequencyView extends ConsumerWidget {
       stream: frequencyStream,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
-        var frequency = snapshot.data!;
+        var frequency = snapshot.data;
+        if (frequency == null) {
+          return const Text("No Data");
+        }
         if (frequency <= 0) {
           frequency = 0.0;
         }

@@ -51,12 +51,17 @@ class DetuningMatrix {
     if (!samples.containsKey(effectingStringIndex)) {
       samples[effectingStringIndex] = [
         [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0], // TODO: variable length for now 6 string guitars
       ];
     }
-    var samplesForEffectingString = samples[effectingStringIndex]!;
+    var samplesForEffectingString = samples[effectingStringIndex];
+    if (samplesForEffectingString == null) {
+      throw Exception(
+        "Samples for effecting string index $effectingStringIndex should have been initialized but is null",
+      );
+    }
     for (int i = samplesForEffectingString.length; i < 2; i++) {
-      samplesForEffectingString.add([0, 0, 0, 0, 0, 0]);
+      samplesForEffectingString.add([0, 0, 0, 0, 0, 0]); // TODO: variable length for now 6 string guitars
     }
 
     return samplesForEffectingString;

@@ -26,6 +26,7 @@ class DetuningMatrixMeasureStateNotifier
       currentEffectingStringIndex: index,
       currentSampleIndex: 0,
     );
+
     ref.notifyListeners();
   }
 

@@ -20,8 +20,14 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
       return Text("Loading...");
     }
     // after the null-check above it's safe to assign to non-nullable locals
-    final detuning = selectedDetuningMatrix.value!;
-    final tuning = selectedTuningConfig.value!;
+    final detuning = selectedDetuningMatrix.value;
+    if (detuning == null) {
+      return Text("No Detuning Matrix Selected");
+    }
+    final tuning = selectedTuningConfig.value;
+    if (tuning == null) {
+      return Text("No Tuning Config Selected");
+    }
     final numberOfStrings = detuning.matrix.rowCount;
     assert(numberOfStrings == tuning.goalNotes.length);
     return TabBar(
@@ -29,7 +35,8 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
       isScrollable: true,
       tabs: List.generate(numberOfStrings, (i) {
         var name = "String ${i + 1}";
-        final guitarVals = guitarState.value ?? List<double>.filled(numberOfStrings, 1);
+        final guitarVals =
+            guitarState.value ?? List<double>.filled(numberOfStrings, 1);
         var freq = guitarVals[i];
         return Tab(
           icon: Text(name),
@@ -38,11 +45,16 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
       }),
       onTap: (index) {
         print("Switching to string index $index");
-        ref.read(guitarStateMeasureStateProvider.notifier).set(GuitarStateMeasureState(
-          currentStringIndex: index,
-          manualDetection:
-              ref.read(guitarStateMeasureStateProvider).manualDetection,
-        ));
+        ref
+            .read(guitarStateMeasureStateProvider.notifier)
+            .set(
+              GuitarStateMeasureState(
+                currentStringIndex: index,
+                manualDetection: ref
+                    .read(guitarStateMeasureStateProvider)
+                    .manualDetection,
+              ),
+            );
       },
     );
   }
