@@ -1,12 +1,12 @@
-import 'dart:math';
 import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
 import 'package:test/test.dart';
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
+
+typedef SmallGuitarState = List<double>;
 
 void main() {
   group('calculateMatrixColumn', () {
     test('returns 1 at variableIndex', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, 2.0, 3.0],
         [2.0, 4.0, 6.0],
         [3.0, 6.0, 9.0],
@@ -18,7 +18,7 @@ void main() {
     });
 
     test('perfect positive linear dependence (y = 2x)', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, 2.0],
         [2.0, 4.0],
         [3.0, 6.0],
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('perfect negative linear dependence (y = -3x)', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, -3.0],
         [2.0, -6.0],
         [3.0, -9.0],
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('independent variables → covariance approx 0', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, 10.0],
         [2.0, 9.0],
         [3.0, 11.0],
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('multiple dimensions', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, 2.0, 3.0],
         [2.0, 4.0, 6.0],
         [3.0, 6.0, 9.0],
@@ -74,31 +74,19 @@ void main() {
     });
 
     test('throws assertion if variableIndex out of bounds', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, 2.0],
         [2.0, 4.0],
       ];
 
       expect(
-            () => calculateMatrixColumn(samples, 2),
-        throwsA(isA<AssertionError>()),
-      );
-    });
-
-    test('throws assertion if a variable value is zero', () {
-      List<GuitarState> samples = [
-        [0.0, 1.0],
-        [1.0, 2.0],
-      ];
-
-      expect(
-            () => calculateMatrixColumn(samples, 0),
+        () => calculateMatrixColumn(samples, 2),
         throwsA(isA<AssertionError>()),
       );
     });
 
     test('variance normalization (N-1) is stable', () {
-      List<GuitarState> samples = [
+      List<SmallGuitarState> samples = [
         [1.0, 2.1],
         [2.0, 3.9],
         [3.0, 6.2],

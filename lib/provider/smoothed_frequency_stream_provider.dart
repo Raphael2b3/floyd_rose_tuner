@@ -11,7 +11,7 @@ const WINDOW_SIZE = 5;
 
 @riverpod
 Future<Stream<double>> smoothedFrequencyStream(Ref ref) async {
-  var frequencyStream = await ref.watch(frequencyStreamProvider.future);
+  Stream<double> frequencyStream = await ref.watch(frequencyStreamProvider.future);
   // Ensure a sane window size
   final int window = (WINDOW_SIZE <= 0) ? 1 : WINDOW_SIZE;
 

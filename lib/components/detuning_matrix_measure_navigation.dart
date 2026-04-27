@@ -2,6 +2,8 @@ import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/detuning_matrix_measure_state.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +13,8 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var selectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
-    var detuningMatrixMeasureState = ref.watch(
+    AsyncValue<DetuningMatrix?> selectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
+    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
 
@@ -21,7 +23,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
     if (detuningMatrix == null) {
       return Text("No Detuning Matrix Selected");
     }
-    var samples = detuningMatrix.getSamplesForEffectingString(
+    List<GuitarState> samples = detuningMatrix.getSamplesForEffectingString(
       detuningMatrixMeasureState.currentEffectingStringIndex,
     );
     return Column(
@@ -75,7 +77,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           children: [
             IconButton(
               onPressed: () async {
-                var detuningMatrixMeasureState = ref.read(
+                DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
                   detuningMatrixMeasureStateProvider,
                 );
                 int currentEffectingStringIndex =

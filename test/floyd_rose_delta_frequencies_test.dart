@@ -25,7 +25,7 @@ Vector matrixToVector(Matrix m) {
 void expectVectorCloseTo(Vector actual, Vector expected, {double tol = eps}) {
   expect(actual.length, expected.length);
 
-  for (var i = 0; i < actual.length; i++) {
+  for (int i = 0; i < actual.length; i++) {
     expect(
       actual[i],
       closeTo(expected[i], tol),
@@ -77,8 +77,8 @@ void main() {
     test('inverse works', () {
       final identity = detuningMatrix * detuningMatrix.inverse();
 
-      for (var i = 0; i < identity.rowCount; i++) {
-        for (var j = 0; j < identity.columnCount; j++) {
+      for (int i = 0; i < identity.rowCount; i++) {
+        for (int j = 0; j < identity.columnCount; j++) {
           if (i == j) {
             // Diagonale ≈ 1
             expect(identity[i][j], closeTo(1.0, eps));
@@ -209,7 +209,7 @@ void main() {
   });
   group('Test Floyd Rose Delta Frequency Function', () {
     test('basic usage', () {
-      var delta = floydRoseDeltaFrequencies(
+      List<double> delta = floydRoseDeltaFrequencies(
         detuningMatrix.inverse(),
         guitarState,
         goal,

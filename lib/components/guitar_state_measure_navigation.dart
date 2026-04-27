@@ -2,7 +2,10 @@ import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.da
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
+import 'package:floyd_rose_tuner/types/tuning_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,50 +14,36 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var selectedTuningConfig = ref.watch(selectedTuningConfigProvider);
-    var selectedDetuningMatrix = ref.watch(selectedDetuningMatrixProvider);
-    var guitarState = ref.watch(guitarStateProvider);
+    TuningConfig? selectedTuningConfig = ref.watch(selectedTuningConfigProvider).value;
+    DetuningMatrix? selectedDetuningMatrix = ref
+        .watch(selectedDetuningMatrixProvider)
+        .value;
+    GuitarState? guitarState = ref.watch(guitarStateProvider).value;
 
-    if (selectedTuningConfig.value == null ||
-        selectedDetuningMatrix.value == null) {
+    if (selectedTuningConfig == null ||
+        selectedDetuningMatrix == null ||
+        guitarState == null) {
       return Text("Loading...");
     }
-    // after the null-check above it's safe to assign to non-nullable locals
-    final detuning = selectedDetuningMatrix.value;
-    if (detuning == null) {
-      return Text("No Detuning Matrix Selected");
-    }
-    final tuning = selectedTuningConfig.value;
-    if (tuning == null) {
-      return Text("No Tuning Config Selected");
-    }
-    final numberOfStrings = detuning.matrix.rowCount;
-    assert(numberOfStrings == tuning.goalNotes.length);
+
     return TabBar(
       tabAlignment: TabAlignment.center,
       isScrollable: true,
-      tabs: List.generate(numberOfStrings, (i) {
-        var name = "String ${i + 1}";
-        final guitarVals =
-            guitarState.value ?? List<double>.filled(numberOfStrings, 1);
-        var freq = guitarVals[i];
-        return Tab(
-          icon: Text(name),
-          child: Text("${freq.toStringAsFixed(2)} Hz"),
-        );
+      tabs: List.generate(guitarState.length, (i) {
+        String name = "String ${i + 1}";
+        String freq = guitarState[i].toStringAsFixed(2);
+        return Tab(icon: Text(name), child: Text("$freq Hz"));
       }),
       onTap: (index) {
         print("Switching to string index $index");
         ref
             .read(guitarStateMeasureStateProvider.notifier)
-            .set(
-              GuitarStateMeasureState(
-                currentStringIndex: index,
-                manualDetection: ref
-                    .read(guitarStateMeasureStateProvider)
-                    .manualDetection,
-              ),
-            );
+            .guitarStateMeasureState = GuitarStateMeasureState(
+          currentStringIndex: index,
+          manualDetection: ref
+              .read(guitarStateMeasureStateProvider)
+              .manualDetection,
+        );
       },
     );
   }

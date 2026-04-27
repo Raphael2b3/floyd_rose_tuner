@@ -3,6 +3,7 @@ import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.da
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,7 @@ class GuitarTuningPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTuningConfig = ref.watch(selectedTuningConfigProvider).value;
     final guitarTuningAssistant = ref.watch(guitarTuningAssistantProvider);
-    var selectedDetuningMatrix = ref
+    DetuningMatrix? selectedDetuningMatrix = ref
         .watch(selectedDetuningMatrixProvider)
         .value;
 
@@ -33,8 +34,8 @@ class GuitarTuningPage extends ConsumerWidget {
     }
 
     final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
-    var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
-    var currentStringIndex = guitarStateMeasureState.currentStringIndex;
+    GuitarStateMeasureState guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
+    int currentStringIndex = guitarStateMeasureState.currentStringIndex;
 
     // after the null-check above it's safe to assign to non-nullable locals
     final guitarName = selectedDetuningMatrix.guitarName;
@@ -63,8 +64,8 @@ class GuitarTuningPage extends ConsumerWidget {
             tabAlignment: TabAlignment.center,
             isScrollable: true,
             tabs: List.generate(numberOfStrings, (i) {
-              var name = selectedTuningConfig.goalNotes[i];
-              var freq = delta[i];
+              String name = selectedTuningConfig.goalNotes[i];
+              num freq = delta[i];
               return Tab(
                 icon: Text(name),
                 child: Text("${freq.toStringAsFixed(2)} Hz"),
@@ -74,14 +75,12 @@ class GuitarTuningPage extends ConsumerWidget {
               print("Switching to string index $index");
               ref
                   .read(guitarStateMeasureStateProvider.notifier)
-                  .set(
-                    GuitarStateMeasureState(
-                      currentStringIndex: index,
-                      manualDetection: ref
-                          .read(guitarStateMeasureStateProvider)
-                          .manualDetection,
-                    ),
-                  );
+                  .guitarStateMeasureState = GuitarStateMeasureState(
+                currentStringIndex: index,
+                manualDetection: ref
+                    .read(guitarStateMeasureStateProvider)
+                    .manualDetection,
+              );
             },
           ),
           Text(

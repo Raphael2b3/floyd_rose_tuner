@@ -1,8 +1,8 @@
+import 'dart:collection';
 import 'dart:math';
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
 
-List<double> calculateMatrixColumn(
-    List<GuitarState> samples,
+List<double> calculateMatrixColumn<T extends ListBase<num>>(
+    List<T> samples,
     int variableIndex,
     ) {
   final n = samples.length;
@@ -13,11 +13,9 @@ List<double> calculateMatrixColumn(
   double mean(List<double> xs) => xs.reduce((a, b) => a + b) / xs.length;
 
   final x = col(variableIndex);
-  //assert(x.every((v) => v != 0));
 
   final meanX = mean(x);
   final dimCount = samples[0].length;
-  final otherIndices = List.generate(dimCount, (i) => i).where((i) => i != variableIndex);
 
   // Varianz / Kovarianz für eine Spalte
   double variance(List<double> xs, double meanXs) =>

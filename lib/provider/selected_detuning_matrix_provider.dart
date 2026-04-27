@@ -12,7 +12,7 @@ part 'selected_detuning_matrix_provider.g.dart';
 class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
   @override
   Future<DetuningMatrix?> build() async {
-    var detuningMatrix = await ref.watch(detuningMatricesProvider.future);
+    List<DetuningMatrix> detuningMatrix = await ref.watch(detuningMatricesProvider.future);
     if (detuningMatrix.isEmpty) {
       return null;
     }
@@ -30,7 +30,7 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       }
       return;
     }
-    var currentSamples = state.value?.getSamplesForEffectingString(
+    List<GuitarState>? currentSamples = state.value?.getSamplesForEffectingString(
       effectingStringIndex,
     );
 
@@ -100,19 +100,19 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       }
       return;
     }
-    var guitarStateSamples = state.value!.samples;
+    Map<int, List<GuitarState>> guitarStateSamples = state.value!.samples;
 
     List<List<double>> matrix = [];
     for (int i in guitarStateSamples.keys) {
-      var samplesForEffectingString = guitarStateSamples[i];
+      List<GuitarState>? samplesForEffectingString = guitarStateSamples[i];
       if (samplesForEffectingString == null) {
         return print("samplesForEffectingString is null");
       }
       assert(samplesForEffectingString.length >= 2);
-      var column = calculateMatrixColumn(samplesForEffectingString, i);
+      List<double> column = calculateMatrixColumn<GuitarState>(samplesForEffectingString, i);
       matrix.add(column);
     }
-    var matrixTransposed = Matrix.fromList(matrix).transpose();
+    Matrix matrixTransposed = Matrix.fromList(matrix).transpose();
 
     state = AsyncValue.data(state.value!.copy(matrix: matrixTransposed));
     ref.notifyListeners();

@@ -2,6 +2,7 @@ import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,20 +13,18 @@ class FrequencyDetectorView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var detectedFrequency = ref
-        .watch(detectedFrequencyProvider)
-        .value;
+    double? detectedFrequency = ref.watch(detectedFrequencyProvider).value;
     if (detectedFrequency == null) {
       return const Text("Loading...");
     }
-    var detectedFrequencyNotifier = ref.read(
+    DetectedFrequencyNotifier detectedFrequencyNotifier = ref.read(
       detectedFrequencyProvider.notifier,
     );
 
-    var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
-    var guitarState = ref.watch(guitarStateProvider);
-    final guitarVals = guitarState.value ?? List<double>.filled(6, 0.0);
-    final idx = guitarStateMeasureState.currentStringIndex;
+    GuitarStateMeasureState guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
+    AsyncValue<GuitarState> guitarState = ref.watch(guitarStateProvider);
+    final Object guitarVals = guitarState.value ?? List<double>.filled(6, 0.0);
+    final int idx = guitarStateMeasureState.currentStringIndex;
     return Column(
       children: [
         VolumeThresholdSelector(),
@@ -43,9 +42,10 @@ class FrequencyDetectorView extends ConsumerWidget {
                 enabled: guitarStateMeasureState.manualDetection,
                 onSubmitted: (stringValue) {
                   if (guitarStateMeasureState.manualDetection) {
-                    var value = double.tryParse(stringValue) ?? 0.0;
+                    double value = double.tryParse(stringValue) ?? 0.0;
                     print(
-                        "Manually setting detected frequency to $stringValue");
+                      "Manually setting detected frequency to $stringValue",
+                    );
                     detectedFrequencyNotifier.setDetectedFrequency(value);
                   }
                 },
@@ -57,23 +57,17 @@ class FrequencyDetectorView extends ConsumerWidget {
           onPressed: () {
             print("Toggle Manual Detection");
             print(
-              "Current  manualdetection ${guitarStateMeasureState
-                  .manualDetection}",
+              "Current  manualdetection ${guitarStateMeasureState.manualDetection}",
             );
             ref
                 .read(guitarStateMeasureStateProvider.notifier)
-                .set(
-              GuitarStateMeasureState(
-                currentStringIndex:
-                guitarStateMeasureState.currentStringIndex,
-                manualDetection: !guitarStateMeasureState.manualDetection,
-              ),
+                .guitarStateMeasureState = GuitarStateMeasureState(
+              currentStringIndex: guitarStateMeasureState.currentStringIndex,
+              manualDetection: !guitarStateMeasureState.manualDetection,
             );
           },
           child: Text(
-            "${guitarStateMeasureState.manualDetection
-                ? "Disable"
-                : "Enable"} Manual Input",
+            "${guitarStateMeasureState.manualDetection ? "Disable" : "Enable"} Manual Input",
           ),
         ),
       ],

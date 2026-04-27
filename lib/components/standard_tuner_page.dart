@@ -17,9 +17,10 @@ class StandardTunerPage extends ConsumerWidget {
       stream: frequencyStream,
       builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
         if (!snapshot.hasData) return const Text("No Data");
-        var frequency = snapshot.data;
+        double? frequency = snapshot.data;
         if (frequency == null) return const Text("No Data");
-        late var noteName, centDistance;
+        late String noteName;
+        late double centDistance;
         if (frequency <= 0) {
           noteName = "--";
           centDistance = 0.0;

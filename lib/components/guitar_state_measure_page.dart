@@ -27,8 +27,8 @@ class GuitarStateMeasurePage extends ConsumerWidget {
       return Center(child: CircularProgressIndicator());
     }
     final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
-    var guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
-    var currentStringIndex = guitarStateMeasureState.currentStringIndex;
+    GuitarStateMeasureState guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
+    int currentStringIndex = guitarStateMeasureState.currentStringIndex;
     return DefaultTabController(
       length: maxNumberOfStrings,
       initialIndex: currentStringIndex,

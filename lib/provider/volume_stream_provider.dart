@@ -8,7 +8,7 @@ part 'volume_stream_provider.g.dart';
 
 @riverpod
 Future<Stream<double>> volumeStream(Ref ref) async {
-  var stream = await ref.watch(audioStreamProvider.future);
+  Stream<List<int>>? stream = await ref.watch(audioStreamProvider.future);
   if (stream == null) {
     throw Exception("Audio stream is null");
   }

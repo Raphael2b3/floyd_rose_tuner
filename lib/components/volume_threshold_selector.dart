@@ -17,8 +17,8 @@ class VolumeThresholdSelector extends ConsumerWidget {
         if (!snapshot.hasData) return const Text("No Data");
         // volume is available via snapshot.data if needed
         //print("Volume: $volume");
-        var threshold = ref.watch(volumeThresholdProvider);
-        var thresholdNotifier = ref.read(volumeThresholdProvider.notifier);
+        double threshold = ref.watch(volumeThresholdProvider);
+        VolumeThreshold thresholdNotifier = ref.read(volumeThresholdProvider.notifier);
         return Column(
           children: [
             Row(

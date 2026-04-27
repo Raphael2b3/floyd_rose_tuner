@@ -28,7 +28,7 @@ class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
     ]); // parallelized
     // For each incoming pair, update the buffer (only if volume >= threshold) and emit the
     // squared moving average (RMS) of the values in the buffer. If buffer is empty emit 0.0.
-    var subscription = combinedStream.listen((sample) {
+    StreamSubscription<List<double>> subscription = combinedStream.listen((sample) {
       final frequency = sample[0];
       final volume = sample[1];
       if (frequency <= 0) {

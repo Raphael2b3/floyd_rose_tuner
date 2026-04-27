@@ -1,6 +1,6 @@
 import 'dart:math';
 
-var random = Random();
+Random random = Random();
 double state =441;
 Stream<double> inputStream() async* {
   while (true) {

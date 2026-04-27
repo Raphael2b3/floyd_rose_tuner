@@ -58,7 +58,7 @@ void main() {
       "Gb3", // enharmonic spelling
     ];
 
-    for (var note in notesToCheck) {
+    for (String note in notesToCheck) {
       test('note $note → frequency → nearest note → back to same note', () {
         final freq = getFrequencyFromNoteId(note);
         final nearestNote = getNearestNoteAndCentDistance(freq).$1;

@@ -1,4 +1,6 @@
 
+import 'dart:typed_data';
+
 import 'package:floyd_rose_tuner/utils/bytes_to_int16list.dart';
 import 'package:record/record.dart';
 import 'dart:async';
@@ -13,9 +15,9 @@ const SAMPLE_RATE = 44100; // 8 * MAX_FREQUENCY;
 const BITRATE = 16 * SAMPLE_RATE * NUM_CHANNELS; // PCM 16 -> 16 bit pro sample
 const BUFFER_SIZE = 2 * (BITRATE ~/ MIN_FREQUENCY);
 
-var recorder = AudioRecorder();
+AudioRecorder recorder = AudioRecorder();
 
-var recordConfig = const RecordConfig(
+RecordConfig recordConfig = const RecordConfig(
   autoGain: false,
   encoder: AudioEncoder.pcm16bits,
   numChannels: 1,
@@ -31,7 +33,7 @@ Future<Stream<List<int>>?> audioStream(Ref ref) async {
   });
 
   if (await recorder.hasPermission()) {
-    var recordStream = await recorder.startStream(recordConfig);
+    Stream<Uint8List> recordStream = await recorder.startStream(recordConfig);
     return recordStream.asBroadcastStream().map((data) {
       //print("Audio Stream Data Length: ${data.length}");
       return bytesToInt16List(data);

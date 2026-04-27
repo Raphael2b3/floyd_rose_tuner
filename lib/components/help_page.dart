@@ -9,7 +9,7 @@ class HelpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme.of(context).textTheme;
 
     return SizedBox.expand(
 
@@ -40,7 +40,7 @@ class HelpPage extends StatelessWidget {
                   ),
                 ),
                 onTap: () async {
-                  var result = await launchUrl(Uri.parse("https://www.youtube.com/watch?v=xvFZjo5PgG0"));
+                  bool result = await launchUrl(Uri.parse("https://www.youtube.com/watch?v=xvFZjo5PgG0"));
                     if (!result) {
                       throw 'Could not launch ';
                     }

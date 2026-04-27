@@ -5,6 +5,8 @@ import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/detuning_matrix_measure_state.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,17 +19,17 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var detuningMatrixMeasureState = ref.watch(
+    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
-    var nullableSelectedDetuningMatrix = ref.watch(
+    AsyncValue<DetuningMatrix?> nullableSelectedDetuningMatrix = ref.watch(
       selectedDetuningMatrixProvider,
     );
 
     if (nullableSelectedDetuningMatrix.value == null) {
       return Center(child: CircularProgressIndicator());
     }
-    var selectedDetuningMatrix = nullableSelectedDetuningMatrix.value;
+    DetuningMatrix? selectedDetuningMatrix = nullableSelectedDetuningMatrix.value;
     if (selectedDetuningMatrix == null) {
       return Text("No Detuning Matrix Selected");
     }
@@ -49,7 +51,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
               children: [
                 OutlinedButton(
                   onPressed: () async {
-                    var detuningMatrixMeasureState = ref.read(
+                    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
                       detuningMatrixMeasureStateProvider,
                     );
                     int currentEffectingStringIndex =
@@ -71,7 +73,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                     GuitarState guitarState = await ref.read(
                       guitarStateProvider.future,
                     );
-                    var detuningMatrixMeasureState = ref.read(
+                    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
                       detuningMatrixMeasureStateProvider,
                     );
                     int currentEffectingStringIndex =
@@ -96,7 +98,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                 onPressed: () async {
                   ref.read(selectedDetuningMatrixProvider.notifier);
                   //.calculateMatrix();
-                  var detuningMatrix = ref
+                  DetuningMatrix? detuningMatrix = ref
                       .read(selectedDetuningMatrixProvider)
                       .value;
                   if (detuningMatrix == null) {

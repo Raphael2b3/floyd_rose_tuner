@@ -44,7 +44,7 @@ dynamic getFrequencyFromNoteId(String noteId) {
 }
 
 Vector getFrequenciesFromGoalNotes(List<String> goalNotes) {
-  var output = <double>[];
+  List<double> output = <double>[];
   for (final noteId in goalNotes) {
     output.add(getFrequencyFromNoteId(noteId));
   }

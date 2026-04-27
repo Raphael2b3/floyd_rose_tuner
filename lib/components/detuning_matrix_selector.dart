@@ -106,7 +106,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
         ),
         FilledButton(
           onPressed: () async {
-            var detuningMatrix = ref.read(selectedDetuningMatrixProvider);
+            AsyncValue<DetuningMatrix?> detuningMatrix = ref.read(selectedDetuningMatrixProvider);
 
             print(detuningMatrix.value?.samples);
           },

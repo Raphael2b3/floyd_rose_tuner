@@ -8,7 +8,7 @@ part 'selected_tuning_config_provider.g.dart';
 class SelectedTuningConfigNotifier extends _$SelectedTuningConfigNotifier {
   @override
   Future<TuningConfig> build() async {
-    var tuningConfigs = await ref.watch(tuningConfigsProvider.future);
+    List<TuningConfig> tuningConfigs = await ref.watch(tuningConfigsProvider.future);
     return tuningConfigs[0];
   }
 
