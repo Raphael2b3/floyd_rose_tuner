@@ -14,6 +14,7 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
 
   @override
   Future<List<DetuningMatrix>> build() async {
+
     detuningMatrices =
         await _loadFromLocalStorage() ??
         [
@@ -77,14 +78,17 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
 
   static const _storageKey = 'detuning_matrices';
 
-  // Load DetuningMatrice from SharedPreferences
   Future<List<DetuningMatrix>?> _loadFromLocalStorage() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(_storageKey);
-    if (jsonString != null) {
-      return json.decode(jsonString) as List<DetuningMatrix>;
-    }
-    return null;
+
+    if (jsonString == null) return null;
+
+    final decoded = json.decode(jsonString) as List<dynamic>;
+    print(decoded);
+    return decoded
+        .map((e) => DetuningMatrix.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   // Save DetuningMatrice to SharedPreferences

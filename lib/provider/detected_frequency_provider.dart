@@ -13,7 +13,7 @@ part 'detected_frequency_provider.g.dart';
 class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
   @override
   Future<double> build() async {
-    // explizite Typen hilfen dem Analyzer bei der Typinferenz
+    // explizite Typen helfen dem Analyzer bei der Typinferenz
     Stream<double> smoothedFrequency = await ref.watch(
       smoothedFrequencyStreamProvider.future,
     );

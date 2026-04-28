@@ -21,8 +21,8 @@ class DetuningMatrixSelector extends ConsumerWidget {
     final List<DetuningMatrix>? detuningMatrices = ref
         .watch(detuningMatricesProvider)
         .value;
-    if (detuningMatrices == null || selectedDetuningMatrix == null) {
-      return const CircularProgressIndicator();
+    if (detuningMatrices == null) {
+      return CircularProgressIndicator();
     }
 
     return Column(

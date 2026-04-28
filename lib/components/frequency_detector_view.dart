@@ -11,7 +11,7 @@ class FrequencyDetectorView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double? detectedFrequency = ref.watch(detectedFrequencyProvider).value;
+    double? detectedFrequency = ref.watch(detectedFrequencyProvider).requireValue;
     if (detectedFrequency == null) {
       return const Text("Loading...");
     }
