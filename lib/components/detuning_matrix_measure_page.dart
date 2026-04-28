@@ -27,7 +27,13 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
         .value;
 
     if (selectedDetuningMatrix == null) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("selectedDetuningMatrix is null"),
+          CircularProgressIndicator(),
+        ],
+      ));
     }
     return DefaultTabController(
       length: selectedDetuningMatrix
@@ -90,8 +96,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
             children: [
               FilledButton(
                 onPressed: () async {
-                  ref.read(selectedDetuningMatrixProvider.notifier);
-                  //.calculateMatrix();
+                  ref.read(selectedDetuningMatrixProvider.notifier).calculateMatrix();
                   DetuningMatrix? detuningMatrix = ref
                       .read(selectedDetuningMatrixProvider)
                       .value;
@@ -101,7 +106,7 @@ class DetuningMatrixMeasurePage extends ConsumerWidget {
                     );
                     return;
                   }
-                  ref
+                  await ref
                       .read(detuningMatricesProvider.notifier)
                       .saveDetuningMatrixOverriding(detuningMatrix);
 

@@ -27,6 +27,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
     List<GuitarState> samples = detuningMatrix.getSamplesForEffectingString(
       detuningMatrixMeasureState.currentEffectingStringIndex,
     );
+    print("Rebuilding");
     return Column(
       children: [
         TextField(
@@ -72,6 +73,9 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
                     .read(detuningMatrixMeasureStateProvider.notifier)
                     .currentSampleIndex =
                 index;
+            print(
+              "Current sample index: ${ref.read(detuningMatrixMeasureStateProvider).currentSampleIndex}",
+            );
           },
         ),
         Row(
@@ -85,11 +89,11 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
                 int currentSampleIndex =
                     detuningMatrixMeasureState.currentSampleIndex;
 
-                GuitarState guitarState = await ref.read(
+                GuitarState guitarState = (await ref.read(
                   guitarStateProvider.future,
-                );
+                )).copy(); // copy because otherwise the reference will be the same
 
-                ref
+                await ref
                     .read(selectedDetuningMatrixProvider.notifier)
                     .saveSamples(
                       guitarState,
@@ -100,7 +104,7 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
               icon: Icon(Icons.save),
             ),
             Text(
-              "Current Sample: ${samples[detuningMatrixMeasureState.currentSampleIndex]} Hz",
+              "Current Sample:\n${samples[detuningMatrixMeasureState.currentSampleIndex].map((element) => element.toStringAsFixed(2)).join(" | ")}",
               softWrap: true,
               maxLines: 10,
               overflow: TextOverflow.ellipsis,

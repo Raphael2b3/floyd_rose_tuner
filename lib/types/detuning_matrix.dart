@@ -1,6 +1,7 @@
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ml_linalg/matrix.dart';
+import 'package:statistics/statistics.dart';
 
 part 'detuning_matrix.g.dart';
 
@@ -64,6 +65,6 @@ class DetuningMatrix {
       samplesForEffectingString.add(GuitarState());
     }
 
-    return samplesForEffectingString;
+    return samplesForEffectingString.copy();
   }
 }

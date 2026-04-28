@@ -45,10 +45,12 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     }
 
     detuningMatrix.samples[effectingStringIndex]?.removeAt(sampleIndex);
+    ref.read(detuningMatrixMeasureStateProvider.notifier).currentSampleIndex =
+        sampleIndex % (currentSamples.length - 1);
     ref.notifyListeners();
   }
 
-  void addSampleForEffectingString(
+  Future<void> addSampleForEffectingString(
     GuitarState guitarState,
     int effectingStringIndex,
   ) async {
@@ -59,7 +61,8 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       }
       return;
     }
-    List<GuitarState>? innerSampleList = // TODO: Check if this is really by reference.
+    List<GuitarState>?
+    innerSampleList = // TODO: Check if this is really by reference.
         detuningMatrix.samples[effectingStringIndex];
     if (innerSampleList == null) {
       detuningMatrix.samples[effectingStringIndex] = [guitarState];
@@ -69,7 +72,7 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     ref.notifyListeners();
   }
 
-  void saveSamples(
+  Future<void> saveSamples(
     GuitarState guitarState,
     int effectingStringIndex,
     int sampleIndex,
@@ -105,7 +108,7 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       return;
     }
     Map<int, List<GuitarState>> guitarStateSamples = detuningMatrix.samples;
-
+    guitarStateSamples.forEach((key, value) => print("$key : $value"));
     List<List<double>> matrix = [];
     for (int i in guitarStateSamples.keys) {
       List<GuitarState>? samplesForEffectingString = guitarStateSamples[i];

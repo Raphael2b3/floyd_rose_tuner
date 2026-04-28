@@ -49,4 +49,8 @@ class GuitarState extends ListBase<num> {
   }
 
   List<num> toJson() => List<num>.from(_data);
+
+  GuitarState copy() {
+    return GuitarState(values: _data);
+  }
 }

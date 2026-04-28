@@ -3,6 +3,7 @@ import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +24,12 @@ class DetuningMatrixSelector extends ConsumerWidget {
         .watch(detuningMatricesProvider)
         .value;
     if (detuningMatrices == null) {
-      return CircularProgressIndicator();
+      return Column(
+        children: [
+          Text(" Detuning Matrices is null"),
+          CircularProgressIndicator(),
+        ],
+      );
     }
 
     return Column(
@@ -31,7 +37,8 @@ class DetuningMatrixSelector extends ConsumerWidget {
       children: [
         DropdownMenu(
           label: const Text("Select Your Guitar"),
-          initialSelection: selectedDetuningMatrix, // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
+          initialSelection: selectedDetuningMatrix,
+          // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
           dropdownMenuEntries: detuningMatrices
               .map(
                 (e) => DropdownMenuEntry<DetuningMatrix>(
@@ -89,7 +96,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
         ),
         OutlinedButton(
           onPressed: () async {
-            Matrix freshMatrix = Matrix.fromList( [
+            Matrix freshMatrix = Matrix.fromList([
               [1, 0, 0, 0, 0, 0],
               [0, 1, 0, 0, 0, 0],
               [0, 0, 1, 0, 0, 0],
@@ -110,6 +117,14 @@ class DetuningMatrixSelector extends ConsumerWidget {
           },
           child: Text("Add A New Guitar"),
         ),
+        Text(
+          selectedDetuningMatrix!.samples.entries
+              .map(
+                (MapEntry<int, List<GuitarState>> e) =>
+                    "${key} : ${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n>    ')}",
+              )
+              .join('  \n'),
+        ),
         FilledButton(
           onPressed: () async {
             AsyncValue<DetuningMatrix?> detuningMatrix = ref.read(
@@ -117,7 +132,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
             );
 
             print(detuningMatrix.value?.samples);
-            print(detuningMatrix.value?.inverse);
+            print(detuningMatrix.value?.matrix);
           },
           child: Text("Debug"),
         ),

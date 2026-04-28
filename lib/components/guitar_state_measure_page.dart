@@ -2,10 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_navigation.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
-import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,10 +22,21 @@ class GuitarStateMeasurePage extends ConsumerWidget {
         .watch(selectedDetuningMatrixProvider)
         .value;
     if (selectedTuningConfig == null || selectedDetuningMatrix == null) {
-      return Center(child: CircularProgressIndicator());
+      return Center(
+        child: Column(
+          children: [
+            Text(
+              "selectedTuningConfig ($selectedTuningConfig) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
+            ),
+            CircularProgressIndicator(),
+          ],
+        ),
+      );
     }
     final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
+    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
+      guitarStateMeasureStateProvider,
+    );
     int currentStringIndex = guitarStateMeasureState.currentStringIndex;
     return DefaultTabController(
       length: maxNumberOfStrings,

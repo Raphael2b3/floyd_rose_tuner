@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
 List<double> calculateMatrixColumn(List<List<num>> samples, int variableIndex) {
   final n = samples.length;
+
   assert(samples.every((s) => s.length > variableIndex));
 
   // Spalten extrahieren
@@ -33,7 +36,9 @@ List<double> calculateMatrixColumn(List<List<num>> samples, int variableIndex) {
     final meanY = mean(y);
     final varY = variance(y, meanY);
     final covXY = covariance(y, meanY);
-    assert(covXY != 0, 'covXY is zero – variables are uncorrelated');
+    if (covXY == 0) {
+      return 0;
+    }
     return (varY - varX + sqrt(pow(varY - varX, 2) + 4 * covXY * covXY)) /
         (2 * covXY);
   }

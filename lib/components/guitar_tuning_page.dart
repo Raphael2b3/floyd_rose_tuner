@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,15 +28,30 @@ class GuitarTuningPage extends ConsumerWidget {
     if (selectedTuningConfig == null ||
         !guitarTuningAssistant.hasValue ||
         selectedDetuningMatrix == null) {
-      return Center(child: CircularProgressIndicator());
+      return Center(
+        child: Column(
+          children: [
+            Text(
+              "selectedTuningConfig ($selectedTuningConfig) or guitarTuningAssistant ($guitarTuningAssistant) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
+            ),
+            CircularProgressIndicator(),
+          ],
+        ),
+      );
     }
     final delta = guitarTuningAssistant.value;
     if (delta == null) {
-      return Center(child: CircularProgressIndicator());
+      return Center(
+        child: Column(
+          children: [Text("delta is null"), CircularProgressIndicator()],
+        ),
+      );
     }
 
     final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(guitarStateMeasureStateProvider);
+    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
+      guitarStateMeasureStateProvider,
+    );
     int currentStringIndex = guitarStateMeasureState.currentStringIndex;
 
     // after the null-check above it's safe to assign to non-nullable locals
@@ -46,12 +63,19 @@ class GuitarTuningPage extends ConsumerWidget {
     switch (delta[currentStringIndex]) {
       case > 4:
         hintText = "To LOW! Tune the String higher";
-      case < 4:
+      case < -4:
         hintText = "To HIGH! Tune the String lower";
       default:
         hintText = "Looks Good";
     }
-
+    GuitarState? guitarState = ref.watch(guitarStateProvider).value;
+    if (guitarState == null) {
+      return Center(
+        child: Column(
+          children: [Text("guitarState is null"), CircularProgressIndicator()],
+        ),
+      );
+    }
     return DefaultTabController(
       length: maxNumberOfStrings,
       initialIndex: currentStringIndex,
@@ -60,6 +84,9 @@ class GuitarTuningPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text("$guitarName - ${selectedTuningConfig.name}"),
+          Text(
+            guitarState.map((element) => element.toStringAsFixed(2)).join("|"),
+          ),
           TabBar(
             tabAlignment: TabAlignment.center,
             isScrollable: true,
