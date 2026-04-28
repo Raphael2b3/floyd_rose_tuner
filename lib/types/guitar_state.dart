@@ -1,10 +1,9 @@
 import 'dart:collection';
 
-import 'package:json_annotation/json_annotation.dart';
 
 const NUMBER_OF_STRINGS = 6;
 
-@JsonSerializable()
+
 class GuitarState extends ListBase<num> {
   final List<num> _data = List<num>.filled(
     NUMBER_OF_STRINGS,

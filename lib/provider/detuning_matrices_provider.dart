@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:ml_linalg/matrix.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,14 +15,13 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
 
   @override
   Future<List<DetuningMatrix>> build() async {
-
     detuningMatrices =
         await _loadFromLocalStorage() ??
         [
           DetuningMatrix(
             guitarName: "My New Guitar",
             //Matrix from paper
-            matrix: <List<double>>[
+            matrix: Matrix.fromList(<List<double>>[
               [
                 1.0,
                 -0.13151204,
@@ -70,7 +70,7 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
                 -0.06824934,
                 1.0,
               ],
-            ],
+            ]),
           ),
         ];
     return detuningMatrices;
@@ -98,7 +98,9 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     await prefs.setString(_storageKey, jsonString);
   }
 
-  Future<void> saveDetuningMatrixOverriding(DetuningMatrix detuningMatrix) async {
+  Future<void> saveDetuningMatrixOverriding(
+    DetuningMatrix detuningMatrix,
+  ) async {
     // keep custom list in-memory and set the current state
     detuningMatrices.removeWhere(
       (c) => c.guitarName == detuningMatrix.guitarName,

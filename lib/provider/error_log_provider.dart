@@ -12,6 +12,6 @@ class ErrorLogNotifier extends _$ErrorLogNotifier {
 
   void logError(Object errorMessage, {StackTrace? stacktrace}) {
     state.add(errorMessage);
-    print("ErrorLogProvider: \n $errorMessage");
+    print("ErrorLogProvider: \n$errorMessage \nStacktrace:\n$stacktrace");
   }
 }

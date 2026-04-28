@@ -11,10 +11,12 @@ class DetuningMatrix {
   late Matrix inverse;
   Map<int, List<GuitarState>> samples = {};
 
-  DetuningMatrix({required this.guitarName, matrix, samples})
-    : matrix = Matrix.fromList(matrix),
-      samples = samples ?? {} {
-    inverse = this.matrix.inverse();
+  DetuningMatrix({
+    required this.guitarName,
+    required this.matrix,
+    Map<int, List<GuitarState>>? samples,
+  }) : samples = samples ?? {} {
+    inverse = matrix.inverse();
     this.samples = samples ?? {};
     assert(inverse.sum() != 0);
   }

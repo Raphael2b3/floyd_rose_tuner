@@ -1,4 +1,5 @@
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
+import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
@@ -12,7 +13,7 @@ part 'selected_detuning_matrix_provider.g.dart';
 class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
   @override
   Future<DetuningMatrix?> build() async {
-    List<DetuningMatrix> detuningMatrix = await ref.watch(
+    List<DetuningMatrix> detuningMatrix = await ref.read(
       detuningMatricesProvider.future,
     );
     if (detuningMatrix.isEmpty) {

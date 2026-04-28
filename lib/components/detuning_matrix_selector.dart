@@ -6,6 +6,7 @@ import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ml_linalg/matrix.dart';
 
 // We subclass ConsumerWidget instead of StatelessWidget
 class DetuningMatrixSelector extends ConsumerWidget {
@@ -30,7 +31,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
       children: [
         DropdownMenu(
           label: const Text("Select Your Guitar"),
-          initialSelection: selectedDetuningMatrix,
+          initialSelection: selectedDetuningMatrix, // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
           dropdownMenuEntries: detuningMatrices
               .map(
                 (e) => DropdownMenuEntry<DetuningMatrix>(
@@ -88,14 +89,14 @@ class DetuningMatrixSelector extends ConsumerWidget {
         ),
         OutlinedButton(
           onPressed: () async {
-            List<List<double>> freshMatrix = [
+            Matrix freshMatrix = Matrix.fromList( [
               [1, 0, 0, 0, 0, 0],
               [0, 1, 0, 0, 0, 0],
               [0, 0, 1, 0, 0, 0],
               [0, 0, 0, 1, 0, 0],
               [0, 0, 0, 0, 1, 0],
               [0, 0, 0, 0, 0, 1],
-            ];
+            ]);
 
             ref
                 .read(selectedDetuningMatrixProvider.notifier)
@@ -116,6 +117,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
             );
 
             print(detuningMatrix.value?.samples);
+            print(detuningMatrix.value?.inverse);
           },
           child: Text("Debug"),
         ),
