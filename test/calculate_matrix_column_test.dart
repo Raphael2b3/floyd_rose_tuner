@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 typedef SmallGuitarState = List<num>;
 
 void main() {
-  group('calculateMatrixColumn', () {
+  group('calculateMatrixRow', () {
     test('returns 1 at variableIndex', () {
       List<SmallGuitarState> samples = [
         [1.0, 2.0, 3.0],
@@ -12,7 +12,7 @@ void main() {
         [3.0, 6.0, 9.0],
       ];
 
-      List<double> result = calculateMatrixColumn(samples, 0);
+      List<double> result = calculateMatrixRow(samples, 0);
 
       expect(result[0], equals(1.0));
     });
@@ -25,7 +25,7 @@ void main() {
         [4.0, 8.0],
       ];
 
-      List<double> result = calculateMatrixColumn(samples, 0);
+      List<double> result = calculateMatrixRow(samples, 0);
 
       // coefficient should be close to 2
       expect(result[1], closeTo(2.0, 1e-9));
@@ -39,7 +39,7 @@ void main() {
         [4.0, -12.0],
       ];
 
-      List<double> result = calculateMatrixColumn(samples, 0);
+      List<double> result = calculateMatrixRow(samples, 0);
 
       expect(result[1], closeTo(-3.0, 1e-9));
     });
@@ -52,7 +52,7 @@ void main() {
         [4.0, 10.0],
       ];
 
-      List<double> result = calculateMatrixColumn(samples, 0);
+      List<double> result = calculateMatrixRow(samples, 0);
 
       // Not well-defined analytically, but should not be NaN or infinite
       expect(result[1].isFinite, isTrue);
@@ -65,7 +65,7 @@ void main() {
         [3.0, 6.0, 9.0],
       ];
 
-      List<double> result = calculateMatrixColumn(samples, 0);
+      List<double> result = calculateMatrixRow(samples, 0);
 
       expect(result.length, equals(3));
       expect(result[0], equals(1.0));
@@ -80,7 +80,7 @@ void main() {
       ];
 
       expect(
-        () => calculateMatrixColumn(samples, 2),
+        () => calculateMatrixRow(samples, 2),
         throwsA(isA<AssertionError>()),
       );
     });
@@ -93,7 +93,7 @@ void main() {
         [4.0, 7.8],
       ];
 
-      List<double> result = calculateMatrixColumn(samples, 0);
+      List<double> result = calculateMatrixRow(samples, 0);
 
       expect(result[1].isFinite, isTrue);
       expect(result[1].isNaN, isFalse);
