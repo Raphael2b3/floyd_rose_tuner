@@ -121,7 +121,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
           selectedDetuningMatrix!.samples.entries
               .map(
                 (MapEntry<int, List<GuitarState>> e) =>
-                    "${key} : ${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n>    ')}",
+                    "$key : ${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n>    ')}",
               )
               .join('  \n'),
         ),
