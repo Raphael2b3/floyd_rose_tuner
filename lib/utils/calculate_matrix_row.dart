@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 
-List<double> calculateMatrixColumn(List<List<num>> samples, int variableIndex) {
+List<double> calculateMatrixRow(List<List<num>> samples, int variableIndex) {
+  // Using Orthogonal Regression retrieved from https://de.wikipedia.org/wiki/Orthogonale_Regression
   final n = samples.length;
 
   assert(samples.every((s) => s.length > variableIndex));

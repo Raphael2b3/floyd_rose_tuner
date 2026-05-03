@@ -2,7 +2,7 @@ import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
+import 'package:floyd_rose_tuner/utils/calculate_matrix_row.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ml_linalg/matrix.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -116,8 +116,8 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
         return print("samplesForEffectingString is null");
       }
       assert(samplesForEffectingString.length >= 2);
-      List<double> column = calculateMatrixColumn(samplesForEffectingString, i);
-      matrix.add(column);
+      List<double> row = calculateMatrixRow(samplesForEffectingString, i);
+      matrix.add(row);
     }
     Matrix matrixTransposed = Matrix.fromList(matrix).transpose();
 

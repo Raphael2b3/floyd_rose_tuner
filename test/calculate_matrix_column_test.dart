@@ -1,4 +1,4 @@
-import 'package:floyd_rose_tuner/utils/calculate_matrix_column.dart';
+import 'package:floyd_rose_tuner/utils/calculate_matrix_row.dart';
 import 'package:test/test.dart';
 
 typedef SmallGuitarState = List<num>;
