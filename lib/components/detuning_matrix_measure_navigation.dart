@@ -103,11 +103,16 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
               },
               icon: Icon(Icons.save),
             ),
-            Text(
-              "Current Sample:\n${samples[detuningMatrixMeasureState.currentSampleIndex].map((element) => element.toStringAsFixed(2)).join(" | ")}",
-              softWrap: true,
-              maxLines: 10,
-              overflow: TextOverflow.ellipsis,
+            ListView(
+              children: [
+                SizedBox(height: 100,width:100),
+                Text(
+                  "Current Sample:\n${samples[detuningMatrixMeasureState.currentSampleIndex].map((element) => element.toStringAsFixed(2)).join(" | ")}",
+                  softWrap: true,
+                  maxLines: 10,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ],
         ),
