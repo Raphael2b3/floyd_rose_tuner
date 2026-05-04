@@ -2,9 +2,12 @@ import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/provider/tuning_configs_provider.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix_measure_state.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
+import 'package:floyd_rose_tuner/types/tuning_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +22,12 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
+    TuningConfig? tuningConfig = ref
+        .watch(selectedTuningConfigProvider)
+        .value;
+    if (tuningConfig == null) {
+      return Text("No Tuning Configs Loaded");
+    }
 
     // after the null-check above it's safe to assign to non-nullable locals
     if (detuningMatrix == null) {
@@ -27,7 +36,6 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
     List<GuitarState> samples = detuningMatrix.getSamplesForEffectingString(
       detuningMatrixMeasureState.currentEffectingStringIndex,
     );
-    print("Rebuilding");
     return Column(
       children: [
         TextField(
@@ -50,12 +58,12 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
             tabAlignment: TabAlignment.center,
             isScrollable: true,
             tabs: List.generate(detuningMatrix.matrix.length, (i) {
-              return Tab(child: Text("${i + 1}"));
+              return Tab(child: Text(tuningConfig.goalNotes[i]));
             }),
             onTap: (index) {
               ref
-                      .read(detuningMatrixMeasureStateProvider.notifier)
-                      .currentEffectingStringIndex =
+                  .read(detuningMatrixMeasureStateProvider.notifier)
+                  .currentEffectingStringIndex =
                   index;
               DefaultTabController.of(context).animateTo(0);
             },
@@ -70,11 +78,13 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
           }),
           onTap: (index) {
             ref
-                    .read(detuningMatrixMeasureStateProvider.notifier)
-                    .currentSampleIndex =
+                .read(detuningMatrixMeasureStateProvider.notifier)
+                .currentSampleIndex =
                 index;
             print(
-              "Current sample index: ${ref.read(detuningMatrixMeasureStateProvider).currentSampleIndex}",
+              "Current sample index: ${ref
+                  .read(detuningMatrixMeasureStateProvider)
+                  .currentSampleIndex}",
             );
           },
         ),
@@ -91,32 +101,44 @@ class DetuningMatrixMeasureNavigation extends ConsumerWidget {
 
                 GuitarState guitarState = (await ref.read(
                   guitarStateProvider.future,
-                )).copy(); // copy because otherwise the reference will be the same
+                ))
+                    .copy(); // copy because otherwise the reference will be the same
 
                 await ref
                     .read(selectedDetuningMatrixProvider.notifier)
                     .saveSamples(
-                      guitarState,
-                      currentEffectingStringIndex,
-                      currentSampleIndex,
-                    );
+                  guitarState,
+                  currentEffectingStringIndex,
+                  currentSampleIndex,
+                );
               },
               icon: Icon(Icons.save),
             ),
-            ListView(
-              children: [
-                SizedBox(height: 100,width:100),
-                Text(
-                  "Current Sample:\n${samples[detuningMatrixMeasureState.currentSampleIndex].map((element) => element.toStringAsFixed(2)).join(" | ")}",
-                  softWrap: true,
-                  maxLines: 10,
-                  overflow: TextOverflow.ellipsis,
+            Expanded(
+              child: SizedBox(
+                height: 40,
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    Text(
+                      "Current Sample:\n${samples[detuningMatrixMeasureState // TODO: Make this More efficient
+                          .currentSampleIndex].map((element) {
+                        int i = samples[detuningMatrixMeasureState
+                            .currentSampleIndex].indexOf(element);
+                        return "${tuningConfig.goalNotes[i]}: ${element
+                            .toStringAsFixed(2)}";
+                      }).join(" | ")}",
+                      softWrap: true,
+                      maxLines: 10,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),
-      ],
-    );
-  }
-}
+      ]
+      ,
+    );}}

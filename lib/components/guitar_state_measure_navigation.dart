@@ -30,7 +30,7 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
       tabAlignment: TabAlignment.center,
       isScrollable: true,
       tabs: List.generate(guitarState.length, (i) {
-        String name = "String ${i + 1}";
+        String name = "String ${selectedTuningConfig.goalNotes[i]}";
         String freq = guitarState[i].toStringAsFixed(2);
         return Tab(icon: Text(name), child: Text("$freq Hz"));
       }),
