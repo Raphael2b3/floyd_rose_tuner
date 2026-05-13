@@ -45,9 +45,9 @@ class GuitarStateMeasurePage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Measure Guitar State:",style: TextStyle(fontSize: 20),),
+          Text("Measure String Frequencies", style: TextStyle(fontSize: 20)),
           GuitarStateMeasureNavigation(),
-          FrequencyView(),
+          if (guitarStateMeasureState.manualDetection) FrequencyView(),
           FrequencyDetectorView(),
         ],
       ),

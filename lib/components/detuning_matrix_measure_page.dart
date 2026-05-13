@@ -13,7 +13,7 @@ import 'package:floyd_rose_tuner/types/tuning_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// We subclass ConsumerStatefulWidget instead of StatefulWidget
+//#region Statfulpage
 @RoutePage()
 class DetuningMatrixMeasurePage extends ConsumerStatefulWidget {
   const DetuningMatrixMeasurePage({super.key});
@@ -22,27 +22,34 @@ class DetuningMatrixMeasurePage extends ConsumerStatefulWidget {
   ConsumerState<DetuningMatrixMeasurePage> createState() =>
       _DetuningMatrixMeasureStatePageState();
 }
+//#endregion
 
 class _DetuningMatrixMeasureStatePageState
     extends ConsumerState<DetuningMatrixMeasurePage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
+  //#region Fields
   late TabController stringTabController = TabController(
     length: 6,
     vsync: this,
   );
   late TabController sampleTabController = TabController(
-    length: 2,
+    length: 3, // 2 Default + Plus Symbol
     vsync: this,
   );
-
   late TextEditingController textEditingController = TextEditingController();
-
   bool isKeyboardVisible = false;
+  bool nameEditing = true;
+  late FocusNode guitarNameFocusNode;
 
+  //#endregion
+
+  //#region Methods
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    guitarNameFocusNode = ref.read(focusNodeProvider(guitarNameFocusNodeID));
+    print("INIT STATE $guitarNameFocusNode");
   }
 
   @override
@@ -71,43 +78,7 @@ class _DetuningMatrixMeasureStatePageState
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
-      detuningMatrixMeasureStateProvider,
-    );
-    DetuningMatrix? selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
-        .value;
-
-    if (selectedDetuningMatrix == null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("selectedDetuningMatrix is null"),
-            CircularProgressIndicator(),
-          ],
-        ),
-      );
-    }
-
-    TuningConfig? tuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    if (tuningConfig == null) {
-      return Text("No Tuning Configs Loaded");
-    }
-
-    List<GuitarState> samples = selectedDetuningMatrix
-        .getSamplesForEffectingString(
-          detuningMatrixMeasureState.currentEffectingStringIndex,
-        );
-    var noAutofocusName =
-        ref
-            .read(detuningMatricesProvider)
-            .value
-            ?.contains(selectedDetuningMatrix) ??
-        false;
-
+  void initListeners() {
     ref.listen(selectedDetuningMatrixProvider, (previous, next) {
       int effectingStringIndex = ref
           .read(detuningMatrixMeasureStateProvider)
@@ -135,209 +106,202 @@ class _DetuningMatrixMeasureStatePageState
         textEditingController.text = next.value?.guitarName ?? "null";
       }
     });
-    textEditingController.text = selectedDetuningMatrix.guitarName;
-    print("IS KEYBOARD VISIBLE $isKeyboardVisible");
-    FocusNode guitarNameFocusNode = ref.watch(focusNodeProvider("guitarName"));
+  }
 
-    bool editingName = isKeyboardVisible && guitarNameFocusNode.hasFocus;
-    bool editingFrequency = isKeyboardVisible && !guitarNameFocusNode.hasFocus;
-    return Expanded(
-      child: Center(
+  Future<void> addSample() async {
+    GuitarState guitarState = await ref.read(guitarStateProvider.future);
+    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
+      detuningMatrixMeasureStateProvider,
+    );
+    int currentEffectingStringIndex =
+        detuningMatrixMeasureState.currentEffectingStringIndex;
+
+    ref
+        .read(selectedDetuningMatrixProvider.notifier)
+        .addSampleForEffectingString(guitarState, currentEffectingStringIndex);
+  }
+
+  void removeSample() {
+    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
+      detuningMatrixMeasureStateProvider,
+    );
+    int currentEffectingStringIndex =
+        detuningMatrixMeasureState.currentEffectingStringIndex;
+    int currentSampleIndex = detuningMatrixMeasureState.currentSampleIndex;
+
+    ref
+        .read(selectedDetuningMatrixProvider.notifier)
+        .deleteSample(currentEffectingStringIndex, currentSampleIndex);
+  }
+
+  //#endregion
+
+  @override
+  Widget build(BuildContext context) {
+    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
+      detuningMatrixMeasureStateProvider,
+    );
+
+    DetuningMatrix? selectedDetuningMatrix = ref
+        .watch(selectedDetuningMatrixProvider)
+        .value;
+
+    if (selectedDetuningMatrix == null) {
+      return Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Give It A Name", style: TextStyle(fontSize: 20)),
-
-            Visibility(
-              visible: !editingFrequency,
-              child: TextField(
-                focusNode: guitarNameFocusNode,
-                autofocus: !noAutofocusName,
-                controller: textEditingController,
-                onChanged: (value) {
-                  ref
-                      .read(detuningMatricesProvider.notifier)
-                      .changeGuitarName(selectedDetuningMatrix.guitarName, value);
-
-                  ref
-                      .read(selectedDetuningMatrixProvider.notifier)
-                      .selectDetuningMatrix(
-                        selectedDetuningMatrix.copy(guitarName: value),
-                      );
-                  textEditingController.text = value;
-                },
-              ),
-            ),
-
-            if (!isKeyboardVisible) ...[
-              Text("Select Effecting String", style: TextStyle(fontSize: 20)),
-              TabBar(
-                controller: stringTabController,
-                tabAlignment: TabAlignment.center,
-                isScrollable: true,
-                tabs: List.generate(selectedDetuningMatrix.matrix.length, (i) {
-                  return Tab(height:30, child: Text(tuningConfig.goalNotes[i]));
-                }),
-                onTap: (index) {
-                  ref
-                          .read(detuningMatrixMeasureStateProvider.notifier)
-                          .currentEffectingStringIndex =
-                      index;
-                  sampleTabController.animateTo(0);
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (samples.length > 2)
-                    TextButton.icon(
-                      onPressed: () async {
-                        DetuningMatrixMeasureState detuningMatrixMeasureState = ref
-                            .read(detuningMatrixMeasureStateProvider);
-                        int currentEffectingStringIndex =
-                            detuningMatrixMeasureState.currentEffectingStringIndex;
-                        int currentSampleIndex =
-                            detuningMatrixMeasureState.currentSampleIndex;
-
-                        ref
-                            .read(selectedDetuningMatrixProvider.notifier)
-                            .deleteSample(
-                              currentEffectingStringIndex,
-                              currentSampleIndex,
-                            );
-                      },
-                      label: Text("Delete"),
-                      icon: Icon(Icons.delete_outline),
-                    ),
-                  Text("Measurements"),
-                  TextButton.icon(
-                    onPressed: () async {
-                      GuitarState guitarState = await ref.read(
-                        guitarStateProvider.future,
-                      );
-                      DetuningMatrixMeasureState detuningMatrixMeasureState = ref
-                          .read(detuningMatrixMeasureStateProvider);
-                      int currentEffectingStringIndex =
-                          detuningMatrixMeasureState.currentEffectingStringIndex;
-
-                      ref
-                          .read(selectedDetuningMatrixProvider.notifier)
-                          .addSampleForEffectingString(
-                            guitarState,
-                            currentEffectingStringIndex,
-                          );
-                    },
-                    label: Text("Add"),
-                    icon: Icon(Icons.control_point_outlined),
-                  ),
-                ],
-              ),
-              TabBar(
-
-                controller: sampleTabController,
-                tabAlignment: TabAlignment.center,
-                isScrollable: true,
-                tabs: List.generate(samples.length, (i) {
-                  return Tab(height: 30, iconMargin: EdgeInsets.all(0),child: Text("${i + 1}"),);
-                }),
-                onTap: (index) {
-                  ref
-                          .read(detuningMatrixMeasureStateProvider.notifier)
-                          .currentSampleIndex =
-                      index;
-                  print(
-                    "Current sample index: ${ref.read(detuningMatrixMeasureStateProvider).currentSampleIndex}",
-                  );
-                },
-              ),
-              Text("Measurement:"),
-              SizedBox(
-                height: 20,
-                width: double.infinity,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Text(
-                      samples[detuningMatrixMeasureState.currentSampleIndex].indexed
-                          .map((e) {
-                            int i = e.$1;
-                            var element = e.$2;
-                            return element.toStringAsFixed(2);
-                            return "${tuningConfig.goalNotes[i]}: ${element.toStringAsFixed(2)}";
-                          })
-                          .join(" | "),
-                      softWrap: true,
-                      maxLines: 10,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            Visibility(
-              visible: !editingName,
-              child: Column(
-                children: [
-                  GuitarStateMeasurePage(),
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      DetuningMatrixMeasureState detuningMatrixMeasureState = ref
-                          .read(detuningMatrixMeasureStateProvider);
-                      int currentEffectingStringIndex =
-                          detuningMatrixMeasureState.currentEffectingStringIndex;
-                      int currentSampleIndex =
-                          detuningMatrixMeasureState.currentSampleIndex;
-
-                      GuitarState guitarState = (await ref.read(
-                        guitarStateProvider.future,
-                      )).copy(); // copy because otherwise the reference will be the same
-
-                      await ref
-                          .read(selectedDetuningMatrixProvider.notifier)
-                          .saveSamples(
-                            guitarState,
-                            currentEffectingStringIndex,
-                            currentSampleIndex,
-                          );
-                    },
-                    label: Text(
-                      "Apply Measurement",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    icon: Icon(Icons.camera_alt_outlined),
-                  ),
-
-                  if (selectedDetuningMatrix.hasValidSamples)
-                    FilledButton(
-                      onPressed: () async {
-                        ref
-                            .read(selectedDetuningMatrixProvider.notifier)
-                            .calculateMatrix();
-                        DetuningMatrix? detuningMatrix = ref
-                            .read(selectedDetuningMatrixProvider)
-                            .value;
-                        if (detuningMatrix == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("No Guitar Selected!")),
-                          );
-                          return;
-                        }
-                        await ref
-                            .read(detuningMatricesProvider.notifier)
-                            .saveDetuningMatrixOverriding(detuningMatrix);
-
-                        context.router.pop();
-                      },
-                      child: Text("Done"),
-                    )
-                  else
-                    Text("Something Still Needs To Be Measured"),
-                ],
-              ),
-            ),
+            Text("selectedDetuningMatrix is null"),
+            CircularProgressIndicator(),
           ],
         ),
-      ),
+      );
+    }
+
+    TuningConfig? tuningConfig = ref.watch(selectedTuningConfigProvider).value;
+
+    if (tuningConfig == null) {
+      return Text("No Tuning Configs Loaded");
+    }
+
+    List<GuitarState> samples = selectedDetuningMatrix
+        .getSamplesForEffectingString(
+          detuningMatrixMeasureState.currentEffectingStringIndex,
+        );
+    var currentMeasuredStringName = tuningConfig
+        .goalNotes[detuningMatrixMeasureState.currentEffectingStringIndex];
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GuitarStateMeasurePage(),
+            OutlinedButton.icon(
+              onPressed: () async {
+                DetuningMatrixMeasureState detuningMatrixMeasureState = ref
+                    .read(detuningMatrixMeasureStateProvider);
+                int currentEffectingStringIndex =
+                    detuningMatrixMeasureState.currentEffectingStringIndex;
+                int currentSampleIndex =
+                    detuningMatrixMeasureState.currentSampleIndex;
+
+                GuitarState guitarState = (await ref.read(
+                  guitarStateProvider.future,
+                )).copy(); // copy because otherwise the reference will be the same
+
+                await ref
+                    .read(selectedDetuningMatrixProvider.notifier)
+                    .saveSamples(
+                      guitarState,
+                      currentEffectingStringIndex,
+                      currentSampleIndex,
+                    );
+              },
+              label: Text("Apply Measurement", style: TextStyle(fontSize: 20)),
+              icon: Icon(Icons.camera_alt_outlined),
+            ),
+            TabBar(
+              controller: stringTabController,
+              tabAlignment: TabAlignment.center,
+              isScrollable: true,
+              tabs: List.generate(selectedDetuningMatrix.matrix.length, (i) {
+                return Tab(text: "${tuningConfig.goalNotes[i]}");
+              }),
+              onTap: (index) {
+                ref
+                        .read(detuningMatrixMeasureStateProvider.notifier)
+                        .currentEffectingStringIndex =
+                    index;
+                sampleTabController.animateTo(0);
+              },
+            ),
+
+            TabBar(
+              controller: sampleTabController,
+              tabAlignment: TabAlignment.center,
+              isScrollable: true,
+              tabs: List.generate(samples.length + 1, (i) {
+                var number = samples.length > 2 ? "$i" : "";
+                var text = i == 0
+                    ? "Initial State"
+                    : "$currentMeasuredStringName Changed $number";
+
+                if (i == samples.length) {
+                  return Tab(
+                    height: 30,
+                    child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.add),
+                      onPressed: addSample,
+                    ),
+                  );
+                }
+                return Tab(
+                  height: 30,
+                  child: Row(
+                    children: [
+                      Text(text),
+                      if (samples.length > 2)
+                        IconButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: removeSample,
+                          icon: Icon(Icons.remove),
+                        ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+
+            Text("Measured State for $currentMeasuredStringName"),
+            SizedBox(
+              height: 20,
+              width: double.infinity,
+              child: ListView(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                children: [
+                  Text(
+                    samples[detuningMatrixMeasureState.currentSampleIndex]
+                        .map((e) => e.toStringAsFixed(2))
+                        .join(" | "),
+                    softWrap: true,
+                    maxLines: 10,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            if (selectedDetuningMatrix.hasValidSamples)
+              FilledButton(
+                onPressed: () async {
+                  ref
+                      .read(selectedDetuningMatrixProvider.notifier)
+                      .calculateMatrix();
+                  DetuningMatrix? detuningMatrix = ref
+                      .read(selectedDetuningMatrixProvider)
+                      .value;
+                  if (detuningMatrix == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("No Guitar Selected!")),
+                    );
+                    return;
+                  }
+                  await ref
+                      .read(detuningMatricesProvider.notifier)
+                      .saveDetuningMatrixOverriding(detuningMatrix);
+
+                  context.router.pop();
+                },
+                child: Text("Done"),
+              )
+            else
+              Text("Something Still Needs To Be Measured"),
+          ],
+        ),
+      ],
     );
   }
 }

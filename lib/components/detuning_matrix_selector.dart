@@ -39,13 +39,14 @@ class DetuningMatrixSelector extends ConsumerWidget {
         DropdownMenu(
           width: double.infinity,
           label: const Text("Select Your Guitar"),
-          controller: TextEditingController(text: selectedDetuningMatrix?.guitarName??"Select Your Guitar"),
+          controller: TextEditingController(
+            text: selectedDetuningMatrix?.guitarName ?? "Select Your Guitar",
+          ),
           initialSelection: selectedDetuningMatrix,
           // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
           dropdownMenuEntries: detuningMatrices
               .map(
                 (e) => DropdownMenuEntry<DetuningMatrix>(
-
                   value: e,
                   label: e.guitarName,
                   leadingIcon: IconButton(
@@ -78,7 +79,11 @@ class DetuningMatrixSelector extends ConsumerWidget {
                                 ref
                                     .read(detuningMatricesProvider.notifier)
                                     .removeDetuningMatrix(e.guitarName);
-                                ref.read(selectedDetuningMatrixProvider.notifier).selectDetuningMatrix(null);
+                                ref
+                                    .read(
+                                      selectedDetuningMatrixProvider.notifier,
+                                    )
+                                    .selectDetuningMatrix(null);
                                 Navigator.pop(context, 'OK');
                               },
                               child: const Text('Delete'),
@@ -118,7 +123,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
                     matrix: freshMatrix,
                   ),
                 );
-            await context.router.push(const DetuningMatrixMeasureRoute());
+            await context.router.push(const DetuningMatrixNamingRoute());
           },
           child: Text("Add A New Guitar"),
         ),
@@ -126,7 +131,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
           Expanded(
             child: ListView(
               children: [
-                Text("Measurements", style:TextStyle(fontSize: 20)),
+                Text("Measurements", style: TextStyle(fontSize: 20)),
                 Text(
                   "${selectedDetuningMatrix.samples.entries.map((MapEntry<int, List<GuitarState>> e) => "Effecting String ${ref.read(selectedTuningConfigProvider).value?.goalNotes[e.key]}:\n${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n')}").join(' |  \n\n')} |",
                 ),

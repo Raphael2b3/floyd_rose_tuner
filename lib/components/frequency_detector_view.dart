@@ -8,14 +8,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FrequencyDetectorView extends ConsumerStatefulWidget {
   const FrequencyDetectorView({super.key});
+
   @override
   ConsumerState<FrequencyDetectorView> createState() =>
       FrequencyDetectorViewState();
 }
-class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView>{
+
+class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
   @override
   Widget build(BuildContext context) {
-    double? detectedFrequency = ref.watch(detectedFrequencyProvider).value;
+    double? detectedFrequency = ref
+        .watch(detectedFrequencyProvider)
+        .value;
     if (detectedFrequency == null) {
       return const Text("Loading...");
     }
@@ -26,7 +30,8 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView>{
     GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
-    FocusNode editingFrequencyFocusNode = ref.watch(focusNodeProvider("editingFrequency"));
+    FocusNode editingFrequencyFocusNode = ref.watch(
+        focusNodeProvider("editingFrequency"));
 
     return Column(
       children: [
@@ -35,37 +40,41 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView>{
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text("Detected Frequency:"),
-            IntrinsicWidth(
-              child: TextField(
-                focusNode: editingFrequencyFocusNode,
-                controller: TextEditingController(
-                  text: detectedFrequency.toStringAsFixed(2),
+            if (guitarStateMeasureState.manualDetection)...[
+              Text("Detected Frequency:"),
+              IntrinsicWidth(
+                child: TextField(
+                  focusNode: editingFrequencyFocusNode,
+                  controller: TextEditingController(
+                    text: detectedFrequency.toStringAsFixed(2),
+                  ),
+                  keyboardAppearance: Brightness.light,
+                  keyboardType: TextInputType.number,
+                  enabled: guitarStateMeasureState.manualDetection,
+                  onSubmitted: (stringValue) {
+                    if (guitarStateMeasureState.manualDetection) {
+                      double value = double.tryParse(stringValue) ?? 0.0;
+                      print(
+                        "Manually setting detected frequency to $stringValue",
+                      );
+                      detectedFrequencyNotifier.setDetectedFrequency(value);
+                    }
+                  },
                 ),
-                keyboardAppearance: Brightness.light,
-                keyboardType: TextInputType.number,
-                enabled: guitarStateMeasureState.manualDetection,
-                onSubmitted: (stringValue) {
-                  if (guitarStateMeasureState.manualDetection) {
-                    double value = double.tryParse(stringValue) ?? 0.0;
-                    print(
-                      "Manually setting detected frequency to $stringValue",
-                    );
-                    detectedFrequencyNotifier.setDetectedFrequency(value);
-                  }
-                },
               ),
-            ),
+            ],
             Row(
               children: [
-                Checkbox(value: !guitarStateMeasureState.manualDetection, onChanged: (value) {
-                  ref
-                      .read(guitarStateMeasureStateProvider.notifier)
-                      .guitarStateMeasureState = GuitarStateMeasureState(
-                    currentStringIndex: guitarStateMeasureState.currentStringIndex,
-                    manualDetection: !guitarStateMeasureState.manualDetection,
-                  );
-                },),
+                Checkbox(value: !guitarStateMeasureState.manualDetection,
+                  onChanged: (value) {
+                    ref
+                        .read(guitarStateMeasureStateProvider.notifier)
+                        .guitarStateMeasureState = GuitarStateMeasureState(
+                      currentStringIndex: guitarStateMeasureState
+                          .currentStringIndex,
+                      manualDetection: !guitarStateMeasureState.manualDetection,
+                    );
+                  },),
                 Text(
                   "Auto Detect",
                 ),

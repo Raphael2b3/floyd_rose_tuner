@@ -10,3 +10,6 @@ FocusNode focusNode(Ref ref, String id) {
   print("Rebuild focus node $id");
   return focusN;
 }
+
+const guitarNameFocusNodeID = "guitarName";
+const frequencyInputFocusNodeID = "frequencyInput";
