@@ -67,4 +67,19 @@ class DetuningMatrix {
 
     return samplesForEffectingString.copy();
   }
+
+  bool get hasValidSamples {
+    if (samples.length != 6) {
+      print("there are no samples for every String");
+      return false;
+    }
+    return samples.entries.all((samples4EffectingString) {
+      if (samples4EffectingString.value.length < 2) return false;
+
+      return samples4EffectingString.value.all((sample) {
+        if (sample.length != 6) return false;
+        return sample.all((sampleValue) => sampleValue != 0);
+      });
+    });
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main2() {
   runApp(DebugApp());
@@ -16,30 +17,16 @@ class _DebugAppState extends State<DebugApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Material(
-        child: DefaultTabController(
-          length: 2,
-          initialIndex: index,
+    return SafeArea(
+      child: MaterialApp(
+        home: Material(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TabBar(
-                tabs: List.generate(
-                  2,
-                  (i) => SizedBox(
-                    height: 100,
-                    width: 100,
-                    child: Tab(child: Text("$i")),
-                  ),
-                ),
-                onTap: (i) => setState(() => index = i),
+              Text(
+                "Yarak ",
+                style: TextStyle(color: Colors.black),
               ),
-              OutlinedButton(
-                onPressed: () => setState(() => index = (index + 1) % 2),
-                child: Text("Current Index $index"),
-              ),
+              TextField()
             ],
           ),
         ),

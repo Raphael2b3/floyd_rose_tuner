@@ -9,6 +9,7 @@ class LayoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
+      resizeToAvoidBottomInset: true,
         routes: const [HelpRoute(), FloydRoseTunerRoute(), StandardTunerRoute()],
         bottomNavigationBuilder: (_, tabsRouter) {
           return BottomNavigationBar(

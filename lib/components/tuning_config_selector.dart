@@ -21,7 +21,8 @@ class TuningConfigSelector extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownMenu(
-          label: const Text("Tuning Config"),
+          width: double.infinity,
+          label: const Text("Tuning"),
           helperText: "e.g. Standard EADGBE",
           initialSelection: selected,
           dropdownMenuEntries: tuningConfigs

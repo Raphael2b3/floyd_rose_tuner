@@ -1,3 +1,4 @@
+import 'package:floyd_rose_tuner/provider/focus_node_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
@@ -44,6 +45,8 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
               .read(guitarStateMeasureStateProvider)
               .manualDetection,
         );
+        print("Test");
+        ref.read(focusNodeProvider("editingFrequency")).requestFocus(); // TODO Cursor doesnt appear yet
       },
     );
   }

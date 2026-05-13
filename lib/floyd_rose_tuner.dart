@@ -9,18 +9,21 @@ class FloydRoseTuner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _appRouter.config(),
-      title: 'Floyd Rose Tuner',
-      theme: ThemeData(
-          brightness: Brightness.light,
+    return SafeArea(
+      child: MaterialApp.router(
+      
+        routerConfig: _appRouter.config(),
+        title: 'Floyd Rose Tuner',
+        theme: ThemeData(
+            brightness: Brightness.light,
+            useMaterial3: true,
+            sliderTheme: SliderThemeData(year2023: false)),
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
           useMaterial3: true,
-          sliderTheme: SliderThemeData(year2023: false)),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        useMaterial3: true,
+        ),
+        themeMode: ThemeMode.dark,
       ),
-      themeMode: ThemeMode.dark,
     );
   }
 }

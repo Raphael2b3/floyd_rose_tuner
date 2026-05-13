@@ -1,16 +1,20 @@
 import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
+import 'package:floyd_rose_tuner/provider/focus_node_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// We subclass ConsumerStatefulWidget instead of StatefulWidget
 
-class FrequencyDetectorView extends ConsumerWidget {
+class FrequencyDetectorView extends ConsumerStatefulWidget {
   const FrequencyDetectorView({super.key});
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FrequencyDetectorView> createState() =>
+      FrequencyDetectorViewState();
+}
+class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView>{
+  @override
+  Widget build(BuildContext context) {
     double? detectedFrequency = ref.watch(detectedFrequencyProvider).value;
     if (detectedFrequency == null) {
       return const Text("Loading...");
@@ -22,15 +26,19 @@ class FrequencyDetectorView extends ConsumerWidget {
     GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
+    FocusNode editingFrequencyFocusNode = ref.watch(focusNodeProvider("editingFrequency"));
+
     return Column(
       children: [
-        VolumeThresholdSelector(),
+        if (!guitarStateMeasureState.manualDetection)
+          VolumeThresholdSelector(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text("Detected Frequency:"),
             IntrinsicWidth(
               child: TextField(
+                focusNode: editingFrequencyFocusNode,
                 controller: TextEditingController(
                   text: detectedFrequency.toStringAsFixed(2),
                 ),
@@ -48,25 +56,27 @@ class FrequencyDetectorView extends ConsumerWidget {
                 },
               ),
             ),
+            Row(
+              children: [
+                Checkbox(value: !guitarStateMeasureState.manualDetection, onChanged: (value) {
+                  ref
+                      .read(guitarStateMeasureStateProvider.notifier)
+                      .guitarStateMeasureState = GuitarStateMeasureState(
+                    currentStringIndex: guitarStateMeasureState.currentStringIndex,
+                    manualDetection: !guitarStateMeasureState.manualDetection,
+                  );
+                },),
+                Text(
+                  "Auto Detect",
+                ),
+              ],
+            ),
+
+
           ],
         ),
-        FilledButton(
-          onPressed: () {
-            print("Toggle Manual Detection");
-            print(
-              "Current  manualdetection ${guitarStateMeasureState.manualDetection}",
-            );
-            ref
-                .read(guitarStateMeasureStateProvider.notifier)
-                .guitarStateMeasureState = GuitarStateMeasureState(
-              currentStringIndex: guitarStateMeasureState.currentStringIndex,
-              manualDetection: !guitarStateMeasureState.manualDetection,
-            );
-          },
-          child: Text(
-            "${guitarStateMeasureState.manualDetection ? "Disable" : "Enable"} Manual Input",
-          ),
-        ),
+
+
       ],
     );
   }
