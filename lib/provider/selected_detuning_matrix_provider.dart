@@ -22,7 +22,7 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     return detuningMatrix[0];
   }
 
-  Future<void> selectDetuningMatrix(DetuningMatrix selected) async {
+  Future<void> selectDetuningMatrix(DetuningMatrix? selected) async {
     state = AsyncValue.data(selected);
   }
 

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
@@ -38,11 +39,13 @@ class DetuningMatrixSelector extends ConsumerWidget {
         DropdownMenu(
           width: double.infinity,
           label: const Text("Select Your Guitar"),
+          controller: TextEditingController(text: selectedDetuningMatrix?.guitarName??"Select Your Guitar"),
           initialSelection: selectedDetuningMatrix,
           // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
           dropdownMenuEntries: detuningMatrices
               .map(
                 (e) => DropdownMenuEntry<DetuningMatrix>(
+
                   value: e,
                   label: e.guitarName,
                   leadingIcon: IconButton(
@@ -75,6 +78,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
                                 ref
                                     .read(detuningMatricesProvider.notifier)
                                     .removeDetuningMatrix(e.guitarName);
+                                ref.read(selectedDetuningMatrixProvider.notifier).selectDetuningMatrix(null);
                                 Navigator.pop(context, 'OK');
                               },
                               child: const Text('Delete'),
@@ -118,16 +122,17 @@ class DetuningMatrixSelector extends ConsumerWidget {
           },
           child: Text("Add A New Guitar"),
         ),
-        if(selectedDetuningMatrix != null)
-        Text(
-          "${selectedDetuningMatrix.samples.entries
-              .map(
-                (MapEntry<int, List<GuitarState>> e) =>
-                    "---\n$key:\n${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n')}",
-              )
-              .join('  \n')} |",
-        ),
-
+        if (selectedDetuningMatrix != null)
+          Expanded(
+            child: ListView(
+              children: [
+                Text("Measurements", style:TextStyle(fontSize: 20)),
+                Text(
+                  "${selectedDetuningMatrix.samples.entries.map((MapEntry<int, List<GuitarState>> e) => "Effecting String ${ref.read(selectedTuningConfigProvider).value?.goalNotes[e.key]}:\n${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n')}").join(' |  \n\n')} |",
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

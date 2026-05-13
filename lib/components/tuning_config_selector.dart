@@ -18,6 +18,7 @@ class TuningConfigSelector extends ConsumerWidget {
     final tuningConfigs = configsAsync.value ?? [];
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownMenu(

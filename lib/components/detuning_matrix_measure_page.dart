@@ -175,7 +175,7 @@ class _DetuningMatrixMeasureStatePageState
                 tabAlignment: TabAlignment.center,
                 isScrollable: true,
                 tabs: List.generate(selectedDetuningMatrix.matrix.length, (i) {
-                  return Tab(child: Text(tuningConfig.goalNotes[i]));
+                  return Tab(height:30, child: Text(tuningConfig.goalNotes[i]));
                 }),
                 onTap: (index) {
                   ref
@@ -232,11 +232,12 @@ class _DetuningMatrixMeasureStatePageState
                 ],
               ),
               TabBar(
+
                 controller: sampleTabController,
                 tabAlignment: TabAlignment.center,
                 isScrollable: true,
                 tabs: List.generate(samples.length, (i) {
-                  return Tab(child: Text("${i + 1}"));
+                  return Tab(height: 30, iconMargin: EdgeInsets.all(0),child: Text("${i + 1}"),);
                 }),
                 onTap: (index) {
                   ref
@@ -250,7 +251,7 @@ class _DetuningMatrixMeasureStatePageState
               ),
               Text("Measurement:"),
               SizedBox(
-                height: 40,
+                height: 20,
                 width: double.infinity,
                 child: ListView(
                   shrinkWrap: true,
