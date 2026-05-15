@@ -20,10 +20,10 @@ class DetuningMatrixControlPage extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<DetuningMatrixControlPage> createState() =>
-      _DetuningMatrixMeasureStatePageState();
+      _DetuningMatrixControlPageState();
 }
 
-class _DetuningMatrixMeasureStatePageState
+class _DetuningMatrixControlPageState
     extends ConsumerState<DetuningMatrixControlPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late TabController stringTabController = TabController(
@@ -38,18 +38,17 @@ class _DetuningMatrixMeasureStatePageState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     stringTabController.dispose();
     sampleTabController.dispose();
     super.dispose();
   }
 
   void initListeners() {
+    // syncs tabcontroller length with detuningMeasureStateProvider
     ref.listen(selectedDetuningMatrixProvider, (previous, next) {
       int effectingStringIndex = ref
           .read(detuningMatrixMeasureStateProvider)
@@ -103,58 +102,25 @@ class _DetuningMatrixMeasureStatePageState
         .deleteSample(currentEffectingStringIndex, currentSampleIndex);
   }
 
-  Future<void> applyMeasurement() async {
-    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
-      detuningMatrixMeasureStateProvider,
-    );
-    int currentEffectingStringIndex =
-        detuningMatrixMeasureState.currentEffectingStringIndex;
-    int currentSampleIndex = detuningMatrixMeasureState.currentSampleIndex;
-
-    GuitarState guitarState = (await ref.read(
-      guitarStateProvider.future,
-    )).copy(); // copy because otherwise the reference will be the same
-
-    await ref
-        .read(selectedDetuningMatrixProvider.notifier)
-        .saveSamples(
-          guitarState,
-          currentEffectingStringIndex,
-          currentSampleIndex,
-        );
-
-    var nextIndex =
-        (sampleTabController.index + 1) % sampleTabController.length;
-
-    if (nextIndex == 0) {
-      var nextIndex2 =
-          (stringTabController.index + 1) % stringTabController.length;
-
-      stringTabController.animateTo(nextIndex2);
-      ref
-              .read(detuningMatrixMeasureStateProvider.notifier)
-              .currentEffectingStringIndex =
-          nextIndex2;
-    }
-    sampleTabController.animateTo(nextIndex);
-    ref.read(detuningMatrixMeasureStateProvider.notifier).currentSampleIndex =
-        nextIndex;
-  }
-
   @override
   Widget build(BuildContext context) {
+
     initListeners();
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
+    );
+    sampleTabController.animateTo(
+      detuningMatrixMeasureState.currentSampleIndex,
+    );
+    stringTabController.animateTo(
+      detuningMatrixMeasureState.currentEffectingStringIndex,
     );
     DetuningMatrix? selectedDetuningMatrix = ref
         .watch(selectedDetuningMatrixProvider)
         .value;
 
     TuningConfig? tuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    if (selectedDetuningMatrix == null ||
-        tuningConfig == null
-        ) {
+    if (selectedDetuningMatrix == null || tuningConfig == null) {
       return DisplayError(
         "Somehow No Guitar is Selected"
         "Somehow No Tuning is Selected",
@@ -256,26 +222,26 @@ class _DetuningMatrixMeasureStatePageState
             FilledButton(
               onPressed: selectedDetuningMatrix.isValid
                   ? () async {
-                ref
-                    .read(selectedDetuningMatrixProvider.notifier)
-                    .calculateMatrix();
-                DetuningMatrix? detuningMatrix = ref
-                    .read(selectedDetuningMatrixProvider)
-                    .value;
-                if (detuningMatrix == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("No Guitar Selected!")),
-                  );
-                  return;
-                }
-                await ref
-                    .read(detuningMatricesProvider.notifier)
-                    .saveDetuningMatrixOverriding(detuningMatrix);
+                      ref
+                          .read(selectedDetuningMatrixProvider.notifier)
+                          .calculateMatrix();
+                      DetuningMatrix? detuningMatrix = ref
+                          .read(selectedDetuningMatrixProvider)
+                          .value;
+                      if (detuningMatrix == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("No Guitar Selected!")),
+                        );
+                        return;
+                      }
+                      await ref
+                          .read(detuningMatricesProvider.notifier)
+                          .saveDetuningMatrixOverriding(detuningMatrix);
 
-                context.router.popUntilRouteWithName(
-                  FloydRoseTunerSetupRoute.name,
-                );
-              }
+                      context.router.popUntilRouteWithName(
+                        FloydRoseTunerSetupRoute.name,
+                      );
+                    }
                   : null,
               child: Text("Done"),
             ),

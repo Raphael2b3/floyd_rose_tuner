@@ -8,7 +8,12 @@ part 'guitar_state_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class GuitarStateNotifier extends _$GuitarStateNotifier {
-  GuitarState guitarState = GuitarState();
+  GuitarState _guitarState = GuitarState();
+
+  set guitarState(GuitarState gs) {
+    _guitarState = gs;
+    state = AsyncValue.data(gs);
+  }
 
   @override
   Future<GuitarState> build() async {
@@ -16,9 +21,9 @@ class GuitarStateNotifier extends _$GuitarStateNotifier {
     final detectedFrequency = await ref.watch(detectedFrequencyProvider.future);
     // ensure a list exists for this guitar
     final index = guitarStateMeasureState.currentStringIndex;
-    if (index >= 0 && index < guitarState.length) {
-      guitarState[index] = detectedFrequency;
+    if (index >= 0 && index < _guitarState.length) {
+      _guitarState[index] = detectedFrequency;
     }
-    return guitarState;
+    return _guitarState;
   }
 }

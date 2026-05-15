@@ -21,35 +21,39 @@ class DetuningMatrixMeasurePage extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<DetuningMatrixMeasurePage> createState() =>
-      _DetuningMatrixMeasureStatePageState();
+      _DetuningMatrixMeasurePageState();
 }
 
-class _DetuningMatrixMeasureStatePageState
+class _DetuningMatrixMeasurePageState
     extends ConsumerState<DetuningMatrixMeasurePage> {
   Future<void> applyMeasurement() async {
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
       detuningMatrixMeasureStateProvider,
     );
+    DetuningMatrixMeasureStateNotifier detuningMatrixMeasureStateNotifier = ref
+        .read(detuningMatrixMeasureStateProvider.notifier);
+
     SelectedDetuningMatrixNotifier selectedDetuningMatrixNotifier = ref.read(
       selectedDetuningMatrixProvider.notifier,
     );
-    DetuningMatrixMeasureStateNotifier detuningMatrixMeasureStateNotifier = ref
-        .read(detuningMatrixMeasureStateProvider.notifier);
+    GuitarState guitarState = (await ref.read(
+      guitarStateProvider.future,
+    )).copy(); // copy because otherwise the reference will be the same
 
     int currentEffectingStringIndex =
         detuningMatrixMeasureState.currentEffectingStringIndex;
     int currentSampleIndex = detuningMatrixMeasureState.currentSampleIndex;
 
-    GuitarState guitarState = (await ref.read(
-      guitarStateProvider.future,
-    )).copy(); // copy because otherwise the reference will be the same
     if (!guitarState.isValid) {
       var i = guitarState.validation.indexOf(false);
       ref.read(guitarStateMeasureStateProvider.notifier).currentStringIndex = i;
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Please Measure Every String")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Please Measure Every String"),
+            showCloseIcon: true,
+          ),
+        );
       }
       return;
     }
@@ -107,7 +111,7 @@ class _DetuningMatrixMeasureStatePageState
             Text(
               detuningMatrixMeasureState.currentSampleIndex == 0
                   ? "Original: "
-                  : "Change The String: ",
+                  : "Change The String ",
             ),
             Chip(
               label: Text(
@@ -115,6 +119,8 @@ class _DetuningMatrixMeasureStatePageState
                     .currentEffectingStringIndex],
               ),
             ),
+            if (detuningMatrixMeasureState.currentSampleIndex != 0)
+              Text(" and Measure Again"),
           ],
         ),
         GuitarStateMeasurePage(),

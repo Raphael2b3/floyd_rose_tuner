@@ -21,7 +21,6 @@ class GuitarStateMeasurePage extends ConsumerWidget {
       guitarStateMeasureStateProvider,
     );
 
-        TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,

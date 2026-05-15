@@ -16,7 +16,9 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TuningConfig? selectedTuningConfig = ref.watch(selectedTuningConfigProvider).value;
+    TuningConfig? selectedTuningConfig = ref
+        .watch(selectedTuningConfigProvider)
+        .value;
     DetuningMatrix? selectedDetuningMatrix = ref
         .watch(selectedDetuningMatrixProvider)
         .value;
@@ -27,11 +29,14 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
         guitarState == null) {
       return Text("Loading...");
     }
-    var selectedString = ref.watch(guitarStateMeasureStateProvider).currentStringIndex;
+    var selectedString = ref
+        .watch(guitarStateMeasureStateProvider)
+        .currentStringIndex;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Text("Press to Start Recording String"),
-        GuitarStateView(guitarState,selectedIndex: selectedString,),
+      children: [
+        Text("Press to Start Recording String"),
+        GuitarStateView(guitarState, selectedIndex: selectedString),
       ],
     );
     return TabBar(
@@ -53,7 +58,9 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
               .manualDetection,
         );
         print("Test");
-        ref.read(focusNodeProvider("editingFrequency")).requestFocus(); // TODO Cursor doesnt appear yet
+        ref
+            .read(focusNodeProvider("editingFrequency"))
+            .requestFocus(); // TODO Cursor doesnt appear yet
       },
     );
   }

@@ -40,9 +40,6 @@ class DetuningMatrixSelector extends ConsumerWidget {
         DropdownMenu(
           width: double.infinity,
           label: const Text("Select Your Guitar"),
-          controller: TextEditingController(
-            text: selectedDetuningMatrix?.guitarName ?? "Select Your Guitar",
-          ),
           initialSelection: selectedDetuningMatrix,
           // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
           dropdownMenuEntries: detuningMatrices

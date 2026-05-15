@@ -1,72 +1,51 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/display_error.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
 import 'package:floyd_rose_tuner/types/tuning_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
-class GuitarTuningPage extends ConsumerWidget {
-  const GuitarTuningPage({super.key});
+class GuitarTuningSetupPage extends ConsumerWidget {
+  const GuitarTuningSetupPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TuningConfig? selectedTuningConfig = ref
         .watch(selectedTuningConfigProvider)
         .value;
-    final GuitarState? guitarTuningAssistant = ref
-        .watch(guitarTuningAssistantProvider)
-        .value;
 
     DetuningMatrix? selectedDetuningMatrix = ref
         .watch(selectedDetuningMatrixProvider)
         .value;
 
-    if (selectedTuningConfig == null ||
-        guitarTuningAssistant == null ||
-        selectedDetuningMatrix == null) {
+    if (selectedTuningConfig == null || selectedDetuningMatrix == null) {
       return DisplayError(
-        "selectedTuningConfig ($selectedTuningConfig) or guitarTuningAssistant ($guitarTuningAssistant) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
+        "selectedTuningConfig ($selectedTuningConfig) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
       );
     }
 
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
-      guitarStateMeasureStateProvider,
-    );
-    int currentStringIndex = guitarStateMeasureState.currentStringIndex;
+    // after the null-check above it's safe to assign to non-nullable locals
     final String guitarName = selectedDetuningMatrix.guitarName;
-    late String hintText;
-    switch (guitarTuningAssistant[currentStringIndex]) {
-      case > 1:
-        hintText = "To LOW! Tune the String higher";
-      case < -1:
-        hintText = "To HIGH! Tune the String lower";
-      default:
-        hintText = "Looks Good";
-    }
+
     GuitarState? guitarState = ref.watch(guitarStateProvider).value;
     if (guitarState == null) {
       return DisplayError("guitarState is null");
     }
-    var detectedFrequency = guitarState[currentStringIndex];
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          "Tune Your String",
-          style: Theme.of(context).textTheme.titleLarge,
+          "First Detect Your Guitars Strings",
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         Row(
           children: [
@@ -82,17 +61,14 @@ class GuitarTuningPage extends ConsumerWidget {
         ),
 
         GuitarStateMeasurePage(),
-        Text(
-          hintText,
-          style: Theme.of(context).textTheme.bodyLarge,
-          textAlign: TextAlign.center,
-        ),
 
         FilledButton(
-          onPressed: () {
-            context.router.push(const StandardTunerRoute());
-          },
-          child: Text("Done"),
+          onPressed: guitarState.isValid
+              ? () {
+                  context.router.push(const GuitarTuningRoute());
+                }
+              : null,
+          child: Text("Tune The Guitar"),
         ),
       ],
     );

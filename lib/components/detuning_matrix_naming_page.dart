@@ -55,7 +55,6 @@ class _DetuningMatrixMeasureStatePageState
       children: [
         TextFormField(
           autofocus: true,
-          selectAllOnFocus: true,
           decoration: InputDecoration(
             hintText: "Grandpas Les Paul",
             helperText: "Name Your Guitar",
