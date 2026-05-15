@@ -1,10 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +16,7 @@ class DetuningMatrixSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // safe handling of AsyncValue
-    final DetuningMatrix? selectedDetuningMatrix = ref
+    DetuningMatrix? selectedDetuningMatrix = ref
         .watch(selectedDetuningMatrixProvider)
         .value;
     final List<DetuningMatrix>? detuningMatrices = ref
@@ -31,6 +29,9 @@ class DetuningMatrixSelector extends ConsumerWidget {
           CircularProgressIndicator(),
         ],
       );
+    }
+    if (!detuningMatrices.contains(selectedDetuningMatrix)) {
+      selectedDetuningMatrix = null;
     }
 
     return Column(
@@ -127,17 +128,6 @@ class DetuningMatrixSelector extends ConsumerWidget {
           },
           child: Text("Add A New Guitar"),
         ),
-        if (selectedDetuningMatrix != null)
-          Expanded(
-            child: ListView(
-              children: [
-                Text("Measurements", style: TextStyle(fontSize: 20)),
-                Text(
-                  "${selectedDetuningMatrix.samples.entries.map((MapEntry<int, List<GuitarState>> e) => "Effecting String ${ref.read(selectedTuningConfigProvider).value?.goalNotes[e.key]}:\n${e.value.map((GuitarState e2) => e2.map((e3) => e3.toStringAsFixed(0)).join(' , ')).join(' |\n')}").join(' |  \n\n')} |",
-                ),
-              ],
-            ),
-          ),
       ],
     );
   }

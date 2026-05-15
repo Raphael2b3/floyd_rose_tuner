@@ -16,10 +16,11 @@ class GuitarStateMeasureStateNotifier
   set guitarStateMeasureState(GuitarStateMeasureState guitarStateMeasureState) {
     state = guitarStateMeasureState;
   }
+  set currentStringIndex (int i)=> state = state.copy(currentStringIndex: i);
+
 
   int selectNextString(int numberOfStrings) {
     int nextIndex = (state.currentStringIndex + 1) % numberOfStrings;
-    state = state.copy(currentStringIndex: nextIndex);
     return nextIndex;
   }
 

@@ -17,40 +17,19 @@ class GuitarStateMeasurePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    final selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
-        .value;
-    if (selectedTuningConfig == null || selectedDetuningMatrix == null) {
-      return Center(
-        child: Column(
-          children: [
-            Text(
-              "selectedTuningConfig ($selectedTuningConfig) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
-            ),
-            CircularProgressIndicator(),
-          ],
-        ),
-      );
-    }
-    final int maxNumberOfStrings = selectedTuningConfig.goalNotes.length;
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
+        GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
-    int currentStringIndex = guitarStateMeasureState.currentStringIndex;
-    return DefaultTabController(
-      length: maxNumberOfStrings,
-      initialIndex: currentStringIndex,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("Measure String Frequencies", style: TextStyle(fontSize: 20)),
-          GuitarStateMeasureNavigation(),
-          if (guitarStateMeasureState.manualDetection) FrequencyView(),
-          FrequencyDetectorView(),
-        ],
-      ),
+
+        TextTheme textTheme = Theme.of(context).textTheme;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        GuitarStateMeasureNavigation(),
+        if (guitarStateMeasureState.manualDetection) FrequencyView(),
+        FrequencyDetectorView(),
+      ],
     );
   }
 }

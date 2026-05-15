@@ -1,3 +1,4 @@
+import 'package:floyd_rose_tuner/components/guitar_state_view.dart';
 import 'package:floyd_rose_tuner/provider/focus_node_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
@@ -26,7 +27,13 @@ class GuitarStateMeasureNavigation extends ConsumerWidget {
         guitarState == null) {
       return Text("Loading...");
     }
-
+    var selectedString = ref.watch(guitarStateMeasureStateProvider).currentStringIndex;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Text("Press to Start Recording String"),
+        GuitarStateView(guitarState,selectedIndex: selectedString,),
+      ],
+    );
     return TabBar(
       tabAlignment: TabAlignment.center,
       isScrollable: true,

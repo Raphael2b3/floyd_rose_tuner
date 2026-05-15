@@ -1,8 +1,8 @@
 import 'dart:collection';
 
+import 'package:statistics/statistics.dart';
 
 const NUMBER_OF_STRINGS = 6;
-
 
 class GuitarState extends ListBase<num> {
   final List<num> _data = List<num>.filled(
@@ -26,6 +26,11 @@ class GuitarState extends ListBase<num> {
 
   @override
   int get length => 6;
+
+  List<bool> get validation =>
+      map((element) => element > 30 && element < 360).asList;
+
+  bool get isValid => validation.allEquals(true);
 
   @override
   set length(int newLength) {

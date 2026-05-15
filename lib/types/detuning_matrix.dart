@@ -10,6 +10,7 @@ class DetuningMatrix {
   String guitarName;
   Matrix matrix;
   late Matrix inverse;
+
   Map<int, List<GuitarState>> samples = {};
 
   DetuningMatrix({
@@ -18,7 +19,18 @@ class DetuningMatrix {
     Map<int, List<GuitarState>>? samples,
   }) : samples = samples ?? {} {
     inverse = matrix.inverse();
-    this.samples = samples ?? {};
+    assert(samples == null || samples.length == 6);
+    this.samples =
+        samples ??
+        {
+          0: [GuitarState(), GuitarState()],
+          1: [GuitarState(), GuitarState()],
+          2: [GuitarState(), GuitarState()],
+          3: [GuitarState(), GuitarState()],
+          4: [GuitarState(), GuitarState()],
+          5: [GuitarState(), GuitarState()],
+        };
+
     assert(inverse.sum() != 0);
   }
 
@@ -43,6 +55,7 @@ class DetuningMatrix {
     Matrix? matrix,
     Map<int, List<GuitarState>>? samples,
   }) {
+    assert(samples == null || samples.length == 6);
     return DetuningMatrix._(
       guitarName: guitarName ?? this.guitarName,
       matrix: matrix ?? this.matrix,
@@ -68,18 +81,25 @@ class DetuningMatrix {
     return samplesForEffectingString.copy();
   }
 
-  bool get hasValidSamples {
-    if (samples.length != 6) {
-      print("there are no samples for every String");
-      return false;
-    }
-    return samples.entries.all((samples4EffectingString) {
-      if (samples4EffectingString.value.length < 2) return false;
-
-      return samples4EffectingString.value.all((sample) {
-        if (sample.length != 6) return false;
-        return sample.all((sampleValue) => sampleValue != 0);
-      });
-    });
+  List<bool> getValidationForEffectingString(int effectingStringIndex) {
+    return getSamplesForEffectingString(
+      effectingStringIndex,
+    ).map((e) => e.isValid).asList;
   }
+
+  bool samplesForEffectingStringAreValid(int currentEffectingStringIndex) {
+    return getValidationForEffectingString(
+      currentEffectingStringIndex,
+    ).allEquals(true);
+  }
+
+  List<bool> get effectingStringValidation => samples.entries
+      .map((e) => getValidationForEffectingString(e.key).allEquals(true))
+      .asList;
+
+  List<bool> get validation => samples.entries
+      .map((e) => samplesForEffectingStringAreValid(e.key))
+      .asList;
+
+  bool get isValid => validation.allEquals(true);
 }

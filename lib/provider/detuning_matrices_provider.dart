@@ -117,7 +117,7 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     await _saveToLocalStorage();
   }
 
-  void changeGuitarName(String oldName, String newName) {
+  void tryChangeGuitarName(String oldName, String newName) {
     int index = detuningMatrices.indexWhere((c) => c.guitarName == oldName);
     if (index != -1) {
       DetuningMatrix updatedMatrix = detuningMatrices[index].copy(
