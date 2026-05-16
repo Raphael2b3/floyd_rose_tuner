@@ -89,7 +89,7 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
                     var frequency = (await ref.read(
                       guitarStateProvider.future,
                     ))[guitarStateMeasureState.currentStringIndex].toDouble();
-                    TonePlayer().playFrequency(frequency);
+                    await TonePlayer().playFrequency(frequency);
                   },
                   label: Text("Play Sound"),
                   icon: Icon(Icons.volume_up),

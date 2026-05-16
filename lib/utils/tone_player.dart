@@ -7,10 +7,10 @@ class TonePlayer {
   static const int sampleRate = 44100;
 
   Future<void> playFrequency(
-      double frequency, {
-        double durationSeconds = 2.0,
-        double volume = 0.5,
-      }) async {
+    double frequency, {
+    double durationSeconds = 2.0,
+    double volume = 0.5,
+  }) async {
     final player = FlutterSoundPlayer();
     await player.openPlayer();
 
@@ -20,7 +20,8 @@ class TonePlayer {
 
     for (int i = 0; i < totalSamples; i++) {
       final double t = i / sampleRate;
-      final double sample = sin(2 * pi * frequency * t);
+      final double sample =
+          sin(2 * pi * frequency * t) + 1 / 2 * sin(4 * pi * frequency * t);
       final int value = (sample * 32767 * volume).toInt();
       byteData.setInt16(i * 2, value, Endian.little);
     }
@@ -33,7 +34,7 @@ class TonePlayer {
       bufferSize: 8192, // ✅ neu required in 9.x
     );
 
-    await player.feedFromStream(bytes); // ✅ ersetzt foodSink?.add()
+    await player.feedUint8FromStream(bytes); // ✅ ersetzt foodSink?.add()
 
     await Future.delayed(
       Duration(milliseconds: (durationSeconds * 1000).toInt()),
