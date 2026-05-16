@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/display_error.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -62,13 +64,31 @@ class GuitarTuningSetupPage extends ConsumerWidget {
 
         GuitarStateMeasurePage(),
 
-        FilledButton(
-          onPressed: guitarState.isValid
-              ? () {
-                  context.router.push(const GuitarTuningRoute());
-                }
-              : null,
-          child: Text("Tune The Guitar"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              child: Text("Back"),
+              onPressed: () {
+                context.router.pop();
+              },
+            ),
+            FilledButton(
+              onPressed: guitarState.isValid
+                  ? () {
+                      ref
+                              .read(guitarStateMeasureStateProvider.notifier)
+                              .currentStringIndex =
+                          0;
+                      ref
+                          .read(guitarTuningAssistantProvider.notifier)
+                          .calculateOrderedGoalNotes();
+                      context.router.push(const GuitarTuningRoute());
+                    }
+                  : null,
+              child: Text("Tune The Guitar"),
+            ),
+          ],
         ),
       ],
     );

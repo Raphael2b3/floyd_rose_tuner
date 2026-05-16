@@ -134,14 +134,7 @@ class _DetuningMatrixMeasurePageState
           children: [
             TextButton(
               onPressed: () {
-                if (context.router.stack.length > 1) {
-                  var pageBefore =
-                      context.router.stack[context.router.stack.length - 2];
-                  if (pageBefore.name == DetuningMatrixNamingRoute.name) {
-                    return context.router.back();
-                  }
-                }
-                context.router.push(const DetuningMatrixNamingRoute());
+                context.router.navigate(const DetuningMatrixNamingRoute());
               },
               child: Text("Change Name"),
             ),

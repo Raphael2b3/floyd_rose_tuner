@@ -1,12 +1,10 @@
-
 import 'dart:math';
+
 import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:floyd_rose_tuner/utils/note_to_frequenzy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 void main() {
-
   group('getNearestNoteAndCentDistance', () {
     test('returns A4 for 440 Hz', () {
       expect(getNearestNoteAndCentDistance(440.0).$1, equals('A4'));
@@ -41,13 +39,25 @@ void main() {
     });
 
     test('works with custom normTone 432 Hz', () {
-      expect(getNearestNoteAndCentDistance(432.0, normTone: 432.0).$1, equals('A4'));
+      expect(
+        getNearestNoteAndCentDistance(432.0, normTone: 432.0).$1,
+        equals('A4'),
+      );
     });
   });
 
   group('Property-based tests', () {
     test('doubling frequency increases octave but keeps same note name', () {
-      final baseFreqs = [110.0, 220.0, 246.94, 261.63, 293.66, 329.63, 392.0, 440.0];
+      final baseFreqs = [
+        110.0,
+        220.0,
+        246.94,
+        261.63,
+        293.66,
+        329.63,
+        392.0,
+        440.0,
+      ];
       for (final freq in baseFreqs) {
         final note1 = getNearestNoteAndCentDistance(freq).$1;
         final note2 = getNearestNoteAndCentDistance(freq * 2).$1;
@@ -55,8 +65,11 @@ void main() {
         final name1 = note1.replaceAll(RegExp(r'\d'), '');
         final name2 = note2.replaceAll(RegExp(r'\d'), '');
 
-        expect(name1, equals(name2),
-            reason: 'Note name should remain same when doubling frequency');
+        expect(
+          name1,
+          equals(name2),
+          reason: 'Note name should remain same when doubling frequency',
+        );
       }
     });
 
@@ -69,8 +82,11 @@ void main() {
         final name1 = note1.replaceAll(RegExp(r'\d'), '');
         final name2 = note2.replaceAll(RegExp(r'\d'), '');
 
-        expect(name1, equals(name2),
-            reason: 'Note name should remain same when halving frequency');
+        expect(
+          name1,
+          equals(name2),
+          reason: 'Note name should remain same when halving frequency',
+        );
       }
     });
 
@@ -84,53 +100,77 @@ void main() {
       final name2 = note2.replaceAll(RegExp(r'\d'), '');
 
       final expectedNext =
-      noteNames[(noteNames.indexOf(name1) + 1) % numberOfNotes];
+          noteNames[(noteNames.indexOf(name1) + 1) % numberOfNotes];
 
       expect(name2, equals(expectedNext));
     });
   });
 
-  group('getCentDistance', () {
+  group('getCentDistanceFromNote(frequency, noteNumber)', () {
     test('returns 0 for exact frequency match (A4 = 440Hz)', () {
-      expect(getCentDistance(440.0, getNoteNumberFromNoteId("A4")), closeTo(0.0, 1e-10));
+      expect(
+        getCentDistanceFromNote(440.0, getNoteNumberFromNoteId("A4")),
+        closeTo(0.0, 1e-10),
+      );
     });
 
     test('returns positive cents for sharp frequency', () {
       // A4 expected = 440Hz; 450Hz should be sharp
-      final cents = getCentDistance(450.0, getNoteNumberFromNoteId("A4"));
+      final cents = getCentDistanceFromNote(
+        450.0,
+        getNoteNumberFromNoteId("A4"),
+      );
       expect(cents, greaterThan(0));
     });
 
     test('returns negative cents for flat frequency', () {
       // A4 expected = 440Hz; 430Hz should be flat
-      final cents = getCentDistance(430.0, getNoteNumberFromNoteId("A4"));
+      final cents = getCentDistanceFromNote(
+        430.0,
+        getNoteNumberFromNoteId("A4"),
+      );
       expect(cents, lessThan(0));
     });
 
     test('returns 100 cents for one semitone sharp (Bb4 ~ 466.16Hz)', () {
-      final cents = getCentDistance(466.1638, getNoteNumberFromNoteId("A4"));
+      final cents = getCentDistanceFromNote(
+        466.1638,
+        getNoteNumberFromNoteId("A4"),
+      );
       expect(cents, closeTo(100.0, 0.01));
     });
 
     test('returns -100 cents for one semitone flat (Ab4 ~ 415.30Hz)', () {
-      final cents = getCentDistance(415.3047, getNoteNumberFromNoteId("A4"));
+      final cents = getCentDistanceFromNote(
+        415.3047,
+        getNoteNumberFromNoteId("A4"),
+      );
       expect(cents, closeTo(-100.0, 0.01));
     });
 
     test('works with non-standard reference tone (A4 = 442Hz)', () {
-      final cents = getCentDistance(442.0, getNoteNumberFromNoteId("A4"), normTone: 442.0);
+      final cents = getCentDistanceFromNote(
+        442.0,
+        getNoteNumberFromNoteId("A4"),
+        normTone: 442.0,
+      );
       expect(cents, closeTo(0.0, 1e-10));
     });
 
     test('handles very high frequencies (C8 = 4186Hz)', () {
-      final cents = getCentDistance(4186.01, getNoteNumberFromNoteId("C8"));
+      final cents = getCentDistanceFromNote(
+        4186.01,
+        getNoteNumberFromNoteId("C8"),
+      );
       expect(cents.abs(), lessThan(1.0)); // should be very close to exact
     });
 
     test('handles very low frequencies (C1 ~ 32.70Hz)', () {
-      final cents = getCentDistance(32.703, getNoteNumberFromNoteId("C1"));
+      final cents = getCentDistanceFromNote(
+        32.703,
+        getNoteNumberFromNoteId("C1"),
+      );
       expect(cents.abs(), lessThan(1.0)); // should be very close to exact
     });
   });
 }
-

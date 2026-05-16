@@ -1,16 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/display_error.dart';
-import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
-import 'package:floyd_rose_tuner/types/tuning_config.dart';
+import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
@@ -19,80 +16,126 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class GuitarTuningPage extends ConsumerWidget {
   const GuitarTuningPage({super.key});
 
+  String hinText(num value) {
+    switch (value) {
+      case > 1:
+        return "To LOW! Tune the String higher";
+      case < -1:
+        return "To HIGH! Tune the String lower";
+      default:
+        return "Looks Good";
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TuningConfig? selectedTuningConfig = ref
-        .watch(selectedTuningConfigProvider)
-        .value;
-    final GuitarState? guitarTuningAssistant = ref
-        .watch(guitarTuningAssistantProvider)
-        .value;
-
-    DetuningMatrix? selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
-        .value;
-
-    if (selectedTuningConfig == null ||
-        guitarTuningAssistant == null ||
-        selectedDetuningMatrix == null) {
-      return DisplayError(
-        "selectedTuningConfig ($selectedTuningConfig) or guitarTuningAssistant ($guitarTuningAssistant) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
-      );
-    }
-
+    final GuitarState guitarTuningAssistant = ref.watch(
+      guitarTuningAssistantProvider,
+    );
+    GuitarState? guitarState = ref.watch(guitarStateProvider).value;
     GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
-    int currentStringIndex = guitarStateMeasureState.currentStringIndex;
-    final String guitarName = selectedDetuningMatrix.guitarName;
-    late String hintText;
-    switch (guitarTuningAssistant[currentStringIndex]) {
-      case > 1:
-        hintText = "To LOW! Tune the String higher";
-      case < -1:
-        hintText = "To HIGH! Tune the String lower";
-      default:
-        hintText = "Looks Good";
-    }
-    GuitarState? guitarState = ref.watch(guitarStateProvider).value;
-    if (guitarState == null) {
-      return DisplayError("guitarState is null");
-    }
-    var detectedFrequency = guitarState[currentStringIndex];
+    var tuningConfig = ref.watch(selectedTuningConfigProvider).value;
+    if (tuningConfig == null) return DisplayError("No Tuning");
+    if (guitarState == null) return DisplayError("guitarState is null");
 
+    num frequency = guitarState[guitarStateMeasureState.currentStringIndex];
+
+    late num centDistance = getCentDistance(
+      frequency,
+      guitarTuningAssistant[guitarStateMeasureState.currentStringIndex],
+    );
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          "Tune Your String",
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text("Tune Your String", style: Theme.of(context).textTheme.titleLarge),
         Row(
           children: [
-            Text("Guitar: "),
-            Chip(label: Text(guitarName)),
+            Text("We Are Tuning: "),
+            Chip(
+              label: Text(
+                tuningConfig.goalNotes[guitarStateMeasureState
+                    .currentStringIndex],
+              ),
+            ),
           ],
         ),
-        Row(
+        Stack(
+          alignment: Alignment.center,
           children: [
-            Text("Tuning: "),
-            Chip(label: Text(selectedTuningConfig.name)),
+            Slider(
+              year2023: false,
+              value: centDistance.clamp(-100.0, 100.0).toDouble(),
+              max: 100,
+              min: -100,
+              activeColor: Theme.of(context).colorScheme.secondaryContainer,
+              thumbColor: Theme.of(context).colorScheme.primary,
+              onChanged: (_) {},
+            ),
+            IgnorePointer(
+              child: Opacity(
+                opacity: 0.3,
+                child: Container(
+                  width: 24,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-
-        GuitarStateMeasurePage(),
         Text(
-          hintText,
+          hinText(
+            guitarTuningAssistant[guitarStateMeasureState.currentStringIndex],
+          ),
           style: Theme.of(context).textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
 
-        FilledButton(
-          onPressed: () {
-            context.router.push(const StandardTunerRoute());
-          },
-          child: Text("Done"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              onPressed: () {
+                if (guitarStateMeasureState.currentStringIndex > 0) {
+                  ref
+                      .read(guitarStateMeasureStateProvider.notifier)
+                      .selectPreviousString();
+                } else {
+                  context.router.pop(const StandardTunerRoute());
+                }
+              },
+              child: Text("Back"),
+            ),
+            FilledButton(
+              onPressed: centDistance < 2 && centDistance > -2
+                  ? () {
+                      if (guitarStateMeasureState.currentStringIndex < 5) {
+                        ref
+                            .read(guitarStateMeasureStateProvider.notifier)
+                            .selectNextString();
+                      } else {
+                        context.router.popUntilRouteWithName(
+                          FloydRoseTunerSetupRoute.name,
+                        );
+                        context.router.root.navigate(
+                          const StandardTunerRoute(),
+                        );
+                      }
+                    }
+                  : null,
+              child: Text(
+                guitarStateMeasureState.currentStringIndex < 5
+                    ? "Next"
+                    : "Done",
+              ),
+            ),
+          ],
         ),
       ],
     );

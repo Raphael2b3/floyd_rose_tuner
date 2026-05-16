@@ -43,7 +43,7 @@ dependencies:
   pitch_detector_dart: ^0.0.7
   url_launcher: ^6.3.2
   auto_route: ^11.1.0
-
+  flutter_sound: ^9.30.0
   json_annotation: any
   buffered_list_stream: ^1.3.0
   async: ^2.13.0

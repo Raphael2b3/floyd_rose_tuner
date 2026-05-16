@@ -18,31 +18,33 @@ const List<String> noteNames = [
 final indexOfA = noteNames.indexOf('A'); // Index of A in the noteNames list
 final numberOfNotes = noteNames.length;
 
-int getClosestNoteNumber(double frequency, {double normTone = 440.0}) {
+int getClosestNoteNumber(num frequency, {num normTone = 440.0}) {
   if (frequency <= 0) {
     //print('Frequency must be greater than 0');
     frequency = 1;
   }
-  double numberOfSemitones =
+  num numberOfSemitones =
       indexOfA + numberOfNotes * log(frequency / normTone) / log(2);
   int noteNumber = numberOfSemitones.round();
   return noteNumber;
 }
 
-double getCentDistance(
-  double frequency,
+num getCentDistanceFromNote(
+  num frequency,
   int noteNumber, {
-  double normTone = 440.0,
+  num normTone = 440.0,
 }) {
   if (frequency <= 0) {
     //print('Frequency must be greater than 0');
     frequency = 1;
   }
-  double exactFrequency =
+  num exactFrequency =
       normTone * pow(2, (noteNumber - indexOfA) / numberOfNotes);
-  double distance = 1200 * log(frequency / exactFrequency) / log(2);
-  return distance;
+  return getCentDistance(frequency, exactFrequency);
 }
+
+num getCentDistance(num frequency, num otherFrequency) =>
+    1200 * log(frequency / otherFrequency) / log(2);
 
 String getNoteName(int noteNumber) {
   int noteIndex = noteNumber % numberOfNotes; // Determine the octave and note
@@ -60,16 +62,12 @@ String getNoteName(int noteNumber) {
   return '$noteName$octave';
 }
 
-(String, double) getNearestNoteAndCentDistance(
-  double frequency, {
-  double normTone = 440.0,
+(String, num) getNearestNoteAndCentDistance(
+  num frequency, {
+  num normTone = 440.0,
 }) {
   int noteNumber = getClosestNoteNumber(frequency, normTone: normTone);
   String noteName = getNoteName(noteNumber);
-  double centDistance = getCentDistance(
-    frequency,
-    noteNumber,
-    normTone: normTone,
-  );
+  num centDistance = getCentDistanceFromNote(frequency, noteNumber, normTone: normTone);
   return (noteName, centDistance);
 }

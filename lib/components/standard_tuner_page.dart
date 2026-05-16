@@ -20,7 +20,7 @@ class StandardTunerPage extends ConsumerWidget {
         double? frequency = snapshot.data;
         if (frequency == null) return const Text("No Data");
         late String noteName;
-        late double centDistance;
+        late num centDistance;
         if (frequency <= 0) {
           noteName = "--";
           centDistance = 0.0;
@@ -44,7 +44,7 @@ class StandardTunerPage extends ConsumerWidget {
               children: [
                 Slider(
                   year2023: false,
-                  value: centDistance.clamp(-100.0, 100.0),
+                  value: centDistance.clamp(-100.0, 100.0).toDouble(),
                   max: 100,
                   min: -100,
                   activeColor: Theme.of(context).colorScheme.secondaryContainer,

@@ -13,18 +13,20 @@ class GuitarStateMeasureStateNotifier
       manualDetection: false,
     );
   }
+
   set guitarStateMeasureState(GuitarStateMeasureState guitarStateMeasureState) {
     state = guitarStateMeasureState;
   }
-  set currentStringIndex (int i)=> state = state.copy(currentStringIndex: i);
 
+  set currentStringIndex(int i) => state = state.copy(currentStringIndex: i);
 
-  int selectNextString(int numberOfStrings) {
+  int selectNextString({int numberOfStrings = 6}) {
     int nextIndex = (state.currentStringIndex + 1) % numberOfStrings;
+    currentStringIndex = nextIndex;
     return nextIndex;
   }
 
-  int selectPreviousString(int numberOfStrings) {
+  int selectPreviousString({int numberOfStrings = 6}) {
     int prevIndex = (state.currentStringIndex - 1) % numberOfStrings;
     state = state.copy(currentStringIndex: prevIndex);
     return prevIndex;
