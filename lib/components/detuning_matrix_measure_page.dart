@@ -26,6 +26,15 @@ class DetuningMatrixMeasurePage extends ConsumerStatefulWidget {
 
 class _DetuningMatrixMeasurePageState
     extends ConsumerState<DetuningMatrixMeasurePage> {
+  double calculateProgress(
+    int effectingStringIndex,
+    int sampleIndex,
+    int stringIndex,
+  ) {
+    num v = effectingStringIndex * 12 + sampleIndex * 6 + stringIndex;
+    return v / (5 * 12 + 1 * 12 + 6);
+  }
+
   Future<void> applyMeasurement() async {
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
       detuningMatrixMeasureStateProvider,
@@ -89,6 +98,9 @@ class _DetuningMatrixMeasurePageState
     DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
       detuningMatrixMeasureStateProvider,
     );
+    int currentStringIndex = ref
+        .watch(guitarStateMeasureStateProvider)
+        .currentStringIndex;
     DetuningMatrix? selectedDetuningMatrix = ref
         .watch(selectedDetuningMatrixProvider)
         .value;
@@ -122,6 +134,16 @@ class _DetuningMatrixMeasurePageState
             if (detuningMatrixMeasureState.currentSampleIndex != 0)
               Text(" and Measure Again"),
           ],
+        ),
+        LinearProgressIndicator(
+          year2023: false,
+          value: (selectedDetuningMatrix.isValid
+              ? 1
+              : calculateProgress(
+                  detuningMatrixMeasureState.currentEffectingStringIndex,
+                  detuningMatrixMeasureState.currentSampleIndex,
+                  currentStringIndex,
+                )),
         ),
         GuitarStateMeasurePage(),
         FilledButton.icon(
