@@ -113,7 +113,7 @@ class GuitarTuningPage extends ConsumerWidget {
               child: Text("Back"),
             ),
             FilledButton(
-              onPressed: centDistance < 2 && centDistance > -2
+              onPressed: centDistance < 4 && centDistance > -4
                   ? () {
                       if (guitarStateMeasureState.currentStringIndex < 5) {
                         ref
