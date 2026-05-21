@@ -138,7 +138,7 @@ class _CalibrationControlPageState
 
     String currentMeasuredStringName = tuningConfig
         .goalNotes[calibrationState.currentEffectingStringIndex];
-    var GuitarValidation = selectedGuitar.validation;
+    var guitarValidation = selectedGuitar.validation;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -149,7 +149,7 @@ class _CalibrationControlPageState
           tabs: List.generate(selectedGuitar.matrix.length, (i) {
             return Tab(
               child: Badge(
-                isLabelVisible: !(GuitarValidation[i]),
+                isLabelVisible: !(guitarValidation[i]),
                 child: Text(tuningConfig.goalNotes[i]),
               ),
             );

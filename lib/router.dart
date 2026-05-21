@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/calibration_control_page.dart';
 import 'package:floyd_rose_tuner/components/calibration_page.dart';
 import 'package:floyd_rose_tuner/components/guitar_page.dart';
-import 'package:floyd_rose_tuner/components/layout2_page.dart';
+import 'package:floyd_rose_tuner/components/layoutt_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_setup_page.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuning_page.dart';
@@ -27,7 +27,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: HelpRoute.page),
         AutoRoute(
           initial: true,
-          page: Layout2Route.page,
+          page: LayouttRoute.page,
           children: [
             AutoRoute(page: FloydRoseTunerSetupRoute.page, initial: true),
             AutoRoute(page: GuitarStateMeasureRoute.page),
