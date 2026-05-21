@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/detuning_matrix_selector.dart';
-import 'package:floyd_rose_tuner/components/tuning_config_selector.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/components/guitar_selector.dart';
+import 'package:floyd_rose_tuner/components/tuning_selector.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,8 +17,8 @@ class FloydRoseTunerSetupPage extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(flex: 1, child: TuningConfigSelector()),
-        Expanded(flex: 2, child: DetuningMatrixSelector()),
+        Expanded(flex: 1, child: TuningSelector()),
+        Expanded(flex: 2, child: GuitarSelector()),
         Expanded(
           flex: 0,
           child: Row(
@@ -26,13 +26,13 @@ class FloydRoseTunerSetupPage extends ConsumerWidget {
             children: [
               FilledButton(
                 onPressed: () async {
-                  if (ref.read(selectedDetuningMatrixProvider).value == null) {
+                  if (ref.read(selectedGuitarProvider).value == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("No Guitar Selected!")),
                     );
                     return;
                   }
-                  if (ref.read(selectedTuningConfigProvider).value == null) {
+                  if (ref.read(selectedTuningProvider).value == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("No Tuning Selected!")),
                     );

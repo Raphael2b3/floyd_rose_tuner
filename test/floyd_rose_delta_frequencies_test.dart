@@ -51,7 +51,7 @@ final goal = Vector.fromList([82.41, 110.00, 146.83, 196.00, 246.94, 329.63]);
 
 final guitarState = Vector.fromList([80.0, 113.0, 142.2, 200.0, 242.4, 319.33]);
 
-final detuningMatrix = Matrix.fromList([
+final guitar = Matrix.fromList([
   [1.0, -0.13151204, -0.07967868, -0.08285579, -0.03920727, -0.00887611],
   [-0.17081316, 1.0, -0.09513059, -0.09088310, -0.04186852, -0.00678739],
   [-0.21073616, -0.17126097, 1.0, -0.11291342, -0.05205339, -0.00973759],
@@ -66,8 +66,8 @@ final detuningMatrix = Matrix.fromList([
 void main() {
   group('Input sanity checks', () {
     test('matrix dimensions are 6x6', () {
-      expect(detuningMatrix.rowCount, 6);
-      expect(detuningMatrix.columnCount, 6);
+      expect(guitar.rowCount, 6);
+      expect(guitar.columnCount, 6);
     });
 
     test('vectors have length 6', () {
@@ -75,7 +75,7 @@ void main() {
       expect(guitarState.length, 6);
     });
     test('inverse works', () {
-      final identity = detuningMatrix * detuningMatrix.inverse();
+      final identity = guitar * guitar.inverse();
 
       for (int i = 0; i < identity.rowCount; i++) {
         for (int j = 0; j < identity.columnCount; j++) {
@@ -110,7 +110,7 @@ void main() {
 
   group('Step 2: matrix inversion', () {
     test('inverse matrix matches paper values', () {
-      final inverse = detuningMatrix.inverse();
+      final inverse = guitar.inverse();
 
       final expectedInverse = Matrix.fromList([
         [
@@ -170,7 +170,7 @@ void main() {
   group('Step 3: solve linear system', () {
     test('delta vector is correct', () {
       final rhs = goal - guitarState;
-      final delta = detuningMatrix.inverse() * rhs;
+      final delta = guitar.inverse() * rhs;
 
       final expectedDelta = Vector.fromList([
         2.81032384,
@@ -187,9 +187,9 @@ void main() {
   group('Step 4: reconstruction check', () {
     test('A * delta + guitarState equals goal', () {
       final rhs = goal - guitarState;
-      final delta = detuningMatrix.inverse() * rhs;
+      final delta = guitar.inverse() * rhs;
       final reconstructed =
-          matrixToVector(detuningMatrix * delta) + guitarState;
+          matrixToVector(guitar * delta) + guitarState;
 
       expectVectorCloseTo(reconstructed, goal);
     });
@@ -198,9 +198,9 @@ void main() {
   group('Step 5: residual analysis', () {
     test('residual is near zero', () {
       final rhs = goal - guitarState;
-      final delta = detuningMatrix.inverse() * rhs;
+      final delta = guitar.inverse() * rhs;
 
-      final residual = matrixToVector(detuningMatrix * delta) - rhs;
+      final residual = matrixToVector(guitar * delta) - rhs;
 
       for (final v in residual) {
         expect(v.abs() < eps, true);
@@ -210,13 +210,13 @@ void main() {
   group('Test Floyd Rose Delta Frequency Function', () {
     test('basic usage', () {
       List<double> delta = floydRoseDeltaFrequencies(
-        detuningMatrix.inverse(),
+        guitar.inverse(),
         guitarState,
         goal,
       );
 
       expect(
-        matrixToVector(detuningMatrix * Vector.fromList(delta)) + guitarState,
+        matrixToVector(guitar * Vector.fromList(delta)) + guitarState,
         goal,
       );
     });

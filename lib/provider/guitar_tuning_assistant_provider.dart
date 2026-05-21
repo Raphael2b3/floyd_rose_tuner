@@ -1,9 +1,9 @@
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/tuning_config.dart';
+import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:floyd_rose_tuner/utils/floyd_rose_delta_frequencies.dart';
 import 'package:floyd_rose_tuner/utils/note_to_frequenzy.dart';
 import 'package:ml_linalg/vector.dart';
@@ -19,14 +19,14 @@ class GuitarTuningAssistantNotifier extends _$GuitarTuningAssistantNotifier {
   }
 
   Future<void> calculateOrderedGoalNotes() async {
-    DetuningMatrix? matrix = await ref.read(
-      selectedDetuningMatrixProvider.future,
+    Guitar? matrix = await ref.read(
+      selectedGuitarProvider.future,
     );
     if (matrix == null) throw Exception("No selected Guitar");
 
     GuitarState guitarState = await ref.read(guitarStateProvider.future);
 
-    TuningConfig tuning = await ref.watch(selectedTuningConfigProvider.future);
+    Tuning tuning = await ref.watch(selectedTuningProvider.future);
     Vector goalFrequencies = getFrequenciesFromGoalNotes(tuning.goalNotes);
 
     List<double> delta = floydRoseDeltaFrequencies(

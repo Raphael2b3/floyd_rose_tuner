@@ -1,9 +1,8 @@
 import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/focus_node_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
+import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
 import 'package:floyd_rose_tuner/utils/tone_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,9 +29,6 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
     GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
-    FocusNode editingFrequencyFocusNode = ref.watch(
-      focusNodeProvider("editingFrequency"),
-    );
 
     return Column(
       children: [
@@ -44,7 +40,6 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
               Text("Detected Frequency:"),
               IntrinsicWidth(
                 child: TextField(
-                  focusNode: editingFrequencyFocusNode,
                   controller: TextEditingController(
                     text: detectedFrequency.toStringAsFixed(2),
                   ),

@@ -1,15 +1,15 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/display_error.dart';
+import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/tuning_config.dart';
+import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
@@ -20,26 +20,26 @@ class GuitarTuningSetupPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TuningConfig? selectedTuningConfig = ref
-        .watch(selectedTuningConfigProvider)
+    final Tuning? selectedTuning = ref
+        .watch(selectedTuningProvider)
         .value;
 
-    DetuningMatrix? selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
+    Guitar? selectedGuitar = ref
+        .watch(selectedGuitarProvider)
         .value;
 
-    if (selectedTuningConfig == null || selectedDetuningMatrix == null) {
-      return DisplayError(
-        "selectedTuningConfig ($selectedTuningConfig) or selectedDetuningMatrix ($selectedDetuningMatrix) is null",
+    if (selectedTuning == null || selectedGuitar == null) {
+      return ErrorDisplay(
+        "selectedTuning ($selectedTuning) or selectedGuitar ($selectedGuitar) is null",
       );
     }
 
     // after the null-check above it's safe to assign to non-nullable locals
-    final String guitarName = selectedDetuningMatrix.guitarName;
+    final String guitarName = selectedGuitar.guitarName;
 
     GuitarState? guitarState = ref.watch(guitarStateProvider).value;
     if (guitarState == null) {
-      return DisplayError("guitarState is null");
+      return ErrorDisplay("guitarState is null");
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -58,7 +58,7 @@ class GuitarTuningSetupPage extends ConsumerWidget {
         Row(
           children: [
             Text("Tuning: "),
-            Chip(label: Text(selectedTuningConfig.name)),
+            Chip(label: Text(selectedTuning.name)),
           ],
         ),
 

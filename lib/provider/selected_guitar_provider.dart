@@ -1,40 +1,40 @@
-import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
-import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
+import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/utils/calculate_matrix_row.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ml_linalg/matrix.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'selected_detuning_matrix_provider.g.dart';
+part 'selected_guitar_provider.g.dart';
 
 @riverpod
-class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
+class SelectedGuitarNotifier extends _$SelectedGuitarNotifier {
   @override
-  Future<DetuningMatrix?> build() async {
-    List<DetuningMatrix> detuningMatrix = await ref.read(
-      detuningMatricesProvider.future,
+  Future<Guitar?> build() async {
+    List<Guitar> guitar = await ref.read(
+      guitarsProvider.future,
     );
-    if (detuningMatrix.isEmpty) {
+    if (guitar.isEmpty) {
       return null;
     }
-    return detuningMatrix[0];
+    return guitar[0];
   }
 
-  Future<void> selectDetuningMatrix(DetuningMatrix? selected) async {
+  Future<void> select(Guitar? selected) async {
     state = AsyncValue.data(selected);
   }
 
   void deleteSample(int effectingStringIndex, int sampleIndex) {
-    DetuningMatrix? detuningMatrix = state.value;
-    if (detuningMatrix == null) {
+    Guitar? guitar = state.value;
+    if (guitar == null) {
       if (kDebugMode) {
         print("No detuning matrix selected, can't delete sample");
       }
       return;
     }
-    List<GuitarState> currentSamples = detuningMatrix
+    List<GuitarState> currentSamples = guitar
         .getSamplesForEffectingString(effectingStringIndex);
 
     if (currentSamples.length < 3) {
@@ -44,8 +44,8 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       return;
     }
 
-    detuningMatrix.samples[effectingStringIndex]?.removeAt(sampleIndex);
-    ref.read(detuningMatrixMeasureStateProvider.notifier).currentSampleIndex =
+    guitar.samples[effectingStringIndex]?.removeAt(sampleIndex);
+    ref.read(calibrationStateProvider.notifier).currentSampleIndex =
         sampleIndex % (currentSamples.length - 1);
     ref.notifyListeners();
   }
@@ -54,8 +54,8 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     GuitarState guitarState,
     int effectingStringIndex,
   ) async {
-    DetuningMatrix? detuningMatrix = state.value;
-    if (detuningMatrix == null) {
+    Guitar? guitar = state.value;
+    if (guitar == null) {
       if (kDebugMode) {
         print("No detuning matrix selected, can't add sample");
       }
@@ -63,9 +63,9 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     }
     List<GuitarState>?
     innerSampleList = // TODO: Check if this is really by reference.
-        detuningMatrix.samples[effectingStringIndex];
+        guitar.samples[effectingStringIndex];
     if (innerSampleList == null) {
-      detuningMatrix.samples[effectingStringIndex] = [guitarState];
+      guitar.samples[effectingStringIndex] = [guitarState];
     } else {
       innerSampleList.add(guitarState);
     }
@@ -77,16 +77,16 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     int effectingStringIndex,
     int sampleIndex,
   ) async {
-    DetuningMatrix? detuningMatrix = state.value;
+    Guitar? guitar = state.value;
 
-    if (detuningMatrix == null) {
+    if (guitar == null) {
       if (kDebugMode) {
         print("No detuning matrix selected, can't save sample");
       }
       return;
     }
-    if (detuningMatrix.samples[effectingStringIndex] == null ||
-        sampleIndex >= detuningMatrix.samples[effectingStringIndex]!.length ||
+    if (guitar.samples[effectingStringIndex] == null ||
+        sampleIndex >= guitar.samples[effectingStringIndex]!.length ||
         sampleIndex < 0) {
       if (kDebugMode) {
         print(
@@ -95,19 +95,19 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
       }
       return;
     }
-    detuningMatrix.samples[effectingStringIndex]![sampleIndex] = guitarState;
+    guitar.samples[effectingStringIndex]![sampleIndex] = guitarState;
     ref.notifyListeners();
   }
 
   void calculateMatrix() {
-    DetuningMatrix? detuningMatrix = state.value;
-    if (detuningMatrix == null) {
+    Guitar? guitar = state.value;
+    if (guitar == null) {
       if (kDebugMode) {
         print("No detuning matrix selected, can't calculate matrix");
       }
       return;
     }
-    Map<int, List<GuitarState>> guitarStateSamples = detuningMatrix.samples;
+    Map<int, List<GuitarState>> guitarStateSamples = guitar.samples;
     guitarStateSamples.forEach((key, value) => print("$key : $value"));
     List<List<double>> matrix = [];
     for (int i in guitarStateSamples.keys) {
@@ -121,7 +121,7 @@ class SelectedDetuningMatrixNotifier extends _$SelectedDetuningMatrixNotifier {
     }
     Matrix matrixTransposed = Matrix.fromList(matrix).transpose();
 
-    state = AsyncValue.data(detuningMatrix.copy(matrix: matrixTransposed));
+    state = AsyncValue.data(guitar.copy(matrix: matrixTransposed));
     ref.notifyListeners();
   }
 }

@@ -2,8 +2,8 @@
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:flutter/material.dart';
 
-class FloydRoseTuner extends StatelessWidget {
-  FloydRoseTuner({super.key});
+class FloydRoseTunerApp extends StatelessWidget {
+  FloydRoseTunerApp({super.key});
 
   final _appRouter = AppRouter();
 

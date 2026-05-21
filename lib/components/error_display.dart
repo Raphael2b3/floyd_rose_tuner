@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class DisplayError extends StatelessWidget {
+class ErrorDisplay extends StatelessWidget {
   final String text;
 
-  const DisplayError(this.text, {super.key});
+  const ErrorDisplay(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {

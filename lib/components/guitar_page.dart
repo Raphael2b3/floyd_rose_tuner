@@ -1,25 +1,25 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/display_error.dart';
-import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/components/error_display.dart';
+import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //#region Statfulpage
 @RoutePage()
-class DetuningMatrixNamingPage extends ConsumerStatefulWidget {
-  const DetuningMatrixNamingPage({super.key});
+class GuitarPage extends ConsumerStatefulWidget {
+  const GuitarPage({super.key});
 
   @override
-  ConsumerState<DetuningMatrixNamingPage> createState() =>
-      _DetuningMatrixMeasureStatePageState();
+  ConsumerState<GuitarPage> createState() =>
+      _GuitarPageState();
 }
 //#endregion
 
-class _DetuningMatrixMeasureStatePageState
-    extends ConsumerState<DetuningMatrixNamingPage>
+class _GuitarPageState
+    extends ConsumerState<GuitarPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late TextEditingController textEditingController = TextEditingController();
 
@@ -30,9 +30,9 @@ class _DetuningMatrixMeasureStatePageState
   }
 
   void initListeners() {
-    var selectedDetuningMatrix = ref.read(selectedDetuningMatrixProvider).value;
-    textEditingController.text = selectedDetuningMatrix?.guitarName ?? "";
-    ref.listen(selectedDetuningMatrixProvider, (previous, next) {
+    var selectedGuitar = ref.read(selectedGuitarProvider).value;
+    textEditingController.text = selectedGuitar?.guitarName ?? "";
+    ref.listen(selectedGuitarProvider, (previous, next) {
       if (next.value?.guitarName != textEditingController.text) {
         textEditingController.text = next.value?.guitarName ?? "";
       }
@@ -43,12 +43,12 @@ class _DetuningMatrixMeasureStatePageState
   Widget build(BuildContext context) {
     initListeners();
 
-    DetuningMatrix? selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
+    Guitar? selectedGuitar = ref
+        .watch(selectedGuitarProvider)
         .value;
 
-    if (selectedDetuningMatrix == null) {
-      return DisplayError("selectedDetuningMatrix is null");
+    if (selectedGuitar == null) {
+      return ErrorDisplay("selectedGuitar is null");
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -62,13 +62,13 @@ class _DetuningMatrixMeasureStatePageState
           controller: textEditingController,
           onChanged: (value) {
             ref
-                .read(detuningMatricesProvider.notifier)
-                .tryChangeGuitarName(selectedDetuningMatrix.guitarName, value);
+                .read(guitarsProvider.notifier)
+                .tryChangeName(selectedGuitar.guitarName, value);
 
             ref
-                .read(selectedDetuningMatrixProvider.notifier)
-                .selectDetuningMatrix(
-                  selectedDetuningMatrix.copy(guitarName: value),
+                .read(selectedGuitarProvider.notifier)
+                .select(
+                  selectedGuitar.copy(guitarName: value),
                 );
             textEditingController.text = value;
           },
@@ -84,9 +84,9 @@ class _DetuningMatrixMeasureStatePageState
             ),
             FilledButton(
               onPressed: () {
-                context.router.push(const DetuningMatrixMeasureRoute());
+                context.router.push(const CalibrationRoute());
               },
-              child: Text("Teach the App Your Guitar"),
+              child: Text("Calibrate This Guitar"),
             ),
           ],
         ),

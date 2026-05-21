@@ -1,4 +1,4 @@
-import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
+import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'guitar_state_measure_state_provider.g.dart';

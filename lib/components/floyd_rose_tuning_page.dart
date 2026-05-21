@@ -1,20 +1,20 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/display_error.dart';
+import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/guitare_state_measure_state.dart';
+import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
 import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
-class GuitarTuningPage extends ConsumerWidget {
-  const GuitarTuningPage({super.key});
+class FloydRoseTuningPage extends ConsumerWidget {
+  const FloydRoseTuningPage({super.key});
 
   String hinText(num value) {
     switch (value) {
@@ -36,9 +36,9 @@ class GuitarTuningPage extends ConsumerWidget {
     GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
-    var tuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    if (tuningConfig == null) return DisplayError("No Tuning");
-    if (guitarState == null) return DisplayError("guitarState is null");
+    var tuning = ref.watch(selectedTuningProvider).value;
+    if (tuning == null) return ErrorDisplay("No Tuning");
+    if (guitarState == null) return ErrorDisplay("guitarState is null");
 
     num frequency = guitarState[guitarStateMeasureState.currentStringIndex];
 
@@ -56,7 +56,7 @@ class GuitarTuningPage extends ConsumerWidget {
             Text("We Are Tuning: "),
             Chip(
               label: Text(
-                tuningConfig.goalNotes[guitarStateMeasureState
+                tuning.goalNotes[guitarStateMeasureState
                     .currentStringIndex],
               ),
             ),

@@ -1,24 +1,24 @@
 import 'dart:convert';
 
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:ml_linalg/matrix.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../types/detuning_matrix.dart';
+import '../types/guitar.dart';
 
-part 'detuning_matrices_provider.g.dart';
+part 'guitars_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
-  List<DetuningMatrix> detuningMatrices = [];
+class GuitarsNotifier extends _$GuitarsNotifier {
+  List<Guitar> guitars = [];
 
   @override
-  Future<List<DetuningMatrix>> build() async {
-    detuningMatrices =
+  Future<List<Guitar>> build() async {
+    guitars =
         await _loadFromLocalStorage() ??
         [
-          DetuningMatrix(
+          Guitar(
             guitarName: "My New Guitar",
             //Matrix from paper
             matrix: Matrix.fromList(<List<double>>[
@@ -73,12 +73,12 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
             ]),
           ),
         ];
-    return detuningMatrices;
+    return guitars;
   }
 
   static const _storageKey = 'detuning_matrices';
 
-  Future<List<DetuningMatrix>?> _loadFromLocalStorage() async {
+  Future<List<Guitar>?> _loadFromLocalStorage() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(_storageKey);
 
@@ -87,44 +87,44 @@ class DetuningMatricesNotifier extends _$DetuningMatricesNotifier {
     final decoded = json.decode(jsonString) as List<dynamic>;
     print(decoded);
     return decoded
-        .map((e) => DetuningMatrix.fromJson(e as Map<String, dynamic>))
+        .map((e) => Guitar.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
   // Save DetuningMatrice to SharedPreferences
   Future<void> _saveToLocalStorage() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonString = json.encode(detuningMatrices);
+    final jsonString = json.encode(guitars);
     await prefs.setString(_storageKey, jsonString);
   }
 
-  Future<void> saveDetuningMatrixOverriding(
-    DetuningMatrix detuningMatrix,
+  Future<void> saveOverriding(
+    Guitar guitar,
   ) async {
     // keep custom list in-memory and set the current state
-    detuningMatrices.removeWhere(
-      (c) => c.guitarName == detuningMatrix.guitarName,
+    guitars.removeWhere(
+      (c) => c.guitarName == guitar.guitarName,
     );
-    detuningMatrices.add(detuningMatrix);
-    state = AsyncValue.data([...detuningMatrices]);
+    guitars.add(guitar);
+    state = AsyncValue.data([...guitars]);
     await _saveToLocalStorage();
   }
 
-  Future<void> removeDetuningMatrix(String guitarName) async {
-    detuningMatrices.removeWhere((c) => c.guitarName == guitarName);
-    state = AsyncValue.data([...detuningMatrices]);
+  Future<void> remove(String guitarName) async {
+    guitars.removeWhere((c) => c.guitarName == guitarName);
+    state = AsyncValue.data([...guitars]);
     // if the removed one is currently selected, fall back to default selectedIndex
     await _saveToLocalStorage();
   }
 
-  void tryChangeGuitarName(String oldName, String newName) {
-    int index = detuningMatrices.indexWhere((c) => c.guitarName == oldName);
+  void tryChangeName(String oldName, String newName) {
+    int index = guitars.indexWhere((c) => c.guitarName == oldName);
     if (index != -1) {
-      DetuningMatrix updatedMatrix = detuningMatrices[index].copy(
+      Guitar updatedMatrix = guitars[index].copy(
         guitarName: newName,
       );
-      detuningMatrices[index] = updatedMatrix;
-      state = AsyncValue.data([...detuningMatrices]);
+      guitars[index] = updatedMatrix;
+      state = AsyncValue.data([...guitars]);
       _saveToLocalStorage();
     }
   }

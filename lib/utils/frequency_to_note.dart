@@ -46,9 +46,7 @@ num getCentDistanceFromNote(
 num getCentDistance(num frequency, num otherFrequency) =>
     1200 * log(frequency / otherFrequency) / log(2);
 
-String getNoteName(int noteNumber) {
-  int noteIndex = noteNumber % numberOfNotes; // Determine the octave and note
-
+String getNoteNameWithOctave(int noteNumber) {
   int octave =
       4 +
       (noteNumber >=
@@ -57,9 +55,18 @@ String getNoteName(int noteNumber) {
           : ((noteNumber + 1) ~/ numberOfNotes) - 1);
 
   // Get the note name
-  String noteName = noteNames[noteIndex];
+  String noteName = getNoteName(noteNumber);
   // Return the full note with octave
   return '$noteName$octave';
+}
+
+String getNoteName(int noteNumber) {
+  int noteIndex = noteNumber % numberOfNotes; // Determine the octave and note
+
+  // Get the note name
+  String noteName = noteNames[noteIndex];
+  // Return the full note with octave
+  return noteName;
 }
 
 (String, num) getNearestNoteAndCentDistance(
@@ -68,6 +75,10 @@ String getNoteName(int noteNumber) {
 }) {
   int noteNumber = getClosestNoteNumber(frequency, normTone: normTone);
   String noteName = getNoteName(noteNumber);
-  num centDistance = getCentDistanceFromNote(frequency, noteNumber, normTone: normTone);
+  num centDistance = getCentDistanceFromNote(
+    frequency,
+    noteNumber,
+    normTone: normTone,
+  );
   return (noteName, centDistance);
 }

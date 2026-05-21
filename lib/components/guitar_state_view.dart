@@ -1,8 +1,8 @@
-import 'package:floyd_rose_tuner/components/display_error.dart';
+import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/tuning_config.dart';
+import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:statistics/statistics.dart';
@@ -15,15 +15,15 @@ class GuitarStateView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TuningConfig? tuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    if (tuningConfig == null) return DisplayError("No Tuning Selected");
+    Tuning? tuning = ref.watch(selectedTuningProvider).value;
+    if (tuning == null) return ErrorDisplay("No Tuning Selected");
     var guitarStateValidation = guitarState.validation;
     List<Widget> tiles = guitarState.indexed.map((e) {
       var (i, element) = e;
       var coreChild = Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${tuningConfig.goalNotes[i]}:"),
+          Text("${tuning.goalNotes[i]}:"),
           Badge(
             isLabelVisible: !guitarStateValidation[i],
             child: Padding(

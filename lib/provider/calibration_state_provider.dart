@@ -1,23 +1,23 @@
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix_measure_state.dart';
+import 'package:floyd_rose_tuner/types/calibration_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'detuning_matrix_measure_state_provider.g.dart';
+part 'calibration_state_provider.g.dart';
 
 @riverpod
-class DetuningMatrixMeasureStateNotifier
-    extends _$DetuningMatrixMeasureStateNotifier {
+class CalibrationStateNotifier
+    extends _$CalibrationStateNotifier {
   @override
-  DetuningMatrixMeasureState build() {
-    return DetuningMatrixMeasureState(
+  CalibrationState build() {
+    return CalibrationState(
       currentEffectingStringIndex: 0,
       currentSampleIndex: 0,
     );
   }
 
-  void set(DetuningMatrixMeasureState guitarMeasureState) {
-    state = guitarMeasureState;
+  void set(CalibrationState calibrationState) {
+    state = calibrationState;
     ref.notifyListeners();
   }
 

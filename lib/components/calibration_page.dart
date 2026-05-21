@@ -1,31 +1,31 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/display_error.dart';
+import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
-import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
-import 'package:floyd_rose_tuner/provider/detuning_matrix_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
+import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_tuning_config_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix_measure_state.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
+import 'package:floyd_rose_tuner/types/calibration_state.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/tuning_config.dart';
+import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
-class DetuningMatrixMeasurePage extends ConsumerStatefulWidget {
-  const DetuningMatrixMeasurePage({super.key});
+class CalibrationPage extends ConsumerStatefulWidget {
+  const CalibrationPage({super.key});
 
   @override
-  ConsumerState<DetuningMatrixMeasurePage> createState() =>
-      _DetuningMatrixMeasurePageState();
+  ConsumerState<CalibrationPage> createState() =>
+      _CalibrationPageState();
 }
 
-class _DetuningMatrixMeasurePageState
-    extends ConsumerState<DetuningMatrixMeasurePage> {
+class _CalibrationPageState
+    extends ConsumerState<CalibrationPage> {
   double calculateProgress(
     int effectingStringIndex,
     int sampleIndex,
@@ -36,22 +36,22 @@ class _DetuningMatrixMeasurePageState
   }
 
   Future<void> applyMeasurement() async {
-    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.read(
-      detuningMatrixMeasureStateProvider,
+    CalibrationState calibrationState = ref.read(
+      calibrationStateProvider,
     );
-    DetuningMatrixMeasureStateNotifier detuningMatrixMeasureStateNotifier = ref
-        .read(detuningMatrixMeasureStateProvider.notifier);
+    CalibrationStateNotifier calibrationStateNotifier = ref
+        .read(calibrationStateProvider.notifier);
 
-    SelectedDetuningMatrixNotifier selectedDetuningMatrixNotifier = ref.read(
-      selectedDetuningMatrixProvider.notifier,
+    SelectedGuitarNotifier selectedGuitarNotifier = ref.read(
+      selectedGuitarProvider.notifier,
     );
     GuitarState guitarState = (await ref.read(
       guitarStateProvider.future,
     )).copy(); // copy because otherwise the reference will be the same
 
     int currentEffectingStringIndex =
-        detuningMatrixMeasureState.currentEffectingStringIndex;
-    int currentSampleIndex = detuningMatrixMeasureState.currentSampleIndex;
+        calibrationState.currentEffectingStringIndex;
+    int currentSampleIndex = calibrationState.currentSampleIndex;
 
     if (!guitarState.isValid) {
       var i = guitarState.validation.indexOf(false);
@@ -66,7 +66,7 @@ class _DetuningMatrixMeasurePageState
       }
       return;
     }
-    await selectedDetuningMatrixNotifier.saveSamples(
+    await selectedGuitarNotifier.saveSamples(
       guitarState,
       currentEffectingStringIndex,
       currentSampleIndex,
@@ -76,11 +76,11 @@ class _DetuningMatrixMeasurePageState
 
     if (nextSampleIndex == 0) {
       var nextEffectingStringIndex = (currentEffectingStringIndex + 1) % 6;
-      detuningMatrixMeasureStateNotifier.currentEffectingStringIndex =
+      calibrationStateNotifier.currentEffectingStringIndex =
           nextEffectingStringIndex;
 
       if (nextEffectingStringIndex != 0) {
-        await selectedDetuningMatrixNotifier.saveSamples(
+        await selectedGuitarNotifier.saveSamples(
           guitarState,
           nextEffectingStringIndex,
           nextSampleIndex,
@@ -88,26 +88,26 @@ class _DetuningMatrixMeasurePageState
         nextSampleIndex++;
       }
     }
-    detuningMatrixMeasureStateNotifier.currentSampleIndex = nextSampleIndex;
+    calibrationStateNotifier.currentSampleIndex = nextSampleIndex;
     ref.read(guitarStateMeasureStateProvider.notifier).currentStringIndex = 0;
     ref.read(guitarStateProvider.notifier).guitarState = GuitarState();
   }
 
   @override
   Widget build(BuildContext context) {
-    DetuningMatrixMeasureState detuningMatrixMeasureState = ref.watch(
-      detuningMatrixMeasureStateProvider,
+    CalibrationState calibrationState = ref.watch(
+      calibrationStateProvider,
     );
     int currentStringIndex = ref
         .watch(guitarStateMeasureStateProvider)
         .currentStringIndex;
-    DetuningMatrix? selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
+    Guitar? selectedGuitar = ref
+        .watch(selectedGuitarProvider)
         .value;
 
-    TuningConfig? tuningConfig = ref.watch(selectedTuningConfigProvider).value;
-    if (selectedDetuningMatrix == null || tuningConfig == null) {
-      return DisplayError(
+    Tuning? tuning = ref.watch(selectedTuningProvider).value;
+    if (selectedGuitar == null || tuning == null) {
+      return ErrorDisplay(
         "Somehow No Guitar is Selected"
         "Somehow No Tuning is Selected",
       );
@@ -121,27 +121,27 @@ class _DetuningMatrixMeasurePageState
         Row(
           children: [
             Text(
-              detuningMatrixMeasureState.currentSampleIndex == 0
+              calibrationState.currentSampleIndex == 0
                   ? "Original: "
                   : "Change The String ",
             ),
             Chip(
               label: Text(
-                tuningConfig.goalNotes[detuningMatrixMeasureState
+                tuning.goalNotes[calibrationState
                     .currentEffectingStringIndex],
               ),
             ),
-            if (detuningMatrixMeasureState.currentSampleIndex != 0)
+            if (calibrationState.currentSampleIndex != 0)
               Text(" and Measure Again"),
           ],
         ),
         LinearProgressIndicator(
           year2023: false,
-          value: (selectedDetuningMatrix.isValid
+          value: (selectedGuitar.isValid
               ? 1
               : calculateProgress(
-                  detuningMatrixMeasureState.currentEffectingStringIndex,
-                  detuningMatrixMeasureState.currentSampleIndex,
+                  calibrationState.currentEffectingStringIndex,
+                  calibrationState.currentSampleIndex,
                   currentStringIndex,
                 )),
         ),
@@ -156,34 +156,34 @@ class _DetuningMatrixMeasurePageState
           children: [
             TextButton(
               onPressed: () {
-                context.router.navigate(const DetuningMatrixNamingRoute());
+                context.router.navigate(const GuitarRoute());
               },
               child: Text("Change Name"),
             ),
             OutlinedButton(
               onPressed: () {
-                context.router.push(const DetuningMatrixControlRoute());
+                context.router.push(const GuitarControlRoute());
               },
               child: Text("Check"),
             ),
             FilledButton(
-              onPressed: selectedDetuningMatrix.isValid
+              onPressed: selectedGuitar.isValid
                   ? () {
                       ref
-                          .read(selectedDetuningMatrixProvider.notifier)
+                          .read(selectedGuitarProvider.notifier)
                           .calculateMatrix();
-                      DetuningMatrix? detuningMatrix = ref
-                          .read(selectedDetuningMatrixProvider)
+                      Guitar? guitar = ref
+                          .read(selectedGuitarProvider)
                           .value;
-                      if (detuningMatrix == null) {
+                      if (guitar == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("No Guitar Selected!")),
                         );
                         return;
                       }
                       ref
-                          .read(detuningMatricesProvider.notifier)
-                          .saveDetuningMatrixOverriding(detuningMatrix);
+                          .read(guitarsProvider.notifier)
+                          .saveOverriding(guitar);
 
                       context.router.popUntilRouteWithName(
                         FloydRoseTunerSetupRoute.name,

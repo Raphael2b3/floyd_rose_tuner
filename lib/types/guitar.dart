@@ -3,17 +3,17 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:ml_linalg/matrix.dart';
 import 'package:statistics/statistics.dart';
 
-part 'detuning_matrix.g.dart';
+part 'guitar.g.dart';
 
 @JsonSerializable()
-class DetuningMatrix {
+class Guitar {
   String guitarName;
   Matrix matrix;
   late Matrix inverse;
 
   Map<int, List<GuitarState>> samples = {};
 
-  DetuningMatrix({
+  Guitar({
     required this.guitarName,
     required this.matrix,
     Map<int, List<GuitarState>>? samples,
@@ -34,7 +34,7 @@ class DetuningMatrix {
     assert(inverse.sum() != 0);
   }
 
-  DetuningMatrix._({
+  Guitar._({
     required this.guitarName,
     required this.matrix,
     required this.samples,
@@ -42,21 +42,20 @@ class DetuningMatrix {
     assert(inverse.sum() != 0);
   }
 
-  /// Connect the generated [DetuningMatrixFromJson] function to the `fromJson`
+  /// Connect the generated [GuitarFromJson] function to the `fromJson`
   /// factory.
-  factory DetuningMatrix.fromJson(Map<String, dynamic> json) =>
-      _$DetuningMatrixFromJson(json);
+  factory Guitar.fromJson(Map<String, dynamic> json) => _$GuitarFromJson(json);
 
-  /// Connect the generated [DetuningMatrixToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$DetuningMatrixToJson(this);
+  /// Connect the generated [GuitarToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$GuitarToJson(this);
 
-  DetuningMatrix copy({
+  Guitar copy({
     String? guitarName,
     Matrix? matrix,
     Map<int, List<GuitarState>>? samples,
   }) {
     assert(samples == null || samples.length == 6);
-    return DetuningMatrix._(
+    return Guitar._(
       guitarName: guitarName ?? this.guitarName,
       matrix: matrix ?? this.matrix,
       samples: samples ?? this.samples,

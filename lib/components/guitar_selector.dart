@@ -1,28 +1,28 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/provider/detuning_matrices_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_detuning_matrix_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/detuning_matrix.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ml_linalg/matrix.dart';
 
 // We subclass ConsumerWidget instead of StatelessWidget
-class DetuningMatrixSelector extends ConsumerWidget {
-  const DetuningMatrixSelector({super.key});
+class GuitarSelector extends ConsumerWidget {
+  const GuitarSelector({super.key});
 
   // "build" receives an extra parameter
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // safe handling of AsyncValue
-    DetuningMatrix? selectedDetuningMatrix = ref
-        .watch(selectedDetuningMatrixProvider)
+    Guitar? selectedGuitar = ref
+        .watch(selectedGuitarProvider)
         .value;
-    final List<DetuningMatrix>? detuningMatrices = ref
-        .watch(detuningMatricesProvider)
+    final List<Guitar>? guitars = ref
+        .watch(guitarsProvider)
         .value;
-    if (detuningMatrices == null) {
+    if (guitars == null) {
       return Column(
         children: [
           Text(" Detuning Matrices is null"),
@@ -30,8 +30,8 @@ class DetuningMatrixSelector extends ConsumerWidget {
         ],
       );
     }
-    if (!detuningMatrices.contains(selectedDetuningMatrix)) {
-      selectedDetuningMatrix = null;
+    if (!guitars.contains(selectedGuitar)) {
+      selectedGuitar = null;
     }
 
     return Column(
@@ -40,20 +40,20 @@ class DetuningMatrixSelector extends ConsumerWidget {
         DropdownMenu(
           width: double.infinity,
           label: const Text("Select Your Guitar"),
-          initialSelection: selectedDetuningMatrix,
+          initialSelection: selectedGuitar,
           // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
-          dropdownMenuEntries: detuningMatrices
+          dropdownMenuEntries: guitars
               .map(
-                (e) => DropdownMenuEntry<DetuningMatrix>(
+                (e) => DropdownMenuEntry<Guitar>(
                   value: e,
                   label: e.guitarName,
                   leadingIcon: IconButton(
                     onPressed: () async {
                       ref
-                          .read(selectedDetuningMatrixProvider.notifier)
-                          .selectDetuningMatrix(e);
+                          .read(selectedGuitarProvider.notifier)
+                          .select(e);
                       await context.router.push(
-                        const DetuningMatrixMeasureRoute(),
+                        const CalibrationRoute(),
                       );
                     },
                     icon: Icon(Icons.edit),
@@ -75,13 +75,13 @@ class DetuningMatrixSelector extends ConsumerWidget {
                             FilledButton(
                               onPressed: () {
                                 ref
-                                    .read(detuningMatricesProvider.notifier)
-                                    .removeDetuningMatrix(e.guitarName);
+                                    .read(guitarsProvider.notifier)
+                                    .remove(e.guitarName);
                                 ref
                                     .read(
-                                      selectedDetuningMatrixProvider.notifier,
+                                      selectedGuitarProvider.notifier,
                                     )
-                                    .selectDetuningMatrix(null);
+                                    .select(null);
                                 Navigator.pop(context, 'OK');
                               },
                               child: const Text('Delete'),
@@ -95,11 +95,11 @@ class DetuningMatrixSelector extends ConsumerWidget {
                 ),
               )
               .toList(),
-          onSelected: (DetuningMatrix? value) {
+          onSelected: (Guitar? value) {
             if (value == null) return;
             ref
-                .read(selectedDetuningMatrixProvider.notifier)
-                .selectDetuningMatrix(value);
+                .read(selectedGuitarProvider.notifier)
+                .select(value);
           },
         ),
         OutlinedButton(
@@ -114,14 +114,14 @@ class DetuningMatrixSelector extends ConsumerWidget {
             ]);
 
             ref
-                .read(selectedDetuningMatrixProvider.notifier)
-                .selectDetuningMatrix(
-                  DetuningMatrix(
+                .read(selectedGuitarProvider.notifier)
+                .select(
+                  Guitar(
                     guitarName: "New Guitar ${random.nextInt(5555)}",
                     matrix: freshMatrix,
                   ),
                 );
-            await context.router.push(const DetuningMatrixNamingRoute());
+            await context.router.push(const GuitarRoute());
           },
           child: Text("Add A New Guitar"),
         ),

@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/components/detuning_matrix_control_page.dart';
-import 'package:floyd_rose_tuner/components/detuning_matrix_measure_page.dart';
-import 'package:floyd_rose_tuner/components/detuning_matrix_naming_page.dart';
-import 'package:floyd_rose_tuner/components/floyd_rose_tuner_page.dart';
+import 'package:floyd_rose_tuner/components/calibration_control_page.dart';
+import 'package:floyd_rose_tuner/components/calibration_page.dart';
+import 'package:floyd_rose_tuner/components/guitar_page.dart';
+import 'package:floyd_rose_tuner/components/layout2_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_setup_page.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
-import 'package:floyd_rose_tuner/components/guitar_tuning_page.dart';
+import 'package:floyd_rose_tuner/components/floyd_rose_tuning_page.dart';
 import 'package:floyd_rose_tuner/components/guitar_tuning_setup_page.dart';
 import 'package:floyd_rose_tuner/components/help_page.dart';
 import 'package:floyd_rose_tuner/components/layout_page.dart';
@@ -27,14 +27,14 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: HelpRoute.page),
         AutoRoute(
           initial: true,
-          page: FloydRoseTunerRoute.page,
+          page: Layout2Route.page,
           children: [
             AutoRoute(page: FloydRoseTunerSetupRoute.page, initial: true),
             AutoRoute(page: GuitarStateMeasureRoute.page),
-            AutoRoute(page: GuitarTuningRoute.page),
-            AutoRoute(page: DetuningMatrixMeasureRoute.page),
-            AutoRoute(page: DetuningMatrixNamingRoute.page),
-            AutoRoute(page: DetuningMatrixControlRoute.page),
+            AutoRoute(page: FloydRoseTuningRoute.page),
+            AutoRoute(page: CalibrationRoute.page),
+            AutoRoute(page: GuitarRoute.page),
+            AutoRoute(page: CalibrationControlRoute.page),
             AutoRoute(page: GuitarTuningSetupRoute.page),
           ],
         ),
