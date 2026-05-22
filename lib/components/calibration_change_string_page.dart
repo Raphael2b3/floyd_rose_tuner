@@ -128,7 +128,24 @@ class _CalibrationPageChangeStringState
             ),
 
             FilledButton(
-              onPressed: () {
+              onPressed: () { // TODO make this work etc
+                var caliNotifier = ref.read(calibrationStateProvider.notifier);
+//* After navigating through everything
+// Failed assertion: line 6420 pos 14: '() {
+//         // check that it really is our descendant
+//         Element? ancestor = dependent._parent;
+//         while (ancestor != this && ancestor != null) {
+//           ancestor = ancestor._parent;
+//         }
+//         return ancestor == this;
+//       }()': is not true.
+// *//
+                caliNotifier.currentEffectingStringIndex =
+                    calibrationState.currentEffectingStringIndex + 1;
+                caliNotifier.stringIsChanging = false;
+                caliNotifier.currentSampleIndex = 1;
+                ref.read(guitarStateMeasureStateProvider.notifier).selectFirstString();
+
                 context.navigateTo(const CalibrationMeasureStringRoute());
               },
               child: Text("Done"),

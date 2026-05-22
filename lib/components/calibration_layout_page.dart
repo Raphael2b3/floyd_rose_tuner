@@ -25,8 +25,8 @@ class CalibrationLayoutPage extends ConsumerWidget {
     num v =
         effectingStringIndex * 24 +
         sampleIndex * 12 +
-        stringIndex * 2 +
-        (bla ? 1 : 0);
+        stringIndex  +
+        (bla ? 6 : 0);
     return v / maxProgress;
   }
 
@@ -63,7 +63,7 @@ class CalibrationLayoutPage extends ConsumerWidget {
                     ? 1
                     : progress),
               ),
-              Text("$progress/$maxProgress"),
+              Text("${(progress*maxProgress).toInt()}/${maxProgress.toInt()}"),
               Expanded(child: AutoRouter()),
             ],
           ),

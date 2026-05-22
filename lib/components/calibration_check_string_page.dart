@@ -7,7 +7,6 @@ import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/calibration_state.dart';
-import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:floyd_rose_tuner/utils/tone_player.dart';
@@ -89,7 +88,7 @@ class _CalibrationCheckStringPageState
     CalibrationState calibrationState = ref.watch(calibrationStateProvider);
 
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
-    if ( tuning == null ) {
+    if (tuning == null) {
       return ErrorDisplay(
         "Somehow No Guitar is Selected\n"
         "Somehow No Tuning is Selected\n"
@@ -143,9 +142,23 @@ class _CalibrationCheckStringPageState
               children: [
                 FilledButton(
                   onPressed: () {
-                    context.router.navigate(
-                      const CalibrationChangeStringRoute(),
+                    var currentStringIndex = ref
+                        .read(guitarStateMeasureStateProvider)
+                        .currentStringIndex;
+                    var notifier = ref.read(
+                      guitarStateMeasureStateProvider.notifier,
                     );
+                    if (currentStringIndex < 5) {
+                      notifier.selectNextString();
+                      context.router.navigate(CalibrationMeasureStringRoute());
+                    } else {
+                      notifier.currentStringIndex = ref
+                          .read(calibrationStateProvider)
+                          .currentEffectingStringIndex;
+                      context.router.navigate(
+                        const CalibrationChangeStringRoute(),
+                      );
+                    }
                   },
                   child: Text("Yes"),
                 ),
