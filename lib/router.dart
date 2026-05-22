@@ -33,7 +33,6 @@ class AppRouter extends RootStackRouter {
           page: FloydRoseTunerLayoutRoute.page,
           children: [
             AutoRoute(page: FloydRoseTunerSetupRoute.page, initial: true),
-            AutoRoute(page: GuitarStateMeasureRoute.page),
             AutoRoute(page: FloydRoseTuningRoute.page),
             AutoRoute(
               page: CalibrationLayoutRoute.page,

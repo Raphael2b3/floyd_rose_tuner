@@ -7,7 +7,7 @@ import 'frequency_stream_provider.dart';
 
 part 'smoothed_frequency_stream_provider.g.dart';
 
-const WINDOW_SIZE = 5;
+const WINDOW_SIZE = 3;
 
 @riverpod
 Future<Stream<double>> smoothedFrequencyStream(Ref ref) async {

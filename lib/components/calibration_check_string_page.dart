@@ -2,12 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/calibration_state.dart';
-import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:floyd_rose_tuner/utils/tone_player.dart';
 import 'package:flutter/material.dart';
@@ -26,67 +24,14 @@ class CalibrationCheckStringPage extends ConsumerStatefulWidget {
 
 class _CalibrationCheckStringPageState
     extends ConsumerState<CalibrationCheckStringPage> {
-  Future<void> applyMeasurement() async {
-    CalibrationState calibrationState = ref.read(calibrationStateProvider);
-    CalibrationStateNotifier calibrationStateNotifier = ref.read(
-      calibrationStateProvider.notifier,
-    );
-
-    SelectedGuitarNotifier selectedGuitarNotifier = ref.read(
-      selectedGuitarProvider.notifier,
-    );
-    GuitarState guitarState = (await ref.read(
-      guitarStateProvider.future,
-    )).copy(); // copy because otherwise the reference will be the same
-
-    int currentEffectingStringIndex =
-        calibrationState.currentEffectingStringIndex;
-    int currentSampleIndex = calibrationState.currentSampleIndex;
-
-    if (!guitarState.isValid) {
-      var i = guitarState.validation.indexOf(false);
-      ref.read(guitarStateMeasureStateProvider.notifier).currentStringIndex = i;
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Please Measure Every String"),
-            showCloseIcon: true,
-          ),
-        );
-      }
-      return;
-    }
-    await selectedGuitarNotifier.saveSamples(
-      guitarState,
-      currentEffectingStringIndex,
-      currentSampleIndex,
-    );
-
-    var nextSampleIndex = (currentSampleIndex + 1) % 2;
-
-    if (nextSampleIndex == 0) {
-      var nextEffectingStringIndex = (currentEffectingStringIndex + 1) % 6;
-      calibrationStateNotifier.currentEffectingStringIndex =
-          nextEffectingStringIndex;
-
-      if (nextEffectingStringIndex != 0) {
-        await selectedGuitarNotifier.saveSamples(
-          guitarState,
-          nextEffectingStringIndex,
-          nextSampleIndex,
-        );
-        nextSampleIndex++;
-      }
-    }
-    calibrationStateNotifier.currentSampleIndex = nextSampleIndex;
-    ref.read(guitarStateMeasureStateProvider.notifier).currentStringIndex = 0;
-    ref.read(guitarStateProvider.notifier).guitarState = GuitarState();
-  }
-
   @override
   Widget build(BuildContext context) {
     CalibrationState calibrationState = ref.watch(calibrationStateProvider);
-
+    int effectingString = calibrationState.currentEffectingStringIndex;
+    int sampleIndex = calibrationState.currentSampleIndex;
+    int currentString = ref
+        .watch(guitarStateMeasureStateProvider)
+        .currentStringIndex;
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
     if (tuning == null) {
       return ErrorDisplay(
@@ -108,7 +53,7 @@ class _CalibrationCheckStringPageState
 
             Chip(
               label: Text(
-                tuning.goalNotes[calibrationState.currentEffectingStringIndex],
+                tuning.goalNotes[currentString],
                 style: textTheme.titleLarge,
               ),
             ),
@@ -134,35 +79,62 @@ class _CalibrationCheckStringPageState
           children: [
             TextButton(
               onPressed: () {
-                context.router.back();
+                context.router.navigate(
+                  CalibrationMeasureStringRoute(cameBackFromError: true),
+                );
               },
               child: Text("Back/No"),
             ),
-            Column(
-              children: [
-                FilledButton(
-                  onPressed: () {
-                    var currentStringIndex = ref
-                        .read(guitarStateMeasureStateProvider)
-                        .currentStringIndex;
-                    var notifier = ref.read(
-                      guitarStateMeasureStateProvider.notifier,
-                    );
-                    if (currentStringIndex < 5) {
-                      notifier.selectNextString();
-                      context.router.navigate(CalibrationMeasureStringRoute());
-                    } else {
-                      notifier.currentStringIndex = ref
-                          .read(calibrationStateProvider)
-                          .currentEffectingStringIndex;
-                      context.router.navigate(
-                        const CalibrationChangeStringRoute(),
-                      );
-                    }
-                  },
-                  child: Text("Yes"),
-                ),
-              ],
+
+            FilledButton(
+              onPressed: () {
+                var gMeasureStateNotifier = ref.read(
+                  guitarStateMeasureStateProvider.notifier,
+                );
+                var selectedGuitarNotifier = ref.read(
+                  selectedGuitarProvider.notifier,
+                );
+
+                selectedGuitarNotifier.setStringMeasurement(
+                  widget.detectedFrequency,
+                  effectingString,
+                  sampleIndex,
+                  currentString,
+                );
+                if (currentString < 5) {
+                  // b) see readme paper
+                  gMeasureStateNotifier.selectNextString();
+                  context.router.navigate(CalibrationMeasureStringRoute());
+                } else if (sampleIndex < 1) {
+                  //d) see readme paper
+                  gMeasureStateNotifier.currentStringIndex = effectingString;
+                  context.router.navigate(const CalibrationChangeStringRoute());
+                } else if (effectingString < 5) {
+                  //g) see readme paper
+                  gMeasureStateNotifier.currentStringIndex = 0;
+                  ref
+                          .read(calibrationStateProvider.notifier)
+                          .currentEffectingStringIndex =
+                      effectingString + 1;
+                  var oldSamples = ref
+                      .read(selectedGuitarProvider)
+                      .value
+                      ?.getSamplesForEffectingString(
+                        effectingString,
+                      )[sampleIndex];
+                  selectedGuitarNotifier.saveSamples(
+                    oldSamples!.copy(),
+                    effectingString,
+                    sampleIndex,
+                  );
+
+                  context.router.navigate(CalibrationChangeStringRoute());
+                } else {
+                  selectedGuitarNotifier.calculateMatrix();
+                  context.router.parent()?.navigate(CalibrationControlRoute());
+                }
+              },
+              child: Text("Yes"),
             ),
           ],
         ),

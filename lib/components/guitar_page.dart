@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
+import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -109,7 +111,7 @@ class _GuitarPageState extends ConsumerState<GuitarPage>
           children: [
             TextButton(
               onPressed: () {
-                context.router.back();
+                context.router.navigate(FloydRoseTunerSetupRoute());
               },
               child: Text("Back"),
             ),
@@ -119,6 +121,13 @@ class _GuitarPageState extends ConsumerState<GuitarPage>
                   children: [
                     FilledButton(
                       onPressed: () {
+                        ref.read(calibrationStateProvider.notifier)
+                          ..currentSampleIndex = 0
+                          ..currentEffectingStringIndex = 0;
+                        ref
+                                .read(guitarStateMeasureStateProvider.notifier)
+                                .currentStringIndex =
+                            0;
                         context.router.navigate(const CalibrationLayoutRoute());
                       },
                       child: Text("Calibrate This Guitar"),

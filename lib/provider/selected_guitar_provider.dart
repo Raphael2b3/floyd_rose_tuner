@@ -25,7 +25,9 @@ class SelectedGuitarNotifier extends _$SelectedGuitarNotifier {
   }
 
   Future<void> selectAny() async {
-    state = AsyncValue.data(await build()); // TODO codeSmell could have sideeffects
+    state = AsyncValue.data(
+      await build(),
+    ); // TODO codeSmell could have sideeffects
   }
 
   void deleteSample(int effectingStringIndex, int sampleIndex) {
@@ -126,5 +128,14 @@ class SelectedGuitarNotifier extends _$SelectedGuitarNotifier {
 
     state = AsyncValue.data(guitar.copy(matrix: matrixTransposed));
     ref.notifyListeners();
+  }
+
+  void setStringMeasurement(
+    double frequency,
+    int effectingString,
+    int sample,
+    int string,
+  ) {
+    state.value!.samples[effectingString]![sample][string] = frequency;
   }
 }

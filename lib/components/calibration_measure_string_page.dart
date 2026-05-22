@@ -4,16 +4,21 @@ import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/calibration_state.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
 class CalibrationMeasureStringPage extends ConsumerStatefulWidget {
-  const CalibrationMeasureStringPage({super.key});
+  final bool cameBackFromError;
+
+  const CalibrationMeasureStringPage({
+    super.key,
+    this.cameBackFromError = false,
+  });
 
   @override
   ConsumerState<CalibrationMeasureStringPage> createState() =>
@@ -24,7 +29,9 @@ class _CalibrationMeasureStringPageState
     extends ConsumerState<CalibrationMeasureStringPage> {
   @override
   Widget build(BuildContext context) {
-    CalibrationState calibrationState = ref.watch(calibrationStateProvider);
+    var selectedString = ref
+        .watch(guitarStateMeasureStateProvider)
+        .currentStringIndex;
 
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
     if (tuning == null) {
@@ -41,7 +48,7 @@ class _CalibrationMeasureStringPageState
             Text("Play The String:", style: textTheme.titleLarge),
             Chip(
               label: Text(
-                tuning.goalNotes[calibrationState.currentEffectingStringIndex],
+                tuning.goalNotes[selectedString],
                 style: textTheme.titleLarge,
               ),
             ),
@@ -53,11 +60,62 @@ class _CalibrationMeasureStringPageState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
-              onPressed: () {
-                if (context.router.canNavigateBack) {
-                  context.router.back();
-                } else {
-                  context.router.parent()?.back();
+              onPressed: () async {
+                var caliState = ref.read(calibrationStateProvider);
+                if (selectedString == 0 && // reverse x)
+                    caliState.currentSampleIndex == 0 &&
+                    caliState.currentEffectingStringIndex == 0) {
+                  context.router.parent()?.navigate(const GuitarRoute());
+                  return;
+                }
+                if (selectedString > 0) {
+                  //reverse c) b)
+                  if (!widget.cameBackFromError) {
+                    ref
+                        .read(guitarStateMeasureStateProvider.notifier)
+                        .selectPreviousString();
+                  }
+
+                  var lastFrequency =
+                      (await ref.read(
+                        selectedGuitarProvider.future,
+                      ))!.getSamplesForEffectingString(
+                        caliState.currentEffectingStringIndex,
+                      )[caliState.currentSampleIndex][selectedString];
+                  context.router.navigate(
+                    CalibrationCheckStringRoute(
+                      detectedFrequency: lastFrequency.toDouble(),
+                    ),
+                  );
+                  // we need to get the old detected Frequency
+                  return;
+                }
+                if (selectedString == 0 && caliState.currentSampleIndex > 0) {
+                  //reverse e)
+                  ref
+                          .read(guitarStateMeasureStateProvider.notifier)
+                          .currentStringIndex =
+                      5;
+                  ref
+                          .read(calibrationStateProvider.notifier)
+                          .currentSampleIndex =
+                      caliState.currentSampleIndex - 1;
+                  context.router.navigate(const CalibrationChangeStringRoute());
+                  return;
+                }
+                if (selectedString == 0 && //reverse f)
+                    caliState.currentSampleIndex == 0 &&
+                    caliState.currentEffectingStringIndex > 0) {
+                  ref
+                          .read(guitarStateMeasureStateProvider.notifier)
+                          .currentStringIndex =
+                      5;
+                  ref
+                          .read(calibrationStateProvider.notifier)
+                          .currentSampleIndex =
+                      caliState.currentSampleIndex - 1;
+                  context.router.navigate(const CalibrationChangeStringRoute());
+                  return;
                 }
               },
               child: Text("Back"),
@@ -67,7 +125,6 @@ class _CalibrationMeasureStringPageState
                 double detectedFrequency = await ref.read(
                   detectedFrequencyProvider.future,
                 );
-                ref.read(guitarStateMeasureStateProvider.notifier).selectNextString();
                 context.router.navigate(
                   CalibrationCheckStringRoute(
                     detectedFrequency: detectedFrequency,
