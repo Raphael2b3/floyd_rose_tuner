@@ -13,13 +13,11 @@ class GuitarPage extends ConsumerStatefulWidget {
   const GuitarPage({super.key});
 
   @override
-  ConsumerState<GuitarPage> createState() =>
-      _GuitarPageState();
+  ConsumerState<GuitarPage> createState() => _GuitarPageState();
 }
 //#endregion
 
-class _GuitarPageState
-    extends ConsumerState<GuitarPage>
+class _GuitarPageState extends ConsumerState<GuitarPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late TextEditingController textEditingController = TextEditingController();
 
@@ -43,16 +41,51 @@ class _GuitarPageState
   Widget build(BuildContext context) {
     initListeners();
 
-    Guitar? selectedGuitar = ref
-        .watch(selectedGuitarProvider)
-        .value;
+    Guitar? selectedGuitar = ref.watch(selectedGuitarProvider).value;
 
     if (selectedGuitar == null) {
       return ErrorDisplay("selectedGuitar is null");
     }
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton.icon(
+              label: Text("Delete"),
+              onPressed: () {
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Delete The Guitar'),
+                    content: Text(
+                      'Do you really want to delete ${selectedGuitar.guitarName}?',
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          ref
+                              .read(guitarsProvider.notifier)
+                              .remove(selectedGuitar.guitarName);
+                          ref.read(selectedGuitarProvider.notifier).selectAny();
+                          Navigator.pop(context, 'OK');
+                          context.router.back();
+                        },
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              icon: Icon(Icons.delete),
+            ),
+          ],
+        ),
         TextFormField(
           autofocus: true,
           decoration: InputDecoration(
@@ -67,9 +100,7 @@ class _GuitarPageState
 
             ref
                 .read(selectedGuitarProvider.notifier)
-                .select(
-                  selectedGuitar.copy(guitarName: value),
-                );
+                .select(selectedGuitar.copy(guitarName: value));
             textEditingController.text = value;
           },
         ),
@@ -82,12 +113,27 @@ class _GuitarPageState
               },
               child: Text("Back"),
             ),
-            FilledButton(
-              onPressed: () {
-                context.router.push(const CalibrationRoute());
-              },
-              child: Text("Calibrate This Guitar"),
-            ),
+            if (!selectedGuitar.isValid)
+              Badge(
+                child: Column(
+                  children: [
+                    FilledButton(
+                      onPressed: () {
+                        context.router.navigate(const CalibrationLayoutRoute());
+                      },
+                      child: Text("Calibrate This Guitar"),
+                    ),
+                    Text("This Guitar Needs Calibration"),
+                  ],
+                ),
+              )
+            else
+              OutlinedButton(
+                onPressed: () {
+                  context.router.navigate(const CalibrationLayoutRoute());
+                },
+                child: Text("Recalibrate"),
+              ),
           ],
         ),
       ],

@@ -1,9 +1,7 @@
 import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
-import 'package:floyd_rose_tuner/utils/tone_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,11 +31,14 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
     return Column(
       children: [
         if (!guitarStateMeasureState.manualDetection) VolumeThresholdSelector(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            if (guitarStateMeasureState.manualDetection) ...[
-              Text("Detected Frequency:"),
+        if (guitarStateMeasureState.manualDetection)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                "Detected Frequency:",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               IntrinsicWidth(
                 child: TextField(
                   controller: TextEditingController(
@@ -57,40 +58,25 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
                   },
                 ),
               ),
+              Text("Hz", style: Theme.of(context).textTheme.bodyLarge),
             ],
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Row(
-                  children: [
-                    Checkbox(
-                      value: !guitarStateMeasureState.manualDetection,
-                      onChanged: (value) {
-                        ref
-                            .read(guitarStateMeasureStateProvider.notifier)
-                            .guitarStateMeasureState = GuitarStateMeasureState(
-                          currentStringIndex:
-                              guitarStateMeasureState.currentStringIndex,
-                          manualDetection:
-                              !guitarStateMeasureState.manualDetection,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                Text("Auto Detect"),
-                TextButton.icon(
-                  onPressed: () async {
-                    var frequency = (await ref.read(
-                      guitarStateProvider.future,
-                    ))[guitarStateMeasureState.currentStringIndex].toDouble();
-                    await TonePlayer().playFrequency(frequency);
-                  },
-                  label: Text("Play Sound"),
-                  icon: Icon(Icons.volume_up),
-                ),
-              ],
+          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Checkbox(
+              value: !guitarStateMeasureState.manualDetection,
+              onChanged: (value) {
+                ref
+                    .read(guitarStateMeasureStateProvider.notifier)
+                    .guitarStateMeasureState = GuitarStateMeasureState(
+                  currentStringIndex:
+                      guitarStateMeasureState.currentStringIndex,
+                  manualDetection: !guitarStateMeasureState.manualDetection,
+                );
+              },
             ),
+            Text("Auto Detect", style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
       ],

@@ -1,14 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_view.dart';
-import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/calibration_state.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +23,7 @@ class CalibrationControlPage extends ConsumerStatefulWidget {
       _CalibrationControlPageState();
 }
 
-class _CalibrationControlPageState
-    extends ConsumerState<CalibrationControlPage>
+class _CalibrationControlPageState extends ConsumerState<CalibrationControlPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late TabController stringTabController = TabController(
     length: 6,
@@ -78,9 +77,7 @@ class _CalibrationControlPageState
 
   Future<void> addSample() async {
     GuitarState guitarState = await ref.read(guitarStateProvider.future);
-    CalibrationState calibrationState = ref.read(
-      calibrationStateProvider,
-    );
+    CalibrationState calibrationState = ref.read(calibrationStateProvider);
     int currentEffectingStringIndex =
         calibrationState.currentEffectingStringIndex;
 
@@ -90,9 +87,7 @@ class _CalibrationControlPageState
   }
 
   void removeSample() {
-    CalibrationState calibrationState = ref.read(
-      calibrationStateProvider,
-    );
+    CalibrationState calibrationState = ref.read(calibrationStateProvider);
     int currentEffectingStringIndex =
         calibrationState.currentEffectingStringIndex;
     int currentSampleIndex = calibrationState.currentSampleIndex;
@@ -104,20 +99,11 @@ class _CalibrationControlPageState
 
   @override
   Widget build(BuildContext context) {
-
     initListeners();
-    CalibrationState calibrationState = ref.watch(
-      calibrationStateProvider,
-    );
-    sampleTabController.animateTo(
-      calibrationState.currentSampleIndex,
-    );
-    stringTabController.animateTo(
-      calibrationState.currentEffectingStringIndex,
-    );
-    Guitar? selectedGuitar = ref
-        .watch(selectedGuitarProvider)
-        .value;
+    CalibrationState calibrationState = ref.watch(calibrationStateProvider);
+    sampleTabController.animateTo(calibrationState.currentSampleIndex);
+    stringTabController.animateTo(calibrationState.currentEffectingStringIndex);
+    Guitar? selectedGuitar = ref.watch(selectedGuitarProvider).value;
 
     Tuning? tuningConfig = ref.watch(selectedTuningProvider).value;
     if (selectedGuitar == null || tuningConfig == null) {
@@ -127,17 +113,16 @@ class _CalibrationControlPageState
       );
     }
 
-    List<GuitarState> samples = selectedGuitar
-        .getSamplesForEffectingString(
-          calibrationState.currentEffectingStringIndex,
-        );
+    List<GuitarState> samples = selectedGuitar.getSamplesForEffectingString(
+      calibrationState.currentEffectingStringIndex,
+    );
     List<bool>? sampleValidation = selectedGuitar
         .getValidationForEffectingString(
           calibrationState.currentEffectingStringIndex,
         );
 
-    String currentMeasuredStringName = tuningConfig
-        .goalNotes[calibrationState.currentEffectingStringIndex];
+    String currentMeasuredStringName =
+        tuningConfig.goalNotes[calibrationState.currentEffectingStringIndex];
     var guitarValidation = selectedGuitar.validation;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -167,9 +152,7 @@ class _CalibrationControlPageState
           tabAlignment: TabAlignment.center,
           isScrollable: true,
           onTap: (value) {
-            ref
-                    .read(calibrationStateProvider.notifier)
-                    .currentSampleIndex =
+            ref.read(calibrationStateProvider.notifier).currentSampleIndex =
                 value;
           },
           tabs: List.generate(samples.length, (i) {
@@ -213,9 +196,7 @@ class _CalibrationControlPageState
           children: [
             TextButton(
               onPressed: () {
-                context.router.popUntilRouteWithName(
-                  CalibrationRoute.name,
-                );
+                context.router.back();
               },
               child: Text("Back"),
             ),
@@ -225,9 +206,7 @@ class _CalibrationControlPageState
                       ref
                           .read(selectedGuitarProvider.notifier)
                           .calculateMatrix();
-                      Guitar? guitar = ref
-                          .read(selectedGuitarProvider)
-                          .value;
+                      Guitar? guitar = ref.read(selectedGuitarProvider).value;
                       if (guitar == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("No Guitar Selected!")),

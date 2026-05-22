@@ -83,7 +83,7 @@ class GuitarTuningSetupPage extends ConsumerWidget {
                       ref
                           .read(guitarTuningAssistantProvider.notifier)
                           .calculateOrderedGoalNotes();
-                      context.router.push(const GuitarTuningRoute());
+                      context.router.navigate(const FloydRoseTuningRoute());
                     }
                   : null,
               child: Text("Tune The Guitar"),

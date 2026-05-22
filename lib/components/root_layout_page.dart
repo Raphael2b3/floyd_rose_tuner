@@ -3,14 +3,14 @@ import 'package:floyd_rose_tuner/router.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
-class LayoutPage extends StatelessWidget {
-  const LayoutPage({super.key});
+class RootLayoutPage extends StatelessWidget {
+  const RootLayoutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       resizeToAvoidBottomInset: true,
-        routes: const [HelpRoute(), FloydRoseTunerRoute(), StandardTunerRoute()],
+        routes: const [HelpRoute(), FloydRoseTunerLayoutRoute(), StandardTunerRoute()],
         bottomNavigationBuilder: (_, tabsRouter) {
           return BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,

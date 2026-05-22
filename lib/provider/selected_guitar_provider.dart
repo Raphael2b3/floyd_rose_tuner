@@ -1,5 +1,5 @@
-import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/utils/calculate_matrix_row.dart';
@@ -13,17 +13,19 @@ part 'selected_guitar_provider.g.dart';
 class SelectedGuitarNotifier extends _$SelectedGuitarNotifier {
   @override
   Future<Guitar?> build() async {
-    List<Guitar> guitar = await ref.read(
-      guitarsProvider.future,
-    );
+    List<Guitar> guitar = await ref.read(guitarsProvider.future);
     if (guitar.isEmpty) {
       return null;
     }
     return guitar[0];
   }
 
-  Future<void> select(Guitar? selected) async {
+  void select(Guitar? selected) {
     state = AsyncValue.data(selected);
+  }
+
+  Future<void> selectAny() async {
+    state = AsyncValue.data(await build()); // TODO codeSmell could have sideeffects
   }
 
   void deleteSample(int effectingStringIndex, int sampleIndex) {
@@ -34,8 +36,9 @@ class SelectedGuitarNotifier extends _$SelectedGuitarNotifier {
       }
       return;
     }
-    List<GuitarState> currentSamples = guitar
-        .getSamplesForEffectingString(effectingStringIndex);
+    List<GuitarState> currentSamples = guitar.getSamplesForEffectingString(
+      effectingStringIndex,
+    );
 
     if (currentSamples.length < 3) {
       if (kDebugMode) {

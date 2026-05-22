@@ -1,31 +1,29 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
-import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
-import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/calibration_state.dart';
+import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
-class CalibrationPage extends ConsumerStatefulWidget {
-  const CalibrationPage({super.key});
+class CalibrationChangeStringPage extends ConsumerStatefulWidget {
+  const CalibrationChangeStringPage({super.key});
 
   @override
-  ConsumerState<CalibrationPage> createState() =>
-      _CalibrationPageState();
+  ConsumerState<CalibrationChangeStringPage> createState() =>
+      _CalibrationPageChangeStringState();
 }
 
-class _CalibrationPageState
-    extends ConsumerState<CalibrationPage> {
+class _CalibrationPageChangeStringState
+    extends ConsumerState<CalibrationChangeStringPage> {
   double calculateProgress(
     int effectingStringIndex,
     int sampleIndex,
@@ -36,11 +34,10 @@ class _CalibrationPageState
   }
 
   Future<void> applyMeasurement() async {
-    CalibrationState calibrationState = ref.read(
-      calibrationStateProvider,
+    CalibrationState calibrationState = ref.read(calibrationStateProvider);
+    CalibrationStateNotifier calibrationStateNotifier = ref.read(
+      calibrationStateProvider.notifier,
     );
-    CalibrationStateNotifier calibrationStateNotifier = ref
-        .read(calibrationStateProvider.notifier);
 
     SelectedGuitarNotifier selectedGuitarNotifier = ref.read(
       selectedGuitarProvider.notifier,
@@ -95,15 +92,11 @@ class _CalibrationPageState
 
   @override
   Widget build(BuildContext context) {
-    CalibrationState calibrationState = ref.watch(
-      calibrationStateProvider,
-    );
+    CalibrationState calibrationState = ref.watch(calibrationStateProvider);
     int currentStringIndex = ref
         .watch(guitarStateMeasureStateProvider)
         .currentStringIndex;
-    Guitar? selectedGuitar = ref
-        .watch(selectedGuitarProvider)
-        .value;
+    Guitar? selectedGuitar = ref.watch(selectedGuitarProvider).value;
 
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
     if (selectedGuitar == null || tuning == null) {
@@ -117,79 +110,27 @@ class _CalibrationPageState
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Text("Measure Each String of Your Guitar", style: textTheme.titleLarge),
-        Row(
-          children: [
-            Text(
-              calibrationState.currentSampleIndex == 0
-                  ? "Original: "
-                  : "Change The String ",
-            ),
-            Chip(
-              label: Text(
-                tuning.goalNotes[calibrationState
-                    .currentEffectingStringIndex],
-              ),
-            ),
-            if (calibrationState.currentSampleIndex != 0)
-              Text(" and Measure Again"),
-          ],
-        ),
-        LinearProgressIndicator(
-          year2023: false,
-          value: (selectedGuitar.isValid
-              ? 1
-              : calculateProgress(
-                  calibrationState.currentEffectingStringIndex,
-                  calibrationState.currentSampleIndex,
-                  currentStringIndex,
-                )),
-        ),
-        GuitarStateMeasurePage(),
-        FilledButton.icon(
-          onPressed: applyMeasurement,
-          label: Text("Save & Next"),
-          icon: Icon(Icons.camera_alt_outlined),
+        Text("Change the String", style: textTheme.titleLarge),
+        Chip(
+          label: Text(
+            tuning.goalNotes[calibrationState.currentEffectingStringIndex],
+            style: textTheme.titleLarge,
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
               onPressed: () {
-                context.router.navigate(const GuitarRoute());
+                context.router.back();
               },
-              child: Text("Change Name"),
+              child: Text("Back"),
             ),
-            OutlinedButton(
-              onPressed: () {
-                context.router.push(const GuitarControlRoute());
-              },
-              child: Text("Check"),
-            ),
-            FilledButton(
-              onPressed: selectedGuitar.isValid
-                  ? () {
-                      ref
-                          .read(selectedGuitarProvider.notifier)
-                          .calculateMatrix();
-                      Guitar? guitar = ref
-                          .read(selectedGuitarProvider)
-                          .value;
-                      if (guitar == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("No Guitar Selected!")),
-                        );
-                        return;
-                      }
-                      ref
-                          .read(guitarsProvider.notifier)
-                          .saveOverriding(guitar);
 
-                      context.router.popUntilRouteWithName(
-                        FloydRoseTunerSetupRoute.name,
-                      );
-                    }
-                  : null,
+            FilledButton(
+              onPressed: () {
+                context.navigateTo(const CalibrationMeasureStringRoute());
+              },
               child: Text("Done"),
             ),
           ],

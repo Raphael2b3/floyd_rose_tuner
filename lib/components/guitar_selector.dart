@@ -3,6 +3,8 @@ import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/guitar.dart';
+import 'package:floyd_rose_tuner/utils/floyd_rose_delta_frequencies.dart';
+import 'package:floyd_rose_tuner/utils/optional_badge_wrapper.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,12 +18,8 @@ class GuitarSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // safe handling of AsyncValue
-    Guitar? selectedGuitar = ref
-        .watch(selectedGuitarProvider)
-        .value;
-    final List<Guitar>? guitars = ref
-        .watch(guitarsProvider)
-        .value;
+    Guitar? selectedGuitar = ref.watch(selectedGuitarProvider).value;
+    final List<Guitar>? guitars = ref.watch(guitarsProvider).value;
     if (guitars == null) {
       return Column(
         children: [
@@ -38,89 +36,50 @@ class GuitarSelector extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownMenu(
-          width: double.infinity,
           label: const Text("Select Your Guitar"),
           initialSelection: selectedGuitar,
-          // //  Failed assertion: line 4179 pos 14: 'debugNeedsLayout': is not true.
-          dropdownMenuEntries: guitars
-              .map(
-                (e) => DropdownMenuEntry<Guitar>(
-                  value: e,
-                  label: e.guitarName,
-                  leadingIcon: IconButton(
-                    onPressed: () async {
-                      ref
-                          .read(selectedGuitarProvider.notifier)
-                          .select(e);
-                      await context.router.push(
-                        const CalibrationRoute(),
-                      );
-                    },
-                    icon: Icon(Icons.edit),
-                  ),
-                  trailingIcon: IconButton(
-                    onPressed: () {
-                      showDialog<String>(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Delete The Guitar'),
-                          content: const Text(
-                            'Do you really want to delete the guitar?',
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, 'Cancel'),
-                              child: const Text('Cancel'),
-                            ),
-                            FilledButton(
-                              onPressed: () {
-                                ref
-                                    .read(guitarsProvider.notifier)
-                                    .remove(e.guitarName);
-                                ref
-                                    .read(
-                                      selectedGuitarProvider.notifier,
-                                    )
-                                    .select(null);
-                                Navigator.pop(context, 'OK');
-                              },
-                              child: const Text('Delete'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.delete),
-                  ),
+          expandedInsets: EdgeInsets.zero,
+          dropdownMenuEntries: guitars.map((e) {
+            return DropdownMenuEntry<Guitar>(
+              value: e,
+              label: e.guitarName,
+              labelWidget: OptionalBadgeWrapper(
+                child: Text(e.guitarName),
+                showBadge: !e.isValid,
+              ),
+              leadingIcon: IconButton(
+                onPressed: () async {
+                  Navigator.of(
+                    context,
+                  ).pop(); // or MenuController if you have access
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    ref.read(selectedGuitarProvider.notifier).select(e);
+                    await context.router.push(const GuitarRoute());
+                  });
+                },
+                icon: OptionalBadgeWrapper(
+                  child: Icon(Icons.edit),
+                  showBadge: !e.isValid,
                 ),
-              )
-              .toList(),
+              ),
+            );
+          }).toList(),
           onSelected: (Guitar? value) {
             if (value == null) return;
-            ref
-                .read(selectedGuitarProvider.notifier)
-                .select(value);
+            ref.read(selectedGuitarProvider.notifier).select(value);
           },
         ),
         OutlinedButton(
           onPressed: () async {
-            Matrix freshMatrix = Matrix.fromList([
-              [1, 0, 0, 0, 0, 0],
-              [0, 1, 0, 0, 0, 0],
-              [0, 0, 1, 0, 0, 0],
-              [0, 0, 0, 1, 0, 0],
-              [0, 0, 0, 0, 1, 0],
-              [0, 0, 0, 0, 0, 1],
-            ]);
+            Matrix freshMatrix = Matrix.fromList(exampleMatrix);
+            var newGuitar = Guitar(
+              guitarName: "New Guitar ${random.nextInt(5555)}",
+              matrix: freshMatrix,
+            );
+            ref.read(selectedGuitarProvider.notifier).select(newGuitar);
+            ref.read(guitarsProvider.notifier).saveOverriding(newGuitar);
 
-            ref
-                .read(selectedGuitarProvider.notifier)
-                .select(
-                  Guitar(
-                    guitarName: "New Guitar ${random.nextInt(5555)}",
-                    matrix: freshMatrix,
-                  ),
-                );
             await context.router.push(const GuitarRoute());
           },
           child: Text("Add A New Guitar"),

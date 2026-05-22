@@ -25,8 +25,8 @@ class GuitarStateMeasurePage extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        GuitarStateMeasureNavigation(),
-        if (guitarStateMeasureState.manualDetection) FrequencyView(),
+        //GuitarStateMeasureNavigation(),
+        if (!guitarStateMeasureState.manualDetection) FrequencyView(),
         FrequencyDetectorView(),
       ],
     );

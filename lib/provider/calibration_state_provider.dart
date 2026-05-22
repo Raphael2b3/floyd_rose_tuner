@@ -13,6 +13,7 @@ class CalibrationStateNotifier
     return CalibrationState(
       currentEffectingStringIndex: 0,
       currentSampleIndex: 0,
+      stringIsChanging: false
     );
   }
 
@@ -26,12 +27,14 @@ class CalibrationStateNotifier
       currentEffectingStringIndex: index,
       currentSampleIndex: 0,
     );
-
-    ref.notifyListeners();
   }
 
   set currentSampleIndex(int index) {
     state = state.copy(currentSampleIndex: index);
-    ref.notifyListeners();
+  }
+
+  set stringIsChanging(bool isChanging){
+    state = state.copy(stringIsChanging: isChanging);
+
   }
 }
