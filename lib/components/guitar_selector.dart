@@ -81,7 +81,7 @@ class GuitarSelector extends ConsumerWidget {
             ref.read(selectedGuitarProvider.notifier).select(newGuitar);
             ref.read(guitarsProvider.notifier).saveOverriding(newGuitar);
 
-            await context.router.push(const GuitarRoute());
+            await context.router.navigate(const GuitarRoute());
           },
           child: Text("Add A New Guitar"),
         ),

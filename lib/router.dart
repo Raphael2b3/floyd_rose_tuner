@@ -4,11 +4,11 @@ import 'package:floyd_rose_tuner/components/calibration_check_string_page.dart';
 import 'package:floyd_rose_tuner/components/calibration_control_page.dart';
 import 'package:floyd_rose_tuner/components/calibration_layout_page.dart';
 import 'package:floyd_rose_tuner/components/calibration_measure_string_page.dart';
+import 'package:floyd_rose_tuner/components/floyd_rose_tuner_check_string_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_layout_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_measure_string_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_page.dart';
 import 'package:floyd_rose_tuner/components/floyd_rose_tuner_setup_page.dart';
-import 'package:floyd_rose_tuner/components/floyd_rose_tuning_setup_page.dart';
 import 'package:floyd_rose_tuner/components/guitar_page.dart';
 import 'package:floyd_rose_tuner/components/help_page.dart';
 import 'package:floyd_rose_tuner/components/root_layout_page.dart';
@@ -29,27 +29,27 @@ class AppRouter extends RootStackRouter {
       page: RootLayoutRoute.page,
       children: [
         AutoRoute(page: HelpRoute.page),
-        AutoRoute(
-          page: CalibrationLayoutRoute.page,
-          children: [
-            AutoRoute(page: CalibrationMeasureStringRoute.page, initial: true),
-            AutoRoute(page: CalibrationChangeStringRoute.page),
-            AutoRoute(page: CalibrationCheckStringRoute.page),
-            AutoRoute(page: CalibrationControlRoute.page),
-          ],
-        ),
-        AutoRoute(page: GuitarRoute.page),
+        AutoRoute(page: StandardTunerRoute.page),
         AutoRoute(
           initial: true,
           page: FloydRoseTunerLayoutRoute.page,
           children: [
             AutoRoute(page: FloydRoseTunerSetupRoute.page, initial: true),
+            AutoRoute(
+              page: CalibrationLayoutRoute.page,
+              children: [
+                AutoRoute(page: CalibrationMeasureStringRoute.page, initial: true),
+                AutoRoute(page: CalibrationChangeStringRoute.page),
+                AutoRoute(page: CalibrationCheckStringRoute.page),
+                AutoRoute(page: CalibrationControlRoute.page),
+              ],
+            ),
+            AutoRoute(page: GuitarRoute.page),
             AutoRoute(page: FloydRoseTunerMeasureStringRoute.page),
             AutoRoute(page: FloydRoseTunerRoute.page),
             AutoRoute(page: FloydRoseTunerCheckStringRoute.page),
           ],
         ),
-        AutoRoute(page: StandardTunerRoute.page),
       ],
     ),
   ];

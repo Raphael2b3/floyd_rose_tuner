@@ -1,29 +1,23 @@
-import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'guitar_state_measure_state_provider.dart';
 
 part 'guitar_state_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class GuitarStateNotifier extends _$GuitarStateNotifier {
-  GuitarState _guitarState = GuitarState();
-
   set guitarState(GuitarState gs) {
-    _guitarState = gs;
-    state = AsyncValue.data(gs);
+    state = gs.copy();
+  }
+
+  void saveFrequency(double frequency, int index) {
+    if (index >= 0 && index < state.length) {
+      state[index] = frequency;
+      state = state.copy();
+    }
   }
 
   @override
-  Future<GuitarState> build() async {
-    final guitarStateMeasureState = ref.read(guitarStateMeasureStateProvider);
-    final detectedFrequency = await ref.watch(detectedFrequencyProvider.future);
-    // ensure a list exists for this guitar
-    final index = guitarStateMeasureState.currentStringIndex;
-    if (index >= 0 && index < _guitarState.length) {
-      _guitarState[index] = detectedFrequency;
-    }
-    return _guitarState;
+  GuitarState build() {
+    return GuitarState();
   }
 }

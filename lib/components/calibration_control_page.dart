@@ -3,7 +3,6 @@ import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_view.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -75,8 +74,8 @@ class _CalibrationControlPageState extends ConsumerState<CalibrationControlPage>
     });
   }
 
-  Future<void> addSample() async {
-    GuitarState guitarState = await ref.read(guitarStateProvider.future);
+  void addSample() {
+    GuitarState guitarState = ref.read(guitarStateProvider);
     CalibrationState calibrationState = ref.read(calibrationStateProvider);
     int currentEffectingStringIndex =
         calibrationState.currentEffectingStringIndex;
@@ -203,9 +202,7 @@ class _CalibrationControlPageState extends ConsumerState<CalibrationControlPage>
             FilledButton(
               onPressed: selectedGuitar.isValid
                   ? () async {
-                      context.router.navigate(
-                        GuitarRoute(),
-                      );
+                      context.router.navigate(GuitarRoute());
                     }
                   : null,
               child: Text("Done"),

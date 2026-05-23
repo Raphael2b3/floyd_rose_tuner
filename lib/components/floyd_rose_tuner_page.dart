@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
+import 'package:floyd_rose_tuner/components/frequency_detector_view.dart';
+import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -18,10 +19,10 @@ class FloydRoseTunerPage extends ConsumerWidget {
 
   String hinText(num value) {
     switch (value) {
-      case > 1:
-        return "To LOW! Tune the String higher";
-      case < -1:
-        return "To HIGH! Tune the String lower";
+      case > 4:
+        return "";
+      case < -4:
+        return "";
       default:
         return "Looks Good";
     }
@@ -32,15 +33,14 @@ class FloydRoseTunerPage extends ConsumerWidget {
     final GuitarState guitarTuningAssistant = ref.watch(
       guitarTuningAssistantProvider,
     );
-    GuitarState? guitarState = ref.watch(guitarStateProvider).value;
+    var frequency = ref.watch(detectedFrequencyProvider).value;
+
     GuitarStateMeasureState guitarStateMeasureState = ref.watch(
       guitarStateMeasureStateProvider,
     );
     var tuning = ref.watch(selectedTuningProvider).value;
     if (tuning == null) return ErrorDisplay("No Tuning");
-    if (guitarState == null) return ErrorDisplay("guitarState is null");
-
-    num frequency = guitarState[guitarStateMeasureState.currentStringIndex];
+    if (frequency == null) return ErrorDisplay("Cannot detect Frequency");
 
     late num centDistance = getCentDistance(
       frequency,
@@ -50,18 +50,20 @@ class FloydRoseTunerPage extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text("Tune Your String", style: Theme.of(context).textTheme.titleLarge),
+        Text("Tune", style: Theme.of(context).textTheme.titleLarge),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("We Are Tuning: "),
+            Text("String: ", style: Theme.of(context).textTheme.bodyLarge),
             Chip(
               label: Text(
-                tuning.goalNotes[guitarStateMeasureState
-                    .currentStringIndex],
+                tuning.goalNotes[guitarStateMeasureState.currentStringIndex],
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
           ],
         ),
+        FrequencyDetectorView(),
         Stack(
           alignment: Alignment.center,
           children: [
@@ -90,9 +92,7 @@ class FloydRoseTunerPage extends ConsumerWidget {
           ],
         ),
         Text(
-          hinText(
-            guitarTuningAssistant[guitarStateMeasureState.currentStringIndex],
-          ),
+          hinText(centDistance),
           style: Theme.of(context).textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -113,16 +113,17 @@ class FloydRoseTunerPage extends ConsumerWidget {
               child: Text("Back"),
             ),
             FilledButton(
-              onPressed: centDistance < 4 && centDistance > -4
+              onPressed: centDistance < 15 && centDistance > -15
                   ? () {
                       if (guitarStateMeasureState.currentStringIndex < 5) {
                         ref
                             .read(guitarStateMeasureStateProvider.notifier)
                             .selectNextString();
                       } else {
-                        context.router.popUntilRouteWithName(
-                          FloydRoseTunerSetupRoute.name,
-                        );
+                        ref
+                            .read(guitarStateMeasureStateProvider.notifier)
+                            .selectFirstString();
+                        context.router.popUntilRoot();
                         context.router.root.navigate(
                           const StandardTunerRoute(),
                         );

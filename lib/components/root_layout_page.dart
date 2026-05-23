@@ -10,10 +10,11 @@ class RootLayoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       resizeToAvoidBottomInset: true,
+      homeIndex: 1,
       transitionBuilder: (context, child, animation) {
         return SizedBox.expand(
           child: Center(
-            child: Padding(padding: const EdgeInsets.all(12.0), child: child),
+            child: Padding(padding: const EdgeInsets.all(16.0), child: child),
           ),
         );
       },

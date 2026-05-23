@@ -19,12 +19,10 @@ class GuitarTuningAssistantNotifier extends _$GuitarTuningAssistantNotifier {
   }
 
   Future<void> calculateOrderedGoalNotes() async {
-    Guitar? matrix = await ref.read(
-      selectedGuitarProvider.future,
-    );
+    Guitar? matrix = await ref.read(selectedGuitarProvider.future);
     if (matrix == null) throw Exception("No selected Guitar");
 
-    GuitarState guitarState = await ref.read(guitarStateProvider.future);
+    GuitarState guitarState = ref.read(guitarStateProvider);
 
     Tuning tuning = await ref.watch(selectedTuningProvider.future);
     Vector goalFrequencies = getFrequenciesFromGoalNotes(tuning.goalNotes);

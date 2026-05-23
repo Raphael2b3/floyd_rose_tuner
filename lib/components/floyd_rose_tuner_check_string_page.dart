@@ -1,12 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
-import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
-import 'package:floyd_rose_tuner/types/calibration_state.dart';
 import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:floyd_rose_tuner/utils/tone_player.dart';
@@ -31,9 +30,6 @@ class _FloydRoseTunerCheckStringPageState
     extends ConsumerState<FloydRoseTunerCheckStringPage> {
   @override
   Widget build(BuildContext context) {
-    CalibrationState calibrationState = ref.watch(calibrationStateProvider);
-    int effectingString = calibrationState.currentEffectingStringIndex;
-    int sampleIndex = calibrationState.currentSampleIndex;
     int currentString = ref
         .watch(guitarStateMeasureStateProvider)
         .currentStringIndex;
@@ -85,7 +81,7 @@ class _FloydRoseTunerCheckStringPageState
             TextButton(
               onPressed: () {
                 context.router.navigate(
-                  CalibrationMeasureStringRoute(cameBackFromError: true),
+                  FloydRoseTunerMeasureStringRoute(cameBackFromError: true),
                 );
               },
               child: Text("Back/No"),
@@ -96,60 +92,23 @@ class _FloydRoseTunerCheckStringPageState
                 var gMeasureStateNotifier = ref.read(
                   guitarStateMeasureStateProvider.notifier,
                 );
-                var selectedGuitarNotifier = ref.read(
-                  selectedGuitarProvider.notifier,
-                );
-
-                selectedGuitarNotifier.setStringMeasurement(
-                  widget.detectedFrequency,
-                  effectingString,
-                  sampleIndex,
-                  currentString,
-                );
+                ref
+                    .read(guitarStateProvider.notifier)
+                    .saveFrequency(widget.detectedFrequency, currentString);
                 if (currentString < 5) {
                   // b) see readme paper
                   gMeasureStateNotifier.selectNextString();
-                  context.router.navigate(CalibrationMeasureStringRoute());
-                } else if (sampleIndex < 1) {
-                  //d) see readme paper
-                  gMeasureStateNotifier.currentStringIndex = effectingString;
-                  context.router.navigate(const CalibrationChangeStringRoute());
-                } else if (effectingString < 5) {
-                  //g) see readme paper
-                  gMeasureStateNotifier.currentStringIndex =
-                      effectingString + 1;
-                  ref.read(calibrationStateProvider.notifier)
-                    ..currentEffectingStringIndex = effectingString + 1
-                    ..currentSampleIndex = 0;
-                  var oldSamples = ref
-                      .read(selectedGuitarProvider)
-                      .value
-                      ?.getSamplesForEffectingString(
-                        effectingString,
-                      )[sampleIndex];
-                  selectedGuitarNotifier.saveSamples(
-                    oldSamples!.copy(),
-                    effectingString + 1,
-                    0,
-                  );
-
-                  context.router.navigate(CalibrationChangeStringRoute());
+                  context.router.navigate(FloydRoseTunerMeasureStringRoute());
                 } else {
-                  selectedGuitarNotifier.calculateMatrix();
+                  gMeasureStateNotifier.selectFirstString();
+                  ref
+                      .read(guitarTuningAssistantProvider.notifier)
+                      .calculateOrderedGoalNotes();
 
-                  Guitar? guitar = ref.read(selectedGuitarProvider).value;
-                  if (guitar == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("No Guitar Selected!")),
-                    );
-                    return;
-                  }
-                  await ref
-                      .read(guitarsProvider.notifier)
-                      .saveOverriding(guitar);
-                  context.router.navigate(CalibrationControlRoute());
+                  context.router.navigate(FloydRoseTunerRoute());
                 }
               },
+
               child: Text("Yes"),
             ),
           ],

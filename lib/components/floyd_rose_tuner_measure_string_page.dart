@@ -1,10 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_view.dart';
-import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
+import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
@@ -42,10 +41,11 @@ class _FloydRoseTunerMeasureStringPageState
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
+        Text("Play", style: textTheme.titleLarge),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Play The String:", style: textTheme.titleLarge),
+            Text("String: ", style: textTheme.bodyLarge),
             Chip(
               label: Text(
                 tuning.goalNotes[selectedString],
@@ -61,60 +61,27 @@ class _FloydRoseTunerMeasureStringPageState
           children: [
             TextButton(
               onPressed: () async {
-                var caliState = ref.read(calibrationStateProvider);
-                if (selectedString == 0 && // reverse x)
-                    caliState.currentSampleIndex == 0 &&
-                    caliState.currentEffectingStringIndex == 0) {
-                  context.router.parent()?.navigate(const GuitarRoute());
+                if (selectedString == 0) {
+                  // reverse x)
+                  context.router.navigate(const FloydRoseTunerSetupRoute());
                   return;
                 }
                 if (selectedString > 0) {
-                  //reverse c) b)
+                  //reverse b)
                   if (!widget.cameBackFromError) {
                     ref
                         .read(guitarStateMeasureStateProvider.notifier)
                         .selectPreviousString();
                   }
-
-                  var lastFrequency =
-                      (await ref.read(
-                        selectedGuitarProvider.future,
-                      ))!.getSamplesForEffectingString(
-                        caliState.currentEffectingStringIndex,
-                      )[caliState.currentSampleIndex][selectedString];
+                  var lastFrequency = ref.read(
+                    guitarStateProvider,
+                  )[selectedString - 1];
                   context.router.navigate(
-                    CalibrationCheckStringRoute(
+                    FloydRoseTunerCheckStringRoute(
                       detectedFrequency: lastFrequency.toDouble(),
                     ),
                   );
                   // we need to get the old detected Frequency
-                  return;
-                }
-                if (selectedString == 0 && caliState.currentSampleIndex > 0) {
-                  //reverse e)
-                  ref
-                          .read(guitarStateMeasureStateProvider.notifier)
-                          .currentStringIndex =
-                      5;
-                  ref
-                          .read(calibrationStateProvider.notifier)
-                          .currentSampleIndex =
-                      caliState.currentSampleIndex - 1;
-                  context.router.navigate(const CalibrationChangeStringRoute());
-                  return;
-                }
-                if (selectedString == 0 && //reverse f)
-                    caliState.currentSampleIndex == 0 &&
-                    caliState.currentEffectingStringIndex > 0) {
-                  ref
-                          .read(guitarStateMeasureStateProvider.notifier)
-                          .currentStringIndex =
-                      5;
-                  ref
-                          .read(calibrationStateProvider.notifier)
-                          .currentSampleIndex =
-                      caliState.currentSampleIndex - 1;
-                  context.router.navigate(const CalibrationChangeStringRoute());
                   return;
                 }
               },
@@ -126,7 +93,7 @@ class _FloydRoseTunerMeasureStringPageState
                   detectedFrequencyProvider.future,
                 );
                 context.router.navigate(
-                  CalibrationCheckStringRoute(
+                  FloydRoseTunerCheckStringRoute(
                     detectedFrequency: detectedFrequency,
                   ),
                 );

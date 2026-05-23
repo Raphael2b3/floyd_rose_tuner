@@ -32,38 +32,31 @@ class CalibrationLayoutPage extends ConsumerWidget {
     int effectingStringIndex = calibrationState.currentEffectingStringIndex;
     int sampleIndex = calibrationState.currentSampleIndex;
 
-    return SizedBox.expand(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: AutoRouter(
-            builder: (context, content) {
-              String? pageName = context.router.currentChild?.name;
-              int pageIndex = pageName == CalibrationMeasureStringRoute.name
-                  ? 0
-                  : pageName == CalibrationChangeStringRoute.name
-                  ? 1
-                  : 2;
-              var progress = calculateProgress(
-                pageIndex,
-                stringIndex,
-                sampleIndex,
-                effectingStringIndex,
-              );
-              return Column(
-                children: [
-                  LinearProgressIndicator(year2023: false, value: (progress)),
-                  Text(
-                    //"$pageName "
-                    "${(progress * 100).toInt()}%",
-                  ),
-                  Expanded(child: content),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
+    return AutoRouter(
+      builder: (context, content) {
+        String? pageName = context.router.currentChild?.name;
+        int pageIndex = pageName == CalibrationMeasureStringRoute.name
+            ? 0
+            : pageName == CalibrationChangeStringRoute.name
+            ? 1
+            : 2;
+        var progress = calculateProgress(
+          pageIndex,
+          stringIndex,
+          sampleIndex,
+          effectingStringIndex,
+        );
+        return Column(
+          children: [
+            LinearProgressIndicator(year2023: false, value: (progress)),
+            Text(
+              //"$pageName "
+              "${(progress * 100).toInt()}%",
+            ),
+            Expanded(child: content),
+          ],
+        );
+      },
     );
   }
 }
