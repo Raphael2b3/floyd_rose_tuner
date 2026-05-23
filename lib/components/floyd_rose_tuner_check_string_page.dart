@@ -14,18 +14,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
-class CalibrationCheckStringPage extends ConsumerStatefulWidget {
-  double detectedFrequency = 0;
+class FloydRoseTunerCheckStringPage extends ConsumerStatefulWidget {
+  final double detectedFrequency;
 
-  CalibrationCheckStringPage({super.key, required this.detectedFrequency});
+  const FloydRoseTunerCheckStringPage({
+    super.key,
+    required this.detectedFrequency,
+  });
 
   @override
-  ConsumerState<CalibrationCheckStringPage> createState() =>
-      _CalibrationCheckStringPageState();
+  ConsumerState<FloydRoseTunerCheckStringPage> createState() =>
+      _FloydRoseTunerCheckStringPageState();
 }
 
-class _CalibrationCheckStringPageState
-    extends ConsumerState<CalibrationCheckStringPage> {
+class _FloydRoseTunerCheckStringPageState
+    extends ConsumerState<FloydRoseTunerCheckStringPage> {
   @override
   Widget build(BuildContext context) {
     CalibrationState calibrationState = ref.watch(calibrationStateProvider);

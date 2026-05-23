@@ -12,14 +12,18 @@ import 'package:ml_linalg/matrix.dart';
 
 // We subclass ConsumerWidget instead of StatelessWidget
 class GuitarSelector extends ConsumerWidget {
-  const GuitarSelector({super.key});
+  Guitar? selectedGuitar;
+
+  List<Guitar>? guitars;
+
+  GuitarSelector({super.key});
 
   // "build" receives an extra parameter
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // safe handling of AsyncValue
-    Guitar? selectedGuitar = ref.watch(selectedGuitarProvider).value;
-    final List<Guitar>? guitars = ref.watch(guitarsProvider).value;
+    selectedGuitar = ref.watch(selectedGuitarProvider).value;
+    guitars = ref.watch(guitarsProvider).value;
     if (guitars == null) {
       return Column(
         children: [
@@ -28,7 +32,7 @@ class GuitarSelector extends ConsumerWidget {
         ],
       );
     }
-    if (!guitars.contains(selectedGuitar)) {
+    if (!guitars!.contains(selectedGuitar)) {
       selectedGuitar = null;
     }
 
@@ -39,7 +43,7 @@ class GuitarSelector extends ConsumerWidget {
           label: const Text("Select Your Guitar"),
           initialSelection: selectedGuitar,
           expandedInsets: EdgeInsets.zero,
-          dropdownMenuEntries: guitars.map((e) {
+          dropdownMenuEntries: guitars!.map((e) {
             return DropdownMenuEntry<Guitar>(
               value: e,
               label: e.guitarName,
@@ -48,15 +52,12 @@ class GuitarSelector extends ConsumerWidget {
                 showBadge: !e.isValid,
               ),
               leadingIcon: IconButton(
-                onPressed: () async {
+                onPressed: () {
                   Navigator.of(
                     context,
                   ).pop(); // or MenuController if you have access
-
-                  WidgetsBinding.instance.addPostFrameCallback((_) async {
-                    ref.read(selectedGuitarProvider.notifier).select(e);
-                    await context.router.push(const GuitarRoute());
-                  });
+                  ref.read(selectedGuitarProvider.notifier).select(e);
+                  context.router.push(const GuitarRoute());
                 },
                 icon: OptionalBadgeWrapper(
                   child: Icon(Icons.edit),

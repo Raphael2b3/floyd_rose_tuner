@@ -39,7 +39,7 @@ class FloydRoseTunerSetupPage extends ConsumerWidget {
                     return;
                   }
 
-                  await context.router.push(const GuitarTuningSetupRoute());
+                  await context.router.push(const FloydRoseTuningSetupRoute());
                 },
                 child: Text("Start Tuning"),
               ),

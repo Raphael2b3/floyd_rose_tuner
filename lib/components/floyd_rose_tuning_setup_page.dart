@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
-import 'package:floyd_rose_tuner/components/guitar_state_measure_page.dart';
+import 'package:floyd_rose_tuner/components/guitar_state_measure_view.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
@@ -15,8 +15,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
-class GuitarTuningSetupPage extends ConsumerWidget {
-  const GuitarTuningSetupPage({super.key});
+class FloydRoseTuningSetupPage extends ConsumerWidget {
+  const FloydRoseTuningSetupPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,7 +62,7 @@ class GuitarTuningSetupPage extends ConsumerWidget {
           ],
         ),
 
-        GuitarStateMeasurePage(),
+        GuitarStateMeasureView(),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -83,7 +83,6 @@ class GuitarTuningSetupPage extends ConsumerWidget {
                       ref
                           .read(guitarTuningAssistantProvider.notifier)
                           .calculateOrderedGoalNotes();
-                      context.router.navigate(const FloydRoseTuningRoute());
                     }
                   : null,
               child: Text("Tune The Guitar"),

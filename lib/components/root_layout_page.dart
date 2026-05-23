@@ -10,27 +10,38 @@ class RootLayoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       resizeToAvoidBottomInset: true,
-        routes: const [HelpRoute(), FloydRoseTunerLayoutRoute(), StandardTunerRoute()],
-        bottomNavigationBuilder: (_, tabsRouter) {
-          return BottomNavigationBar(
-            currentIndex: tabsRouter.activeIndex,
-            onTap: tabsRouter.setActiveIndex,
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_outlined),
-                label: 'Help',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.star),
-                label: 'Floyd Rose',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.star_border),
-                label: 'Standard Tuner',
-              ),
-            ],
-
-          );
-        });
+      transitionBuilder: (context, child, animation) {
+        return SizedBox.expand(
+          child: Center(
+            child: Padding(padding: const EdgeInsets.all(12.0), child: child),
+          ),
+        );
+      },
+      routes: const [
+        HelpRoute(),
+        FloydRoseTunerLayoutRoute(),
+        StandardTunerRoute(),
+      ],
+      bottomNavigationBuilder: (_, tabsRouter) {
+        return BottomNavigationBar(
+          currentIndex: tabsRouter.activeIndex,
+          onTap: tabsRouter.setActiveIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              label: 'Help',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star),
+              label: 'Floyd Rose',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.star_border),
+              label: 'Standard Tuner',
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -13,8 +13,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // We subclass ConsumerStatefulWidget instead of StatefulWidget
 
 @RoutePage()
-class FloydRoseTuningPage extends ConsumerWidget {
-  const FloydRoseTuningPage({super.key});
+class FloydRoseTunerPage extends ConsumerWidget {
+  const FloydRoseTunerPage({super.key});
 
   String hinText(num value) {
     switch (value) {

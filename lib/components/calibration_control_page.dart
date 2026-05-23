@@ -203,22 +203,8 @@ class _CalibrationControlPageState extends ConsumerState<CalibrationControlPage>
             FilledButton(
               onPressed: selectedGuitar.isValid
                   ? () async {
-                      ref
-                          .read(selectedGuitarProvider.notifier)
-                          .calculateMatrix();
-                      Guitar? guitar = ref.read(selectedGuitarProvider).value;
-                      if (guitar == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("No Guitar Selected!")),
-                        );
-                        return;
-                      }
-                      await ref
-                          .read(guitarsProvider.notifier)
-                          .saveOverriding(guitar);
-
-                      context.router.popUntilRouteWithName(
-                        FloydRoseTunerSetupRoute.name,
+                      context.router.navigate(
+                        GuitarRoute(),
                       );
                     }
                   : null,

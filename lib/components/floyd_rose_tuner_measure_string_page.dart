@@ -12,21 +12,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
-class CalibrationMeasureStringPage extends ConsumerStatefulWidget {
+class FloydRoseTunerMeasureStringPage extends ConsumerStatefulWidget {
   final bool cameBackFromError;
 
-  const CalibrationMeasureStringPage({
+  const FloydRoseTunerMeasureStringPage({
     super.key,
     this.cameBackFromError = false,
   });
 
   @override
-  ConsumerState<CalibrationMeasureStringPage> createState() =>
-      _CalibrationMeasureStringPageState();
+  ConsumerState<FloydRoseTunerMeasureStringPage> createState() =>
+      _FloydRoseTunerMeasureStringPageState();
 }
 
-class _CalibrationMeasureStringPageState
-    extends ConsumerState<CalibrationMeasureStringPage> {
+class _FloydRoseTunerMeasureStringPageState
+    extends ConsumerState<FloydRoseTunerMeasureStringPage> {
   @override
   Widget build(BuildContext context) {
     var selectedString = ref

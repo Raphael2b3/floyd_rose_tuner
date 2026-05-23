@@ -48,6 +48,17 @@ class _CalibrationPageChangeStringState
             style: textTheme.titleLarge,
           ),
         ),
+        OutlinedButton(
+          onPressed: () {
+            var caliNotifier = ref.read(calibrationStateProvider.notifier);
+            caliNotifier.currentSampleIndex = 0;
+            ref
+                .read(guitarStateMeasureStateProvider.notifier)
+                .selectFirstString();
+            context.navigateTo(CalibrationMeasureStringRoute());
+          },
+          child: Text("Wrong String Changed :("),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -82,17 +93,6 @@ class _CalibrationPageChangeStringState
               },
               child: Text("Back"),
             ),
-            OutlinedButton(
-              onPressed: () {
-                var caliNotifier = ref.read(calibrationStateProvider.notifier);
-                caliNotifier.currentSampleIndex = 0;
-                ref
-                    .read(guitarStateMeasureStateProvider.notifier)
-                    .selectFirstString();
-                context.navigateTo(CalibrationMeasureStringRoute());
-              },
-              child: Text("Wrong String Changed :("),
-            ),
 
             FilledButton(
               onPressed: () {
@@ -107,6 +107,7 @@ class _CalibrationPageChangeStringState
             ),
           ],
         ),
+
       ],
     );
   }
