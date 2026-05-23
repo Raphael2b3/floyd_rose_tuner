@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -53,7 +53,7 @@ class _CalibrationPageChangeStringState
             var caliNotifier = ref.read(calibrationStateProvider.notifier);
             caliNotifier.currentSampleIndex = 0;
             ref
-                .read(guitarStateMeasureStateProvider.notifier)
+                .read(stringMeasureStateProvider.notifier)
                 .selectFirstString();
             context.navigateTo(CalibrationMeasureStringRoute());
           },
@@ -65,14 +65,14 @@ class _CalibrationPageChangeStringState
             TextButton(
               onPressed: () async {
                 var stringIndex = ref
-                    .read(guitarStateMeasureStateProvider)
+                    .read(stringMeasureStateProvider)
                     .currentStringIndex;
 
                 //reverse d)
                 var caliNotifier = ref.read(calibrationStateProvider.notifier);
                 caliNotifier.currentSampleIndex = 0;
                 ref
-                    .read(guitarStateMeasureStateProvider.notifier)
+                    .read(stringMeasureStateProvider.notifier)
                     .selectFirstString();
 
                 var lastFrequency =
@@ -99,7 +99,7 @@ class _CalibrationPageChangeStringState
                 var caliNotifier = ref.read(calibrationStateProvider.notifier);
                 caliNotifier.currentSampleIndex = sampleIndex + 1;
                 ref
-                    .read(guitarStateMeasureStateProvider.notifier)
+                    .read(stringMeasureStateProvider.notifier)
                     .selectFirstString();
                 context.navigateTo(CalibrationMeasureStringRoute());
               },

@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
+import 'package:floyd_rose_tuner/provider/floyd_rose_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -31,7 +31,7 @@ class _FloydRoseTunerCheckStringPageState
   @override
   Widget build(BuildContext context) {
     int currentString = ref
-        .watch(guitarStateMeasureStateProvider)
+        .watch(stringMeasureStateProvider)
         .currentStringIndex;
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
     if (tuning == null) {
@@ -90,7 +90,7 @@ class _FloydRoseTunerCheckStringPageState
             FilledButton(
               onPressed: () async {
                 var gMeasureStateNotifier = ref.read(
-                  guitarStateMeasureStateProvider.notifier,
+                  stringMeasureStateProvider.notifier,
                 );
                 ref
                     .read(guitarStateProvider.notifier)
@@ -102,7 +102,7 @@ class _FloydRoseTunerCheckStringPageState
                 } else {
                   gMeasureStateNotifier.selectFirstString();
                   ref
-                      .read(guitarTuningAssistantProvider.notifier)
+                      .read(floydRoseTuningAssistantProvider.notifier)
                       .calculateOrderedGoalNotes();
 
                   context.router.navigate(FloydRoseTunerRoute());

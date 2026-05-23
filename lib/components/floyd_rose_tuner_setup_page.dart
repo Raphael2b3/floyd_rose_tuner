@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/guitar_selector.dart';
 import 'package:floyd_rose_tuner/components/tuning_selector.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -40,7 +40,7 @@ class FloydRoseTunerSetupPage extends ConsumerWidget {
                     return;
                   }
                   ref
-                      .read(guitarStateMeasureStateProvider.notifier)
+                      .read(stringMeasureStateProvider.notifier)
                       .selectFirstString();
                   await context.router.navigate(
                     FloydRoseTunerMeasureStringRoute(),

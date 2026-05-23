@@ -9,10 +9,10 @@ import 'package:floyd_rose_tuner/utils/note_to_frequenzy.dart';
 import 'package:ml_linalg/vector.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'guitar_tuning_assistant_provider.g.dart';
+part 'floyd_rose_tuning_assistant_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class GuitarTuningAssistantNotifier extends _$GuitarTuningAssistantNotifier {
+class FloydRoseTuningAssistantNotifier extends _$FloydRoseTuningAssistantNotifier {
   @override
   GuitarState build() {
     return GuitarState();

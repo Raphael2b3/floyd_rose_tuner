@@ -1,20 +1,20 @@
-class GuitarStateMeasureState {
+class StringMeasureState {
   final int currentStringIndex;
   final bool manualDetection;
   final List<bool> measuredStrings;
 
-  GuitarStateMeasureState({
+  StringMeasureState({
     required this.currentStringIndex,
     this.manualDetection = false,
     this.measuredStrings = const []
   });
 
-  GuitarStateMeasureState copy({
+  StringMeasureState copy({
     int? currentStringIndex,
     bool? manualDetection,
     List<bool>? measuredStrings
   }) {
-    return GuitarStateMeasureState(
+    return StringMeasureState(
       currentStringIndex: currentStringIndex ?? this.currentStringIndex,
       manualDetection: manualDetection ?? this.manualDetection,
       measuredStrings: measuredStrings?? this.measuredStrings
@@ -23,6 +23,6 @@ class GuitarStateMeasureState {
 
   @override
   String toString() {
-    return 'GuitarStateMeasureState(currentStringIndex: $currentStringIndex, manualDetection: $manualDetection)';
+    return 'StringMeasureState(currentStringIndex: $currentStringIndex, manualDetection: $manualDetection)';
   }
 }

@@ -1,7 +1,7 @@
 import 'package:floyd_rose_tuner/components/volume_threshold_selector.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/types/string_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,14 +24,14 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
       detectedFrequencyProvider.notifier,
     );
 
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
-      guitarStateMeasureStateProvider,
+    StringMeasureState stringMeasureState = ref.watch(
+      stringMeasureStateProvider,
     );
 
     return Column(
       children: [
-        if (!guitarStateMeasureState.manualDetection) VolumeThresholdSelector(),
-        if (guitarStateMeasureState.manualDetection)
+        if (!stringMeasureState.manualDetection) VolumeThresholdSelector(),
+        if (stringMeasureState.manualDetection)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -46,9 +46,9 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
                   ),
                   keyboardAppearance: Brightness.light,
                   keyboardType: TextInputType.number,
-                  enabled: guitarStateMeasureState.manualDetection,
+                  enabled: stringMeasureState.manualDetection,
                   onSubmitted: (stringValue) {
-                    if (guitarStateMeasureState.manualDetection) {
+                    if (stringMeasureState.manualDetection) {
                       double value = double.tryParse(stringValue) ?? 0.0;
                       print(
                         "Manually setting detected frequency to $stringValue",
@@ -65,14 +65,14 @@ class FrequencyDetectorViewState extends ConsumerState<FrequencyDetectorView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Checkbox(
-              value: !guitarStateMeasureState.manualDetection,
+              value: !stringMeasureState.manualDetection,
               onChanged: (value) {
                 ref
-                    .read(guitarStateMeasureStateProvider.notifier)
-                    .guitarStateMeasureState = GuitarStateMeasureState(
+                    .read(stringMeasureStateProvider.notifier)
+                    .stringMeasureState = StringMeasureState(
                   currentStringIndex:
-                      guitarStateMeasureState.currentStringIndex,
-                  manualDetection: !guitarStateMeasureState.manualDetection,
+                      stringMeasureState.currentStringIndex,
+                  manualDetection: !stringMeasureState.manualDetection,
                 );
               },
             ),

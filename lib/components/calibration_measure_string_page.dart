@@ -3,7 +3,7 @@ import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_view.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -30,7 +30,7 @@ class _CalibrationMeasureStringPageState
   @override
   Widget build(BuildContext context) {
     var selectedString = ref
-        .watch(guitarStateMeasureStateProvider)
+        .watch(stringMeasureStateProvider)
         .currentStringIndex;
 
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
@@ -72,7 +72,7 @@ class _CalibrationMeasureStringPageState
                   //reverse c) b)
                   if (!widget.cameBackFromError) {
                     ref
-                        .read(guitarStateMeasureStateProvider.notifier)
+                        .read(stringMeasureStateProvider.notifier)
                         .selectPreviousString();
                   }
 
@@ -93,7 +93,7 @@ class _CalibrationMeasureStringPageState
                 if (selectedString == 0 && caliState.currentSampleIndex > 0) {
                   //reverse e)
                   ref
-                          .read(guitarStateMeasureStateProvider.notifier)
+                          .read(stringMeasureStateProvider.notifier)
                           .currentStringIndex =
                       5;
                   ref
@@ -107,7 +107,7 @@ class _CalibrationMeasureStringPageState
                     caliState.currentSampleIndex == 0 &&
                     caliState.currentEffectingStringIndex > 0) {
                   ref
-                          .read(guitarStateMeasureStateProvider.notifier)
+                          .read(stringMeasureStateProvider.notifier)
                           .currentStringIndex =
                       5;
                   ref

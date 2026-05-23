@@ -11,7 +11,6 @@ class CalibrationStateNotifier
     return CalibrationState(
       currentEffectingStringIndex: 0,
       currentSampleIndex: 0,
-      stringIsChanging: false
     );
   }
 

@@ -1,5 +1,5 @@
 import 'package:async/async.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/smoothed_frequency_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_stream_provider.dart';
 import 'package:floyd_rose_tuner/provider/volume_threshold_provider.dart';
@@ -38,7 +38,7 @@ class DetectedFrequencyNotifier extends _$DetectedFrequencyNotifier {
       if (volume < threshold) {
         return;
       }
-      if (ref.read(guitarStateMeasureStateProvider).manualDetection) return;
+      if (ref.read(stringMeasureStateProvider).manualDetection) return;
 
       state = AsyncValue.data(frequency);
     });

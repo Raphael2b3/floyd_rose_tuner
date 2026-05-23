@@ -2,12 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/frequency_detector_view.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_tuning_assistant_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/floyd_rose_tuning_assistant_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
-import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
+import 'package:floyd_rose_tuner/types/string_measure_state.dart';
 import 'package:floyd_rose_tuner/utils/frequency_to_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,13 +30,13 @@ class FloydRoseTunerPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final GuitarState guitarTuningAssistant = ref.watch(
-      guitarTuningAssistantProvider,
+    final GuitarState floydRoseTuningAssistant = ref.watch(
+      floydRoseTuningAssistantProvider,
     );
     var frequency = ref.watch(detectedFrequencyProvider).value;
 
-    GuitarStateMeasureState guitarStateMeasureState = ref.watch(
-      guitarStateMeasureStateProvider,
+    StringMeasureState stringMeasureState = ref.watch(
+      stringMeasureStateProvider,
     );
     var tuning = ref.watch(selectedTuningProvider).value;
     if (tuning == null) return ErrorDisplay("No Tuning");
@@ -44,7 +44,7 @@ class FloydRoseTunerPage extends ConsumerWidget {
 
     late num centDistance = getCentDistance(
       frequency,
-      guitarTuningAssistant[guitarStateMeasureState.currentStringIndex],
+      floydRoseTuningAssistant[stringMeasureState.currentStringIndex],
     );
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -57,7 +57,7 @@ class FloydRoseTunerPage extends ConsumerWidget {
             Text("String: ", style: Theme.of(context).textTheme.bodyLarge),
             Chip(
               label: Text(
-                tuning.goalNotes[guitarStateMeasureState.currentStringIndex],
+                tuning.goalNotes[stringMeasureState.currentStringIndex],
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -102,9 +102,9 @@ class FloydRoseTunerPage extends ConsumerWidget {
           children: [
             TextButton(
               onPressed: () {
-                if (guitarStateMeasureState.currentStringIndex > 0) {
+                if (stringMeasureState.currentStringIndex > 0) {
                   ref
-                      .read(guitarStateMeasureStateProvider.notifier)
+                      .read(stringMeasureStateProvider.notifier)
                       .selectPreviousString();
                 } else {
                   context.router.pop(const StandardTunerRoute());
@@ -115,13 +115,13 @@ class FloydRoseTunerPage extends ConsumerWidget {
             FilledButton(
               onPressed: centDistance < 15 && centDistance > -15
                   ? () {
-                      if (guitarStateMeasureState.currentStringIndex < 5) {
+                      if (stringMeasureState.currentStringIndex < 5) {
                         ref
-                            .read(guitarStateMeasureStateProvider.notifier)
+                            .read(stringMeasureStateProvider.notifier)
                             .selectNextString();
                       } else {
                         ref
-                            .read(guitarStateMeasureStateProvider.notifier)
+                            .read(stringMeasureStateProvider.notifier)
                             .selectFirstString();
                         context.router.popUntilRoot();
                         context.router.root.navigate(
@@ -131,7 +131,7 @@ class FloydRoseTunerPage extends ConsumerWidget {
                     }
                   : null,
               child: Text(
-                guitarStateMeasureState.currentStringIndex < 5
+                stringMeasureState.currentStringIndex < 5
                     ? "Next"
                     : "Done",
               ),

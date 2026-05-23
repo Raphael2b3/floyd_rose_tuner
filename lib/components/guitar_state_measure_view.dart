@@ -1,6 +1,6 @@
 import 'package:floyd_rose_tuner/components/frequency_view.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
-import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/types/string_measure_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,15 +12,15 @@ class GuitarStateMeasureView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-        GuitarStateMeasureState guitarStateMeasureState = ref.watch(
-      guitarStateMeasureStateProvider,
+        StringMeasureState stringMeasureState = ref.watch(
+      stringMeasureStateProvider,
     );
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (!guitarStateMeasureState.manualDetection) FrequencyView(),
+        if (!stringMeasureState.manualDetection) FrequencyView(),
         FrequencyDetectorView(),
       ],
     );

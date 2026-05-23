@@ -1,5 +1,5 @@
 import 'package:floyd_rose_tuner/components/error_display.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/types/guitar_state.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
@@ -49,7 +49,7 @@ class GuitarStateView extends ConsumerWidget {
         style: OutlinedButton.styleFrom(padding: EdgeInsetsGeometry.all(8)),
         onPressed: () {
           ref
-                  .read(guitarStateMeasureStateProvider.notifier)
+                  .read(stringMeasureStateProvider.notifier)
                   .currentStringIndex =
               i;
         },

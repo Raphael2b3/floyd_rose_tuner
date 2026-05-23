@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitars_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
@@ -32,7 +32,7 @@ class _CalibrationCheckStringPageState
     int effectingString = calibrationState.currentEffectingStringIndex;
     int sampleIndex = calibrationState.currentSampleIndex;
     int currentString = ref
-        .watch(guitarStateMeasureStateProvider)
+        .watch(stringMeasureStateProvider)
         .currentStringIndex;
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
     if (tuning == null) {
@@ -91,7 +91,7 @@ class _CalibrationCheckStringPageState
             FilledButton(
               onPressed: () async {
                 var gMeasureStateNotifier = ref.read(
-                  guitarStateMeasureStateProvider.notifier,
+                  stringMeasureStateProvider.notifier,
                 );
                 var selectedGuitarNotifier = ref.read(
                   selectedGuitarProvider.notifier,

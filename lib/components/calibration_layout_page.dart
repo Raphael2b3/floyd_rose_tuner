@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/calibration_state.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class CalibrationLayoutPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     CalibrationState calibrationState = ref.watch(calibrationStateProvider);
     int stringIndex = ref
-        .watch(guitarStateMeasureStateProvider)
+        .watch(stringMeasureStateProvider)
         .currentStringIndex;
     int effectingStringIndex = calibrationState.currentEffectingStringIndex;
     int sampleIndex = calibrationState.currentSampleIndex;

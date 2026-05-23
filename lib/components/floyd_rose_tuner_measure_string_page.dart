@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_view.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/guitar_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
@@ -29,7 +29,7 @@ class _FloydRoseTunerMeasureStringPageState
   @override
   Widget build(BuildContext context) {
     var selectedString = ref
-        .watch(guitarStateMeasureStateProvider)
+        .watch(stringMeasureStateProvider)
         .currentStringIndex;
 
     Tuning? tuning = ref.watch(selectedTuningProvider).value;
@@ -70,7 +70,7 @@ class _FloydRoseTunerMeasureStringPageState
                   //reverse b)
                   if (!widget.cameBackFromError) {
                     ref
-                        .read(guitarStateMeasureStateProvider.notifier)
+                        .read(stringMeasureStateProvider.notifier)
                         .selectPreviousString();
                   }
                   var lastFrequency = ref.read(

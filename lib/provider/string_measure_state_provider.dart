@@ -1,21 +1,21 @@
-import 'package:floyd_rose_tuner/types/guitar_state_measure_state.dart';
+import 'package:floyd_rose_tuner/types/string_measure_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'guitar_state_measure_state_provider.g.dart';
+part 'string_measure_state_provider.g.dart';
 
 @riverpod
-class GuitarStateMeasureStateNotifier
-    extends _$GuitarStateMeasureStateNotifier {
+class StringMeasureStateNotifier
+    extends _$StringMeasureStateNotifier {
   @override
-  GuitarStateMeasureState build() {
-    return GuitarStateMeasureState(
+  StringMeasureState build() {
+    return StringMeasureState(
       currentStringIndex: 0,
       manualDetection: false,
     );
   }
 
-  set guitarStateMeasureState(GuitarStateMeasureState guitarStateMeasureState) {
-    state = guitarStateMeasureState;
+  set stringMeasureState(StringMeasureState stringMeasureState) {
+    state = stringMeasureState;
   }
 
   set currentStringIndex(int i) => state = state.copy(currentStringIndex: i);

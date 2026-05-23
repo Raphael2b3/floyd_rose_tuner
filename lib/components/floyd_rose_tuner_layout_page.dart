@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:floyd_rose_tuner/provider/guitar_state_measure_state_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +18,7 @@ class FloydRoseTunerLayoutPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     int stringIndex = ref
-        .watch(guitarStateMeasureStateProvider)
+        .watch(stringMeasureStateProvider)
         .currentStringIndex;
     return AutoRouter(
       builder: (context, content) {
