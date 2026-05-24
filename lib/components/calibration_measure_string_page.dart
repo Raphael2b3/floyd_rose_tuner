@@ -3,9 +3,9 @@ import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/components/guitar_state_measure_view.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/detected_frequency_provider.dart';
-import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/tuning.dart';
 import 'package:flutter/material.dart';
@@ -112,8 +112,7 @@ class _CalibrationMeasureStringPageState
                       5;
                   ref
                           .read(calibrationStateProvider.notifier)
-                          .currentSampleIndex =
-                      caliState.currentSampleIndex - 1;
+                          .currentSampleIndex =  1;
                   context.router.navigate(const CalibrationChangeStringRoute());
                   return;
                 }

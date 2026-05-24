@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:floyd_rose_tuner/components/error_display.dart';
 import 'package:floyd_rose_tuner/provider/calibration_state_provider.dart';
-import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/provider/selected_tuning_provider.dart';
+import 'package:floyd_rose_tuner/provider/string_measure_state_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/calibration_state.dart';
 import 'package:floyd_rose_tuner/types/guitar.dart';
@@ -52,9 +52,7 @@ class _CalibrationPageChangeStringState
           onPressed: () {
             var caliNotifier = ref.read(calibrationStateProvider.notifier);
             caliNotifier.currentSampleIndex = 0;
-            ref
-                .read(stringMeasureStateProvider.notifier)
-                .selectFirstString();
+            ref.read(stringMeasureStateProvider.notifier).selectFirstString();
             context.navigateTo(CalibrationMeasureStringRoute());
           },
           child: Text("Wrong String Changed :("),
@@ -72,19 +70,21 @@ class _CalibrationPageChangeStringState
                 var caliNotifier = ref.read(calibrationStateProvider.notifier);
                 caliNotifier.currentSampleIndex = 0;
                 ref
-                    .read(stringMeasureStateProvider.notifier)
-                    .selectFirstString();
-
+                        .read(stringMeasureStateProvider.notifier)
+                        .currentStringIndex =
+                    5;
+                if (sampleIndex == 1 && effectingString > 0) {
+                  caliNotifier.currentEffectingStringIndex =
+                      effectingString - 1;
+                }
                 var lastFrequency =
                     (await ref.read(
                       selectedGuitarProvider.future,
                     ))!.getSamplesForEffectingString(
                       calibrationState.currentEffectingStringIndex,
                     )[calibrationState.currentSampleIndex][stringIndex];
-                if (sampleIndex == 1 && effectingString > 0) {
-                  caliNotifier.currentEffectingStringIndex =
-                      effectingString - 1;
-                }
+
+
                 context.router.navigate(
                   CalibrationCheckStringRoute(
                     detectedFrequency: lastFrequency.toDouble(),
@@ -107,7 +107,6 @@ class _CalibrationPageChangeStringState
             ),
           ],
         ),
-
       ],
     );
   }

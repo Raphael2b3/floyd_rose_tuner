@@ -79,7 +79,7 @@ class _FloydRoseTunerCheckStringPageState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
-              onPressed: () {
+              onPressed: () { // revers a)
                 context.router.navigate(
                   FloydRoseTunerMeasureStringRoute(cameBackFromError: true),
                 );
@@ -99,7 +99,7 @@ class _FloydRoseTunerCheckStringPageState
                   // b) see readme paper
                   gMeasureStateNotifier.selectNextString();
                   context.router.navigate(FloydRoseTunerMeasureStringRoute());
-                } else {
+                } else { //c)
                   gMeasureStateNotifier.selectFirstString();
                   ref
                       .read(floydRoseTuningAssistantProvider.notifier)
