@@ -4,7 +4,6 @@ import 'package:floyd_rose_tuner/provider/selected_guitar_provider.dart';
 import 'package:floyd_rose_tuner/router.dart';
 import 'package:floyd_rose_tuner/types/guitar.dart';
 import 'package:floyd_rose_tuner/utils/floyd_rose_delta_frequencies.dart';
-import 'package:floyd_rose_tuner/utils/optional_badge_wrapper.dart';
 import 'package:floyd_rose_tuner/utils/random_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,9 +46,9 @@ class GuitarSelector extends ConsumerWidget {
             return DropdownMenuEntry<Guitar>(
               value: e,
               label: e.guitarName,
-              labelWidget: OptionalBadgeWrapper(
+              labelWidget: Badge(
+                isLabelVisible:  !e.isValid,
                 child: Text(e.guitarName),
-                showBadge: !e.isValid,
               ),
               leadingIcon: IconButton(
                 onPressed: () {
@@ -59,9 +58,9 @@ class GuitarSelector extends ConsumerWidget {
                   ref.read(selectedGuitarProvider.notifier).select(e);
                   context.router.push(const GuitarRoute());
                 },
-                icon: OptionalBadgeWrapper(
+                icon: Badge(
+                  isLabelVisible: !e.isValid,
                   child: Icon(Icons.edit),
-                  showBadge: !e.isValid,
                 ),
               ),
             );

@@ -13,11 +13,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
 class CalibrationMeasureStringPage extends ConsumerStatefulWidget {
-  final bool cameBackFromError;
 
   const CalibrationMeasureStringPage({
     super.key,
-    this.cameBackFromError = false,
   });
 
   @override
@@ -69,12 +67,11 @@ class _CalibrationMeasureStringPageState
                   return;
                 }
                 if (selectedString > 0) {
-                  //reverse c) b)
-                  if (!widget.cameBackFromError) {
+
                     ref
                         .read(stringMeasureStateProvider.notifier)
                         .selectPreviousString();
-                  }
+
 
                   var lastFrequency =
                       (await ref.read(

@@ -195,7 +195,7 @@ class _CalibrationControlPageState extends ConsumerState<CalibrationControlPage>
           children: [
             TextButton(
               onPressed: () {
-                context.router.back();
+                context.router.navigate(CalibrationMeasureStringRoute());
               },
               child: Text("Back"),
             ),

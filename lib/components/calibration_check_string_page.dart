@@ -82,7 +82,7 @@ class _CalibrationCheckStringPageState
             TextButton(
               onPressed: () {
                 context.router.navigate(
-                  CalibrationMeasureStringRoute(cameBackFromError: true),
+                  CalibrationMeasureStringRoute(),
                 );
               },
               child: Text("Back/No"),
