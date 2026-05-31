@@ -12,11 +12,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
 class FloydRoseTunerMeasureStringPage extends ConsumerStatefulWidget {
-  final bool cameBackFromError;
 
   const FloydRoseTunerMeasureStringPage({
-    super.key,
-    this.cameBackFromError = false,
+    super.key
   });
 
   @override
@@ -68,11 +66,10 @@ class _FloydRoseTunerMeasureStringPageState
                 }
                 if (selectedString > 0) {
                   //reverse b)
-                  if (!widget.cameBackFromError) {
                     ref
                         .read(stringMeasureStateProvider.notifier)
                         .selectPreviousString();
-                  }
+
                   var lastFrequency = ref.read(
                     guitarStateProvider,
                   )[selectedString - 1];
