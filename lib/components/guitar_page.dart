@@ -139,6 +139,13 @@ class _GuitarPageState extends ConsumerState<GuitarPage>
             else
               OutlinedButton(
                 onPressed: () {
+                  ref.read(calibrationStateProvider.notifier)
+                    ..currentSampleIndex = 0
+                    ..currentEffectingStringIndex = 0;
+                  ref
+                      .read(stringMeasureStateProvider.notifier)
+                      .currentStringIndex =
+                  0;
                   context.router.navigate(const CalibrationLayoutRoute());
                 },
                 child: Text("Recalibrate"),

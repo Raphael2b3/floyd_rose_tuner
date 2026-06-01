@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'calibration_state_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CalibrationStateNotifier
     extends _$CalibrationStateNotifier {
   @override
